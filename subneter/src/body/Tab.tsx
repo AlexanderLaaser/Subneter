@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function IpInput() {
+function Tab() {
   const [activeTab, setActiveTab] = useState("tab-2");
 
   const handleTabClick = (tab: React.SetStateAction<string>) => {
@@ -10,17 +10,17 @@ function IpInput() {
   return (
     <>
       <div className="flex justify-center content-center">
-        <div className="font-montserrat pt-14 w-full max-w-screen-lg">
+        <div className="font-montserrat pt-12 w-full max-w-screen-md">
           <div className="">
             <ul
-              className="flex flex-wrap -mb-px text-sm font-medium text-center text-zinc-950 border-b border-zinc-950 dark:border-zinc-950"
+              className="flex flex-wrap -mb-px text-sm text-center text-zinc-950 border-b border-zinc-950 dark:border-zinc-950"
               id="default-tab"
               data-tabs-toggle="#default-Subnet-calculator-tab"
               role="tablist"
             >
               <li className="me-2" role="presentation">
                 <button
-                  className={`font-bold inline-block p-4 border-b-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
+                  className={`font-extrabold inline-block p-4 border-b-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
                     activeTab === "tab-1" ? "text-blue-600 border-blue-600" : ""
                   }`}
                   id="tab-1"
@@ -36,7 +36,7 @@ function IpInput() {
               </li>
               <li className="me-2" role="presentation">
                 <button
-                  className={`font-bold inline-block p-4 border-b-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
+                  className={`font-extrabold inline-block p-4 border-b-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
                     activeTab === "tab-2" ? "text-blue-600 border-blue-600" : ""
                   }`}
                   id="tab-2"
@@ -58,4 +58,4 @@ function IpInput() {
   );
 }
 
-export default IpInput;
+export default Tab;
