@@ -11,7 +11,7 @@ function IpInput() {
             ></input>
             <select
               id="countries"
-              className=" border-t-2 border-r-2 border-b-2 border-l border-zinc-950 text-sm rounded-r-lg focus:border-orange-600 p-2.5 "
+              className=" outline-none border-t-2 border-r-2 border-b-2 border-l border-zinc-950 text-sm rounded-r-lg focus:border-orange-600 p-2.5 "
             >
               <option value="US">/21</option>
               <option value="CA">/22</option>
@@ -23,9 +23,7 @@ function IpInput() {
             </select>
             <div className=" flex pl-2 items-center justify-center">
               <button className="inline-flex items-center justify-center w-6 h-6 mr-2 text-slate-50 transition-colors duration-150 bg-blue-700 rounded-lg focus:shadow-outline hover:bg-orange-600">
-                <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20">
-                  <path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"></path>
-                </svg>
+                <span className="text-2xl">+</span>
               </button>
             </div>
           </div>

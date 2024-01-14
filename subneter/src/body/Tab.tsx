@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import AddButton from "./AddButton";
+import TableHead from "./TableHead";
 
 function Tab() {
-  const [activeTab, setActiveTab] = useState("tab-2");
+  const [activeTab, setActiveTab] = useState("calculator-tab");
 
   const handleTabClick = (tab: React.SetStateAction<string>) => {
     setActiveTab(tab);
@@ -9,9 +11,9 @@ function Tab() {
 
   return (
     <>
-      <div className="flex justify-center content-center">
-        <div className="font-montserrat pt-12 w-full max-w-screen-md">
-          <div className="">
+      <div className="flex justify-center content-center flex-col">
+        <div className="flex justify-center content-center w-full ">
+          <div className="w-full font-montserrat pt-12 max-w-screen-md">
             <ul
               className="flex flex-wrap -mb-px text-sm text-center text-zinc-950 border-b border-zinc-950 dark:border-zinc-950"
               id="default-tab"
@@ -21,15 +23,17 @@ function Tab() {
               <li className="me-2" role="presentation">
                 <button
                   className={`font-extrabold inline-block p-4 border-b-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
-                    activeTab === "tab-1" ? "text-blue-600 border-blue-600" : ""
+                    activeTab === "calculator-tab"
+                      ? "text-blue-600 border-blue-600"
+                      : ""
                   }`}
-                  id="tab-1"
-                  data-tabs-target="#tab-1"
+                  id="calculator-tab"
+                  data-tabs-target="#calculator"
                   type="button"
                   role="tab"
-                  aria-controls="tab-1"
-                  aria-selected={activeTab === "tab-1"}
-                  onClick={() => handleTabClick("tab-1")}
+                  aria-controls="calculator"
+                  aria-selected={activeTab === "calculator-tab"}
+                  onClick={() => handleTabClick("calculator-tab")}
                 >
                   Subnet Calculator
                 </button>
@@ -37,21 +41,43 @@ function Tab() {
               <li className="me-2" role="presentation">
                 <button
                   className={`font-extrabold inline-block p-4 border-b-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
-                    activeTab === "tab-2" ? "text-blue-600 border-blue-600" : ""
+                    activeTab === "json-tab"
+                      ? "text-blue-600 border-blue-600"
+                      : ""
                   }`}
-                  id="tab-2"
-                  data-tabs-target="#tab-2"
+                  id="json-tab"
+                  data-tabs-target="#json"
                   type="button"
                   role="tab"
-                  aria-controls="tab-2"
-                  aria-selected={activeTab === "tab-2"}
-                  onClick={() => handleTabClick("tab-2")}
+                  aria-controls="json"
+                  aria-selected={activeTab === "json-tab"}
+                  onClick={() => handleTabClick("json-tab")}
                 >
                   JSON
                 </button>
               </li>
             </ul>
           </div>
+        </div>
+
+        <div id="default-tab-content">
+          <div
+            className={`  ${activeTab !== "calculator-tab" ? "hidden" : ""}`}
+            id="calculator"
+            role="tabpanel"
+            aria-labelledby="calculator-tab"
+          >
+            <TableHead></TableHead>
+            <AddButton></AddButton>
+          </div>
+          <div
+            className={`flex flex-col ${
+              activeTab !== "json-tab" ? "hidden" : ""
+            }`}
+            id="json"
+            role="tabpanel"
+            aria-labelledby="json-tab"
+          ></div>
         </div>
       </div>
     </>
