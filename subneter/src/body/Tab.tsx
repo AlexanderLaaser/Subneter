@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AddButton from "./AddButton";
 import TableHead from "./TableHead";
+import JSONField from "./JSONField";
 
 function Tab() {
   const [activeTab, setActiveTab] = useState("calculator-tab");
@@ -77,7 +78,9 @@ function Tab() {
             id="json"
             role="tabpanel"
             aria-labelledby="json-tab"
-          ></div>
+          >
+            <JSONField></JSONField>
+          </div>
         </div>
       </div>
     </>

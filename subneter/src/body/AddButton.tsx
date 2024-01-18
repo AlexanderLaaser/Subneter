@@ -1,23 +1,52 @@
 import { useState } from "react";
 import TableEntry from "./TableEntry";
 
-function AddButton() {
-  const [tableEntries, setTableEntries] = useState(0);
+interface TableEntryType {
+  id: number;
+}
 
+function AddButton() {
+  // Init array for table entries
+  const [tableEntries, setTableEntries] = useState<TableEntryType[]>([]);
+
+  // Adding entry for const tableEntries
   const addTableEntry = () => {
-    setTableEntries(tableEntries + 1);
+    const newEntry = {
+      id: tableEntries.length,
+    };
+    setTableEntries([...tableEntries, newEntry]);
     console.log(tableEntries);
   };
 
+  // Rendering TableEntries depending on amount of value of Table Entries
   const renderTableEntries = () => {
-    return Array.from({ length: tableEntries }, (_, index) => (
-      <TableEntry key={index} />
+    return tableEntries.map((entry, index) => (
+      <TableEntry
+        key={entry.id}
+        id={entry.id}
+        deleteTableEntry={() => deleteTableEntry(index)}
+        totalEntries={tableEntries.length}
+      />
     ));
   };
 
+  const deleteTableEntry = (index: number) => {
+    const newTableEntries = tableEntries.filter((_, i) => i !== index);
+    setTableEntries(newTableEntries);
+    console.log("Delete:" + tableEntries);
+  };
+
+  // Displaying table entries & add button
   return (
     <>
-      {renderTableEntries()} {<TableEntry></TableEntry>}
+      {
+        <TableEntry
+          id={0}
+          deleteTableEntry={function (): void {}}
+          totalEntries={0}
+        ></TableEntry>
+      }
+      {renderTableEntries()}{" "}
       <div className="flex justify-center content-center w-full font-montserrat">
         <div className=" flex pl-2 items-center justify-center mt-4">
           <button

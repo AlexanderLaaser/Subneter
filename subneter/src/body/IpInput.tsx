@@ -5,12 +5,13 @@ function IpInput() {
         <div className="pt-14">
           <div className="flex">
             <input
+              id="ip_adress"
               type="text"
               placeholder="IP-Address"
               className="text-sm sm:text-base relative border-t-2 border-l-2 border-b-2 border-r rounded-l-lg placeholder-gray-400 focus:border-orange-600 focus:outline-none py-2 pr-8 pl-8 border-zinc-950"
             ></input>
             <select
-              id="countries"
+              id="ip_size_input"
               className=" outline-none border-t-2 border-r-2 border-b-2 border-l border-zinc-950 text-sm rounded-r-lg focus:border-orange-600 p-2.5 "
             >
               <option value="US">/21</option>

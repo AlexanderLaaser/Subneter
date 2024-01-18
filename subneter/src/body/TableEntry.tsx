@@ -1,4 +1,10 @@
-function TableEntry() {
+interface TableEntryProps {
+  id: number;
+  deleteTableEntry: () => void;
+  totalEntries: number;
+}
+
+function TableEntry({ deleteTableEntry, totalEntries }: TableEntryProps) {
   const amount_ips = 128;
   const calculated_range = "222.222.222.222-222.222.222.222";
 
@@ -7,11 +13,15 @@ function TableEntry() {
       <div className="flex justify-center content-center w-full">
         <div className="flex items-center font-montserrat w-full max-w-screen-md bg-white mt-3 rounded-lg h-12 ml-10">
           <div className="flex pl-6">
-            <input className="w-52 outline-none" placeholder="Name"></input>
+            <input
+              id="subnet_name"
+              className="w-52 outline-none"
+              placeholder="Name"
+            ></input>
           </div>
           <div className="flex pl-10">
             <select
-              id="countries"
+              id="ip_size_entry"
               className=" outline-none border border-grey text-sm rounded-lg focus:border-orange-600 p-1.5 "
             >
               <option value="21">/21</option>
@@ -26,11 +36,18 @@ function TableEntry() {
           <div className="flex pl-20 text-blue-700 font-bold">{amount_ips}</div>
           <div className="flex pl-16  ">{calculated_range}</div>
         </div>
-        <div className=" flex pl-2 items-center justify-center mt-3">
-          <button className="inline-flex items-center justify-center w-6 h-6 mr-2 text-slate-50 transition-colors duration-150 bg-red-700 rounded-lg focus:shadow-outline hover:bg-orange-600">
-            <span className="text-2xl h-10">-</span>
-          </button>
-        </div>
+        {totalEntries > 0 ? (
+          <div className=" flex pl-2 items-center justify-center mt-3">
+            <button
+              className="inline-flex items-center justify-center w-6 h-6 mr-2 text-slate-50 transition-colors duration-150 bg-red-700 rounded-lg focus:shadow-outline hover:bg-orange-600"
+              onClick={deleteTableEntry}
+            >
+              <span className="text-2xl h-10">-</span>
+            </button>
+          </div>
+        ) : (
+          <div className=" flex pl-10 items-center justify-center mt-3"></div>
+        )}
       </div>
     </>
   );
