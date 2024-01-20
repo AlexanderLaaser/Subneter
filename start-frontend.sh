@@ -1,3 +1,3 @@
 #!/bin/bash
-cd subneter
+cd frontend
 npm run dev
