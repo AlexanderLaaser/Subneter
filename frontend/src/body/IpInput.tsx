@@ -29,7 +29,7 @@ function IpInput() {
             </div>
           </div>
           <div className="flex pt-4 justify-center items-center">
-            <div className="">Possible IP-Addresses:</div>
+            <div className="">IP-address space:</div>
             <div className="pl-2 text-blue-700 font-bold text-xl">256</div>
           </div>
         </div>
