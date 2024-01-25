@@ -1,15 +1,19 @@
 from flask import Flask, request 
-from calculator import get_start_iP, get_end_ip
+from calculator.calculation import get_start_iP, get_end_ip
 app = Flask(__name__)
 
-@app.route("/start_ip")
-def hello_world():
+@app.route("/")
+def index():
+    return "Server is running!"
+
+@app.route("/api/start_ip")
+def get_start_iP_route():
     ip = request.args.get('ip') 
     subnet_mask = request.args['subnet_mask']
     return get_start_iP(ip, subnet_mask)
 
-@app.route("/end_ip")
-def hello_world():
+@app.route("/api/end_ip")
+def get_end_iP_route():
     ip = request.args.get('ip') 
     subnet_mask = request.args['subnet_mask']
     return get_end_ip(ip, subnet_mask)

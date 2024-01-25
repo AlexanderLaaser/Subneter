@@ -2,4 +2,4 @@
 cd backend
 source venv/bin/activate
 cd api
-flask --app index run
+flask --app endpoints run
