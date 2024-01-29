@@ -9,6 +9,9 @@ function IpInput() {
               type="text"
               placeholder="IP-Address"
               className="text-sm sm:text-base relative border-t-2 border-l-2 border-b-2 border-r rounded-l-lg placeholder-gray-400 focus:border-orange-600 focus:outline-none py-2 pr-8 pl-8 border-zinc-950"
+              onKeyDown={() => {
+                console.log("stuff is happening");
+              }}
             ></input>
             <select
               id="ip_size_input"
