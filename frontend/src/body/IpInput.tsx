@@ -5,6 +5,7 @@ function IpInput() {
   const [ip, setIp] = useState("");
   const [subnet_mask, setSubnetMask] = useState("21");
   const [isValid, setIsValid] = useState(false);
+  const [address_space, setAddressSpace] = useState("");
 
   //function for validating the entered ip
   const validateIP = (ip: string) => {
@@ -15,26 +16,27 @@ function IpInput() {
 
   //function that handles the api calls
   const handleSubmit = async () => {
-    console.log("start");
-    console.log(ip);
-    console.log(isValid);
     if (isValid && ip) {
       try {
         const response = await axios.get(
-          `${process.env.API_SERVER_URL}/api/address_space?ip=${ip}&subnet_mask=${subnet_mask}`
-          //`http://127.0.0.1:5000/api/address_space?ip=${ip}&subnet_mask=${subnet_mask}`
+          `${
+            import.meta.env.VITE_API_SERVER_URL
+          }/api/address_space?ip=${ip}&subnet_mask=${subnet_mask}`
         );
-        console.log(response.data);
+        setAddressSpace(response.data);
       } catch (error) {
         console.error("Fehler beim API-Call", error);
       }
+    } else {
+      setAddressSpace("");
     }
   };
 
   //function that sets the ip and the validState
-  const handleIpInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleIpInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newIp = (e.target as HTMLInputElement).value;
     setIp(newIp);
+    console.log("Neu Ip" + newIp);
     setIsValid(validateIP(newIp));
     handleSubmit();
   };
@@ -49,7 +51,7 @@ function IpInput() {
               type="text"
               placeholder="IP-Address"
               className="text-sm sm:text-base relative border-t-2 border-l-2 border-b-2 border-r rounded-l-lg placeholder-gray-400 focus:border-orange-600 focus:outline-none py-2 pr-8 pl-8 border-zinc-950"
-              onKeyDown={handleIpInput}
+              onChange={handleIpInput}
             ></input>
             <select
               id="ip_size_input"
@@ -71,7 +73,9 @@ function IpInput() {
           </div>
           <div className="flex pt-4 justify-center items-center">
             <div className="">IP-address space:</div>
-            <div className="pl-2 text-blue-700 font-bold text-xl">256</div>
+            <div className="pl-2 text-blue-700 font-bold text-xl">
+              {address_space}
+            </div>
           </div>
         </div>
       </div>
