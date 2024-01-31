@@ -3,7 +3,7 @@ import axios from "axios";
 
 function IpInput() {
   const [ip, setIp] = useState("");
-  const [subnet_mask, setSubnetMask] = useState("");
+  const [subnet_mask, setSubnetMask] = useState("21");
   const [isValid, setIsValid] = useState(false);
 
   //function for validating the entered ip
@@ -13,28 +13,30 @@ function IpInput() {
     return regex.test(ip);
   };
 
-  //function that sets the ip and the validState
-  const handleIpInput = (e: { target: { value: any } }) => {
-    const newIp = e.target.value;
-    setIp(newIp);
-    setIsValid(validateIP(newIp));
-    console.log(ip);
-    console.log(isValid);
-  };
-
   //function that handles the api calls
   const handleSubmit = async () => {
+    console.log("start");
+    console.log(ip);
+    console.log(isValid);
     if (isValid && ip) {
       try {
         const response = await axios.get(
-          `process.env.API_SERVER_URL/api/address_space?ip=${ip}&subnet_mask=${subnet_mask}`
+          `${process.env.API_SERVER_URL}/api/address_space?ip=${ip}&subnet_mask=${subnet_mask}`
+          //`http://127.0.0.1:5000/api/address_space?ip=${ip}&subnet_mask=${subnet_mask}`
         );
         console.log(response.data);
-        // Weiterer Code für die Verarbeitung der Antwort
       } catch (error) {
         console.error("Fehler beim API-Call", error);
       }
     }
+  };
+
+  //function that sets the ip and the validState
+  const handleIpInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const newIp = (e.target as HTMLInputElement).value;
+    setIp(newIp);
+    setIsValid(validateIP(newIp));
+    handleSubmit();
   };
 
   return (
