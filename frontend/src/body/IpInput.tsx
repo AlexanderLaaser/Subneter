@@ -2,10 +2,11 @@ import { useState } from "react";
 import axios from "axios";
 
 function IpInput() {
-  const [ip, setIp] = useState("");
-  const [subnet_mask, setSubnetMask] = useState("21");
+  const [ip, setIp] = useState("10.0.0.0");
+  const [suffix, setSuffix] = useState("24");
   const [isValid, setIsValid] = useState(false);
-  const [address_space, setAddressSpace] = useState("");
+  const [address_space, setAddressSpace] = useState("10.0.0.0-10.0.0.255");
+  const [address_count, setAddressCount] = useState("256");
 
   //function for validating the entered ip
   const validateIP = (ip: string) => {
@@ -14,14 +15,14 @@ function IpInput() {
     return regex.test(ip);
   };
 
-  //function that handles the api calls
-  const handleSubmit = async () => {
+  //function that handles the api call for the address space calculation
+  const callOnIpInput = async (ip: string, suffix: string) => {
     if (isValid && ip) {
       try {
         const response = await axios.get(
           `${
             import.meta.env.VITE_API_SERVER_URL
-          }/api/address_space?ip=${ip}&subnet_mask=${subnet_mask}`
+          }/api/address_space?ip=${ip}&subnet_mask=${suffix}`
         );
         setAddressSpace(response.data);
       } catch (error) {
@@ -36,9 +37,42 @@ function IpInput() {
   const handleIpInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newIp = (e.target as HTMLInputElement).value;
     setIp(newIp);
-    console.log("Neu Ip" + newIp);
-    setIsValid(validateIP(newIp));
-    handleSubmit();
+    console.log("Ip: " + newIp);
+    updateIsValid(newIp);
+    callOnIpInput(newIp, suffix);
+    console.log(isValid);
+    console.log(ip);
+  };
+
+  const updateIsValid = (newip: string) => {
+    setIsValid(validateIP(newip));
+    console.log(validateIP(newip));
+  };
+
+  //function that handles the api call for the ip address counting
+  const callOnSuffixInput = async (suffix: string) => {
+    if (ip) {
+      try {
+        const response = await axios.get(
+          `${
+            import.meta.env.VITE_API_SERVER_URL
+          }/api/count_ipaddresses?ip=${ip}&subnet_mask=${suffix}`
+        );
+        setAddressCount(response.data);
+      } catch (error) {
+        console.error("Fehler beim API-Call", error);
+      }
+    } else {
+      setAddressCount("");
+    }
+  };
+
+  //function that sets the suffix
+  const handleSuffix = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const suffix = (e.target as HTMLSelectElement).value;
+    setSuffix(suffix);
+    console.log("Suffix:" + suffix);
+    callOnSuffixInput(suffix);
   };
 
   return (
@@ -56,25 +90,40 @@ function IpInput() {
                 onChange={handleIpInput}
               ></input>
               <div className="text-blue-700 font-bold text-sm pt-2">
-                {/* {address_space} */}
-                255.255.255.255 - 255.255.255.255
+                {address_space}
               </div>
             </div>
             <div className="">
               <select
                 id="ip_size_input"
-                className=" text-sm sm:text-base outline-none border border-zinc-950 text-sm rounded focus:border-orange-600 pr-16 pl-4 h-10"
+                className="sm:text-base outline-none border border-zinc-950 text-sm rounded focus:border-orange-600 pr-16 pl-4 h-10"
+                onChange={handleSuffix}
+                defaultValue="24"
               >
-                <option value="US">/21</option>
-                <option value="CA">/22</option>
-                <option value="FR">/23</option>
-                <option value="DE">/24</option>
-                <option value="DE">/25</option>
-                <option value="DE">/26</option>
-                <option value="DE">/27</option>
+                <option value="14">/14</option>
+                <option value="15">/15</option>
+                <option value="16">/16</option>
+                <option value="17">/17</option>
+                <option value="18">/18</option>
+                <option value="19">/19</option>
+                <option value="20">/20</option>
+                <option value="21">/21</option>
+                <option value="22">/22</option>
+                <option value="23">/23</option>
+                <option value="24">/24</option>
+                <option value="25">/25</option>
+                <option value="26">/26</option>
+                <option value="27">/27</option>
+                <option value="28">/28</option>
+                <option value="29">/29</option>
+                <option value="30">/30</option>
+                <option value="31">/31</option>
+                <option value="32">/32</option>
               </select>
 
-              <div className="text-blue-700 font-bold text-sm pt-2">1024</div>
+              <div className="text-blue-700 font-bold text-sm pt-2">
+                {address_count}
+              </div>
             </div>
           </div>
         </div>
