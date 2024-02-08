@@ -2,7 +2,7 @@
 
 Application for calculating ip addresses in Virtual Networks with export functionalities
 
-# env
+# environmental variables in .env.local file
 
 VITE_API_SERVER_URL
 
