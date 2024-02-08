@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 function IpInput() {
   const [ip, setIp] = useState("10.0.0.0");
   const [suffix, setSuffix] = useState("24");
-  const [isValid, setIsValid] = useState(false);
+  const [isValid, setIsValid] = useState(true);
   const [address_space, setAddressSpace] = useState("10.0.0.0-10.0.0.255");
   const [address_count, setAddressCount] = useState("256");
 
@@ -17,7 +17,7 @@ function IpInput() {
 
   //function that handles the api call for the address space calculation
   const callOnIpInput = async (ip: string, suffix: string) => {
-    if (isValid && ip) {
+    if (isValid) {
       try {
         const response = await axios.get(
           `${
@@ -29,7 +29,6 @@ function IpInput() {
         console.error("Fehler beim API-Call", error);
       }
     } else {
-      setAddressSpace("");
     }
   };
 
@@ -37,17 +36,17 @@ function IpInput() {
   const handleIpInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newIp = (e.target as HTMLInputElement).value;
     setIp(newIp);
-    console.log("Ip: " + newIp);
     updateIsValid(newIp);
-    callOnIpInput(newIp, suffix);
-    console.log(isValid);
-    console.log(ip);
   };
 
   const updateIsValid = (newip: string) => {
     setIsValid(validateIP(newip));
-    console.log(validateIP(newip));
+    return validateIP(newip);
   };
+
+  useEffect(() => {
+    callOnIpInput(ip, suffix);
+  });
 
   //function that handles the api call for the ip address counting
   const callOnSuffixInput = async (suffix: string) => {
@@ -89,9 +88,15 @@ function IpInput() {
                 className="text-sm sm:text-base relative border rounded placeholder-gray-400 focus:border-orange-600 focus:outline-none pl-4 pr-20 border-zinc-950 h-10"
                 onChange={handleIpInput}
               ></input>
-              <div className="text-blue-700 font-bold text-sm pt-2">
-                {address_space}
-              </div>
+              {isValid ? (
+                <div className="text-blue-700 font-bold text-sm pt-2">
+                  {address_space}
+                </div>
+              ) : (
+                <div className="text-red-500 font-bold text-sm pt-2">
+                  Ungültige IP-Adresse
+                </div>
+              )}
             </div>
             <div className="">
               <select
