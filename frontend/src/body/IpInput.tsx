@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 function IpInput() {
-  const [ip, setIp] = useState("10.0.0.0");
+  const [startIp, setStartIp] = useState("10.0.0.0");
   const [suffix, setSuffix] = useState("24");
   const [isValid, setIsValid] = useState(true);
   const [address_space, setAddressSpace] = useState("10.0.0.0-10.0.0.255");
@@ -35,7 +35,7 @@ function IpInput() {
   //function that sets the ip and the validState
   const handleIpInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newIp = (e.target as HTMLInputElement).value;
-    setIp(newIp);
+    setStartIp(newIp);
     updateIsValid(newIp);
   };
 
@@ -45,17 +45,17 @@ function IpInput() {
   };
 
   useEffect(() => {
-    callOnIpInput(ip, suffix);
+    callOnIpInput(startIp, suffix);
   });
 
   //function that handles the api call for the ip address counting
   const callOnSuffixInput = async (suffix: string) => {
-    if (ip) {
+    if (startIp) {
       try {
         const response = await axios.get(
           `${
             import.meta.env.VITE_API_SERVER_URL
-          }/api/count_ipaddresses?ip=${ip}&subnet_mask=${suffix}`
+          }/api/count_ipaddresses?ip=${startIp}&subnet_mask=${suffix}`
         );
         setAddressCount(response.data);
       } catch (error) {
