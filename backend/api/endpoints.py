@@ -28,6 +28,5 @@ def call_address_space():
 
 @app.route("/api/count_ipaddresses")
 def call_count_ipaddresses():
-    ip = request.args.get('ip') 
     subnet_mask = request.args['subnet_mask']
-    return count_ipaddresses(ip, subnet_mask)
+    return count_ipaddresses(subnet_mask)

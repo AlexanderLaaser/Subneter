@@ -10,12 +10,10 @@ def get_end_ip(ip, suffix):
     network = ipaddress.ip_network(f"{ip}/{suffix}", strict=False)
     return str(network.broadcast_address)
 
-#Calculating amount of hosts
-def count_ipaddresses(ip, suffix):
-    network = ipaddress.ip_network(f"{ip}/{suffix}", strict=False)
-    return str(network.num_addresses)
+def count_ipaddresses(suffix):
+    return str(2 ** (32 - int(suffix)))
 
 #Testing 
 print(get_start_iP("127.0.0.0","23"))
 print(get_end_ip("127.0.0.0","25"))
-print(count_ipaddresses("127.0.0.0","20"))
+print(count_ipaddresses("20"))

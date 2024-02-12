@@ -6,9 +6,10 @@ Application for calculating ip addresses in Virtual Networks with export functio
 
 VITE_API_SERVER_URL
 
-# Solved Problems
+# Solved Next JS Problems
 
-State handling in React with setState und useEffect
+1. State handling in React with setState und useEffect
+2. State handling in multi component architecture with useContext API
 
 # Install Python in wsl machine
 

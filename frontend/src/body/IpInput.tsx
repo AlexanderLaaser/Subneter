@@ -1,35 +1,19 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useContext, useEffect, useState } from "react";
+import IpStartContext from "../context/IpStartContext";
+import { callSuffixInput, callIpInput } from "../api/calls";
 
 function IpInput() {
-  const [startIp, setStartIp] = useState("10.0.0.0");
   const [suffix, setSuffix] = useState("24");
   const [isValid, setIsValid] = useState(true);
   const [address_space, setAddressSpace] = useState("10.0.0.0-10.0.0.255");
   const [address_count, setAddressCount] = useState("256");
+  const { startIp, setStartIp } = useContext(IpStartContext);
 
   //function for validating the entered ip
   const validateIP = (ip: string) => {
     const regex =
       /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
     return regex.test(ip);
-  };
-
-  //function that handles the api call for the address space calculation
-  const callOnIpInput = async (ip: string, suffix: string) => {
-    if (isValid) {
-      try {
-        const response = await axios.get(
-          `${
-            import.meta.env.VITE_API_SERVER_URL
-          }/api/address_space?ip=${ip}&subnet_mask=${suffix}`
-        );
-        setAddressSpace(response.data);
-      } catch (error) {
-        console.error("Fehler beim API-Call", error);
-      }
-    } else {
-    }
   };
 
   //function that sets the ip and the validState
@@ -45,33 +29,26 @@ function IpInput() {
   };
 
   useEffect(() => {
-    callOnIpInput(startIp, suffix);
-  });
-
-  //function that handles the api call for the ip address counting
-  const callOnSuffixInput = async (suffix: string) => {
-    if (startIp) {
+    const fetchAddressSpace = async () => {
       try {
-        const response = await axios.get(
-          `${
-            import.meta.env.VITE_API_SERVER_URL
-          }/api/count_ipaddresses?ip=${startIp}&subnet_mask=${suffix}`
-        );
-        setAddressCount(response.data);
+        const addressSpace = await callIpInput(startIp, suffix, isValid);
+        setAddressSpace(addressSpace);
       } catch (error) {
-        console.error("Fehler beim API-Call", error);
+        console.error("Failed to fetch address space:", error);
       }
-    } else {
-      setAddressCount("");
+    };
+
+    if (isValid) {
+      fetchAddressSpace();
     }
-  };
+  }, [startIp, suffix, isValid]);
 
   //function that sets the suffix
-  const handleSuffix = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSuffix = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const suffix = (e.target as HTMLSelectElement).value;
     setSuffix(suffix);
     console.log("Suffix:" + suffix);
-    callOnSuffixInput(suffix);
+    setAddressCount(await callSuffixInput(suffix));
   };
 
   return (
