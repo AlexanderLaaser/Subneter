@@ -96,7 +96,7 @@ function AddButton() {
         name={entry.description}
         size={entry.size}
         ips={entry.ips} //{ips.description}
-        range="222-2222"
+        range="255.255.255.255-255.255.255.255"
         updateName={updateName}
         updateSize={updateSize}
         updateIps={updateIps}
