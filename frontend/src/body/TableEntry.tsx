@@ -1,6 +1,3 @@
-import { useContext } from "react";
-import IpStartContext from "../context/IpStartContext";
-
 interface TableEntryProps {
   id: number;
   name: string;

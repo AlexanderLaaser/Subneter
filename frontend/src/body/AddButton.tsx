@@ -16,15 +16,15 @@ function AddButton() {
     {
       id: 0,
       description: "",
-      size: "21",
-      ips: "228",
+      size: "27",
+      ips: "32",
       range: "10.0.0.0-10.0.10",
     },
     {
       id: 1,
       description: "",
-      size: "21",
-      ips: "228",
+      size: "27",
+      ips: "32",
       range: "10.0.0.0-10.0.10",
     },
   ];
