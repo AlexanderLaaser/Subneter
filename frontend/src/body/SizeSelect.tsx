@@ -1,9 +1,16 @@
-function SizeSelect(props: {
-  elementID: any;
-  defaultValue: any;
-  tailWindConfig: any;
-  onChangeFunction: any;
-}) {
+interface SizeSelectProps {
+  elementID: string;
+  defaultValue: string;
+  tailWindConfig: string;
+  onChangeFunction: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+}
+
+function SizeSelect({
+  elementID,
+  defaultValue,
+  tailWindConfig,
+  onChangeFunction,
+}: SizeSelectProps) {
   const suffixOptions = [];
   for (let i = 14; i <= 32; i++) {
     suffixOptions.push(
@@ -12,7 +19,7 @@ function SizeSelect(props: {
       </option>
     );
   }
-  const { elementID, defaultValue, tailWindConfig, onChangeFunction } = props;
+
   return (
     <select
       id={elementID}
