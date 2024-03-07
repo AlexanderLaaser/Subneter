@@ -1,3 +1,5 @@
+import SizeSelect from "./SizeSelect";
+
 interface TableEntryProps {
   id: number;
   name: string;
@@ -45,31 +47,14 @@ function TableEntry({
             ></input>
           </div>
           <div className="flex pl-6 flex-initial w-28 w-min-28">
-            <select
-              value={size}
-              onChange={handleSizeChange}
-              className="w-18 h-8 outline-none border border-grey text-sm rounded-lg focus:border-orange-600 "
-            >
-              <option value="14">/14</option>
-              <option value="15">/15</option>
-              <option value="16">/16</option>
-              <option value="17">/17</option>
-              <option value="18">/18</option>
-              <option value="19">/19</option>
-              <option value="20">/20</option>
-              <option value="21">/21</option>
-              <option value="22">/22</option>
-              <option value="23">/23</option>
-              <option value="24">/24</option>
-              <option value="25">/25</option>
-              <option value="26">/26</option>
-              <option value="27">/27</option>
-              <option value="28">/28</option>
-              <option value="29">/29</option>
-              <option value="30">/30</option>
-              <option value="31">/31</option>
-              <option value="32">/32</option>
-            </select>
+            <SizeSelect
+              elementID={"ip_size_input"}
+              defaultValue="27"
+              tailWindConfig={
+                "w-18 h-8 outline-none border border-grey text-sm rounded-lg focus:border-orange-600"
+              }
+              onChangeFunction={handleSizeChange}
+            ></SizeSelect>
           </div>
           <div className="flex pl-6 flex-initial w-28 text-blue-700 font-bold">
             {ips}

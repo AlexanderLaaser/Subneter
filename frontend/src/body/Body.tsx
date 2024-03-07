@@ -8,7 +8,6 @@ const startIp = "10.0.0.0";
 function Body() {
   const [ip, setIp] = React.useState(startIp);
 
-  // Der Context-Wert, der allen Kindkomponenten zur Verfügung gestellt wird
   const value = {
     startIp: ip,
     setStartIp: setIp,

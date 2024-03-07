@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import IpStartContext from "../context/IpStartContext";
 import { callSuffixInput, callIpInput } from "../api/calls";
+import SizeSelect from "./SizeSelect";
 
 function IpInput() {
   const [suffix, setSuffix] = useState("24");
@@ -76,32 +77,14 @@ function IpInput() {
               )}
             </div>
             <div className="">
-              <select
-                id="ip_size_input"
-                className="sm:text-base outline-none border border-zinc-950 text-sm rounded focus:border-orange-600 pr-16 pl-4 h-10"
-                onChange={handleSuffix}
+              <SizeSelect
+                elementID={"ip_size_input"}
                 defaultValue="24"
-              >
-                <option value="14">/14</option>
-                <option value="15">/15</option>
-                <option value="16">/16</option>
-                <option value="17">/17</option>
-                <option value="18">/18</option>
-                <option value="19">/19</option>
-                <option value="20">/20</option>
-                <option value="21">/21</option>
-                <option value="22">/22</option>
-                <option value="23">/23</option>
-                <option value="24">/24</option>
-                <option value="25">/25</option>
-                <option value="26">/26</option>
-                <option value="27">/27</option>
-                <option value="28">/28</option>
-                <option value="29">/29</option>
-                <option value="30">/30</option>
-                <option value="31">/31</option>
-                <option value="32">/32</option>
-              </select>
+                tailWindConfig={
+                  "sm:text-base outline-none border border-zinc-950 text-sm rounded focus:border-orange-600 pr-16 pl-4 h-10"
+                }
+                onChangeFunction={handleSuffix}
+              ></SizeSelect>
 
               <div className="text-blue-700 font-bold text-sm pt-2">
                 {address_count}
