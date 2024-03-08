@@ -20,7 +20,7 @@ def generate_subnets_within_range(ip_range, desired_subnet_size):
     if new_prefix_length <= network.prefixlen:
         raise ValueError("Die Subnet-Größe ist zu groß für die angegebene IP-Range.")
     
-    # Initialisiere die Liste für bereits genutzte Subnetze
+    # Initialisiere die Liste für bereits genutzte Subnetze- Test
     allocated_subnets = []
 
     def allocate_next_subnet():
