@@ -1,12 +1,12 @@
 import SizeSelect from "./SizeSelect";
 
-interface TableEntryProps {
+interface InterfaceTableEntryProps {
   id: number;
-  name: string;
+  subnetName: string;
   size: string;
   ips: string;
   range: string;
-  updateName: (id: number, description: string) => void;
+  updateSubnetName: (id: number, description: string) => void;
   updateSize: (id: number, size: string) => void;
   updateIps: (id: number, size: string) => void;
   deleteTableEntry: () => void;
@@ -15,18 +15,20 @@ interface TableEntryProps {
 
 function TableEntry({
   id,
-  name,
+  subnetName,
   size,
   ips,
   range,
-  updateName,
+  updateSubnetName,
   updateSize,
   updateIps,
   deleteTableEntry,
   totalEntries,
-}: TableEntryProps) {
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    updateName(id, event.target.value);
+}: InterfaceTableEntryProps) {
+  const handleDescriptionChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    updateSubnetName(id, event.target.value);
   };
 
   const handleSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -40,8 +42,8 @@ function TableEntry({
         <div className="flex items-center font-montserrat w-full max-w-screen-md bg-white mt-3 rounded-lg h-12 ml-10">
           <div className="flex pl-4 flex-initial w-5/12">
             <input
-              value={name}
-              onChange={handleNameChange}
+              value={subnetName}
+              onChange={handleDescriptionChange}
               className="w-60 outline-none"
               placeholder="Name"
             ></input>

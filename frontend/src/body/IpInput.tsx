@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import IpStartContext from "../context/IpStartContext";
-import { callSuffixInput, callIpInput } from "../api/calls";
+import { getIpAddressAmountForSuffix, getStartAndEndIp } from "../api/calls";
 import SizeSelect from "./SizeSelect";
 
 function IpInput() {
@@ -32,7 +32,7 @@ function IpInput() {
   useEffect(() => {
     const fetchAddressSpace = async () => {
       try {
-        const addressSpace = await callIpInput(startIp, suffix, isValid);
+        const addressSpace = await getStartAndEndIp(startIp, suffix, isValid);
         setAddressSpace(addressSpace);
       } catch (error) {
         console.error("Failed to fetch address space:", error);
@@ -49,7 +49,7 @@ function IpInput() {
     const suffix = (e.target as HTMLSelectElement).value;
     setSuffix(suffix);
     console.log("Suffix:" + suffix);
-    setAddressCount(await callSuffixInput(suffix));
+    setAddressCount(await getIpAddressAmountForSuffix(suffix));
   };
 
   return (

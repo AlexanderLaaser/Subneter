@@ -14,6 +14,10 @@ def get_end_ip(ip, suffix):
 def count_ipaddresses(suffix):
     return str(2 ** (32 - int(suffix)))
 
+
+# Param origin_ip_address, origin_ip_range, used_subnets, new_ip_address, new_ip_range
+# Function should calculate next subnet size in range of original vnet size
+
 def generate_subnets_within_range(ip_range, desired_subnet_size):
     network = ipaddress.ip_network(ip_range, strict=False)
     new_prefix_length = 32 - int(math.log2(desired_subnet_size))

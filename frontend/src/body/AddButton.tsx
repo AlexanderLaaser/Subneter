@@ -1,28 +1,28 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import TableEntry from "./TableEntry";
-import { callSuffixInput } from "../api/calls";
+import { getIpAddressAmountForSuffix } from "../api/calls";
 
 interface TableEntryType {
   id: number;
-  description: string;
+  subnetName: string;
   size: string;
   ips: string;
   range: string;
 }
 
 function AddButton() {
-  // Init TableEntries with 0
+  // init table entries
   const initialTableEntries: TableEntryType[] = [
     {
       id: 0,
-      description: "",
+      subnetName: "",
       size: "27",
       ips: "32",
       range: "10.0.0.0-10.0.10",
     },
     {
       id: 1,
-      description: "",
+      subnetName: "",
       size: "27",
       ips: "32",
       range: "10.0.0.0-10.0.10",
@@ -41,7 +41,7 @@ function AddButton() {
   const addTableEntry = () => {
     const newEntry = {
       id: tableEntries.length,
-      description: "",
+      subnetName: "",
       size: "21",
       ips: "228",
       range: "10.0.0.0-10.0.10",
@@ -50,20 +50,23 @@ function AddButton() {
     console.log(tableEntries);
   };
 
-  // Adding a description for a table entry
-  const updateName = (id: number, description: string) => {
+  const deleteTableEntry = (index: number) => {
+    const newTableEntries = tableEntries.filter((_, i) => i !== index);
+    setTableEntries(newTableEntries);
+    console.log("Delete:" + tableEntries);
+  };
+
+  const updateEntryParamSubnetName = (id: number, subnetName: string) => {
     const updatedEntries = tableEntries.map((entry) => {
       if (entry.id === id) {
-        return { ...entry, description };
+        return { ...entry, subnetName };
       }
       return entry;
     });
     setTableEntries(updatedEntries);
   };
 
-  // Adding size to tableEntry state
-  const updateSize = (id: number, size: string) => {
-    // Aktualisiere zunächst den Eintrag mit der neuen Größe
+  const updateEntryParamSize = (id: number, size: string) => {
     const updatedEntries = tableEntries.map((entry) => {
       if (entry.id === id) {
         return { ...entry, size };
@@ -76,7 +79,7 @@ function AddButton() {
   // Adding ips to tableEntry state
   const updateIps = async (id: number, size: string) => {
     // Aktualisiere zunächst den Eintrag mit der neuen Größe
-    const ips = await callSuffixInput(size);
+    const ips = await getIpAddressAmountForSuffix(size);
 
     const updatedEntries = tableEntries.map((entry) => {
       if (entry.id === id) {
@@ -93,23 +96,17 @@ function AddButton() {
       <TableEntry
         key={entry.id}
         id={entry.id}
-        name={entry.description}
+        subnetName={entry.subnetName}
         size={entry.size}
         ips={entry.ips} //{ips.description}
         range="255.255.255.255-255.255.255.255"
-        updateName={updateName}
-        updateSize={updateSize}
+        updateSubnetName={updateEntryParamSubnetName}
+        updateSize={updateEntryParamSize}
         updateIps={updateIps}
         deleteTableEntry={() => deleteTableEntry(index)}
         totalEntries={tableEntries.length}
       />
     ));
-  };
-
-  const deleteTableEntry = (index: number) => {
-    const newTableEntries = tableEntries.filter((_, i) => i !== index);
-    setTableEntries(newTableEntries);
-    console.log("Delete:" + tableEntries);
   };
 
   // Displaying table entries & add button

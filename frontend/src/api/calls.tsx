@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const callSuffixInput = async (suffix: string) => {
+export const getIpAddressAmountForSuffix = async (suffix: string) => {
   try {
     const response = await axios.get(
       `${
@@ -13,7 +13,7 @@ export const callSuffixInput = async (suffix: string) => {
   }
 };
 
-export const callIpInput = async (
+export const getStartAndEndIp = async (
   ip: string,
   suffix: string,
   isValid?: boolean
