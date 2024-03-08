@@ -6,7 +6,7 @@ import SizeSelect from "./SizeSelect";
 function IpInput() {
   const [suffix, setSuffix] = useState("24");
   const [isValid, setIsValid] = useState(true);
-  const [address_space, setAddressSpace] = useState("10.0.0.0-10.0.0.255");
+  const [addressSpace, setAddressSpace] = useState("10.0.0.0-10.0.0.255");
   const [address_count, setAddressCount] = useState("256");
   const { startIp, setStartIp } = useContext(IpStartContext);
 
@@ -68,7 +68,7 @@ function IpInput() {
               ></input>
               {isValid ? (
                 <div className="text-blue-700 font-bold text-sm pt-2">
-                  {address_space}
+                  {addressSpace}
                 </div>
               ) : (
                 <div className="text-red-500 font-bold text-sm pt-2">
