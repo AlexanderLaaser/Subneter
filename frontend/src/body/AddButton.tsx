@@ -11,7 +11,7 @@ interface TableEntryType {
 }
 
 function AddButton() {
-  // Init TableEntries with 0
+  // init table entries
   const initialTableEntries: TableEntryType[] = [
     {
       id: 0,
@@ -50,11 +50,16 @@ function AddButton() {
     console.log(tableEntries);
   };
 
-  // Adding a description for a table entry
-  const updateName = (id: number, description: string) => {
+  const deleteTableEntry = (index: number) => {
+    const newTableEntries = tableEntries.filter((_, i) => i !== index);
+    setTableEntries(newTableEntries);
+    console.log("Delete:" + tableEntries);
+  };
+
+  const updateEntryParamSubnetName = (id: number, subnetName: string) => {
     const updatedEntries = tableEntries.map((entry) => {
       if (entry.id === id) {
-        return { ...entry, description };
+        return { ...entry, subnetName };
       }
       return entry;
     });
@@ -95,7 +100,7 @@ function AddButton() {
       <TableEntry
         key={entry.id}
         id={entry.id}
-        name={entry.description}
+        subnetName={entry.subnetName}
         size={entry.size}
         ips={entry.ips}
         range={entry.range}
@@ -106,12 +111,6 @@ function AddButton() {
         totalEntries={tableEntries.length}
       />
     ));
-  };
-
-  const deleteTableEntry = (index: number) => {
-    const newTableEntries = tableEntries.filter((_, i) => i !== index);
-    setTableEntries(newTableEntries);
-    console.log("Delete:" + tableEntries);
   };
 
   // Displaying table entries & add button

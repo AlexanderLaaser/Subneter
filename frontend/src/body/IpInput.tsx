@@ -49,7 +49,7 @@ function IpInput() {
     const suffix = parseInt((e.target as HTMLSelectElement).value);
     setSuffix(suffix);
     console.log("Suffix:" + suffix);
-    const test = await count_ipaddresses(suffix)s;
+    const test = await count_ipaddresses(suffix);
     console.log(test);
     setAddressCount(test);
   };
