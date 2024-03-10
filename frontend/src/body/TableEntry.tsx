@@ -3,12 +3,12 @@ import SizeSelect from "./SizeSelect";
 interface TableEntryProps {
   id: number;
   name: string;
-  size: string;
+  size: number;
   ips: string;
   range: string;
   updateName: (id: number, description: string) => void;
-  updateSize: (id: number, size: string) => void;
-  updateIps: (id: number, size: string) => void;
+  updateSize: (id: number, size: number) => void;
+  updateIps: (id: number, size: number) => void;
   deleteTableEntry: () => void;
   totalEntries: number;
 }
@@ -30,8 +30,8 @@ function TableEntry({
   };
 
   const handleSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    updateSize(id, event.target.value);
-    updateIps(id, event.target.value);
+    updateSize(id, parseInt(event.target.value));
+    updateIps(id, parseInt(event.target.value));
   };
 
   return (

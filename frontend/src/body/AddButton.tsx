@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import TableEntry from "./TableEntry";
-import { callSuffixInput } from "../api/calls";
+import { generate_next_subnet, count_ipaddresses } from "../api/calls";
 
 interface TableEntryType {
   id: number;
   description: string;
-  size: string;
+  size: number;
   ips: string;
   range: string;
 }
@@ -16,14 +16,14 @@ function AddButton() {
     {
       id: 0,
       description: "",
-      size: "27",
+      size: 27,
       ips: "32",
       range: "10.0.0.0-10.0.10",
     },
     {
       id: 1,
       description: "",
-      size: "27",
+      size: 27,
       ips: "32",
       range: "10.0.0.0-10.0.10",
     },
@@ -42,7 +42,7 @@ function AddButton() {
     const newEntry = {
       id: tableEntries.length,
       description: "",
-      size: "21",
+      size: 21,
       ips: "228",
       range: "10.0.0.0-10.0.10",
     };
@@ -62,8 +62,8 @@ function AddButton() {
   };
 
   // Adding size to tableEntry state
-  const updateSize = (id: number, size: string) => {
-    // Aktualisiere zunächst den Eintrag mit der neuen Größe
+  const updateSize = (id: number, size: number) => {
+    // updating size parameter in table
     const updatedEntries = tableEntries.map((entry) => {
       if (entry.id === id) {
         return { ...entry, size };
@@ -74,13 +74,15 @@ function AddButton() {
   };
 
   // Adding ips to tableEntry state
-  const updateIps = async (id: number, size: string) => {
+  const updateIps = async (id: number, size: number) => {
     // Aktualisiere zunächst den Eintrag mit der neuen Größe
-    const ips = await callSuffixInput(size);
+    const ips = await count_ipaddresses(size);
+
+    const range = generate_next_subnet("10.0.0.0/24", 25, []);
 
     const updatedEntries = tableEntries.map((entry) => {
       if (entry.id === id) {
-        return { ...entry, size, ips };
+        return { ...entry, size, ips, range };
       }
       return entry;
     });
@@ -95,8 +97,8 @@ function AddButton() {
         id={entry.id}
         name={entry.description}
         size={entry.size}
-        ips={entry.ips} //{ips.description}
-        range="255.255.255.255-255.255.255.255"
+        ips={entry.ips}
+        range={entry.range}
         updateName={updateName}
         updateSize={updateSize}
         updateIps={updateIps}

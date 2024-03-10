@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import IpStartContext from "../context/IpStartContext";
-import { callSuffixInput, callIpInput } from "../api/calls";
+import { count_ipaddresses, address_space } from "../api/calls";
 import SizeSelect from "./SizeSelect";
 
 function IpInput() {
-  const [suffix, setSuffix] = useState("24");
+  const [suffix, setSuffix] = useState(24);
   const [isValid, setIsValid] = useState(true);
-  const [addressSpace, setAddressSpace] = useState("10.0.0.0-10.0.0.255");
+  const [addressSpace, setAddressSpace] = useState("10.0.0.0 - 10.0.0.255");
   const [address_count, setAddressCount] = useState("256");
   const { startIp, setStartIp } = useContext(IpStartContext);
 
@@ -32,7 +32,7 @@ function IpInput() {
   useEffect(() => {
     const fetchAddressSpace = async () => {
       try {
-        const addressSpace = await callIpInput(startIp, suffix, isValid);
+        const addressSpace = await address_space(startIp, suffix, isValid);
         setAddressSpace(addressSpace);
       } catch (error) {
         console.error("Failed to fetch address space:", error);
@@ -46,10 +46,12 @@ function IpInput() {
 
   //function that sets the suffix
   const handleSuffix = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const suffix = (e.target as HTMLSelectElement).value;
+    const suffix = parseInt((e.target as HTMLSelectElement).value);
     setSuffix(suffix);
     console.log("Suffix:" + suffix);
-    setAddressCount(await callSuffixInput(suffix));
+    const test = await count_ipaddresses(suffix)s;
+    console.log(test);
+    setAddressCount(test);
   };
 
   return (
