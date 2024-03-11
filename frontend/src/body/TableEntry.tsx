@@ -2,11 +2,11 @@ import SizeSelect from "./SizeSelect";
 
 interface InterfaceTableEntryProps {
   id: number;
-  name: string;
+  subnetName: string;
   size: number;
   ips: string;
   range: string;
-  updateName: (id: number, description: string) => void;
+  updateSubnetName: (id: number, description: string) => void;
   updateSize: (id: number, size: number) => void;
   updateIps: (id: number, size: number) => void;
   deleteTableEntry: () => void;

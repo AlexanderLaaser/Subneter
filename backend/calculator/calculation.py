@@ -2,13 +2,13 @@ import ipaddress
 import math
 
 #Calculating first ip
-def get_start_iP(ip, suffix):
-    network = ipaddress.ip_network(f"{ip}/{suffix}", strict=False)
+def get_start_iP(ipaddress_cidr):
+    network = ipaddress.ip_network(ipaddress_cidr, strict=False)
     return str(network.network_address)
 
 #Calculating last ip
-def get_end_ip(ip, suffix):
-    network = ipaddress.ip_network(f"{ip}/{suffix}", strict=False)
+def get_end_ip(ipaddress_cidr):
+    network = ipaddress.ip_network(ipaddress_cidr, strict=False)
     return str(network.broadcast_address)
 
 # suffix needs to be a string
@@ -44,6 +44,6 @@ next_subnet = generate_next_subnet(ip_range, new_prefix_length, last_ip_ranges_u
 print("Next available subnet:", next_subnet)
 
 #Testing 
-print(get_start_iP("127.0.0.0","23"))
-print(get_end_ip("127.0.0.0","25"))
+print(get_start_iP("127.0.0.0/25"))
+print(get_end_ip("127.0.0.0/25"))
 print(count_ipaddresses(20))

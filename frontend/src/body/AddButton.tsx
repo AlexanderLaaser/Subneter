@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import TableEntry from "./TableEntry";
 import { generate_next_subnet, count_ipaddresses } from "../api/calls";
+import ipaddressCidrStore from "../context/ipaddress_cidr_store";
 
 interface TableEntryType {
   id: number;
-  description: string;
+  subnetName: string;
   size: number;
   ips: string;
   range: string;
@@ -15,14 +16,14 @@ function AddButton() {
   const initialTableEntries: TableEntryType[] = [
     {
       id: 0,
-      description: "",
+      subnetName: "",
       size: 27,
       ips: "32",
       range: "10.0.0.0-10.0.10",
     },
     {
       id: 1,
-      description: "",
+      subnetName: "",
       size: 27,
       ips: "32",
       range: "10.0.0.0-10.0.10",
@@ -41,7 +42,7 @@ function AddButton() {
   const addTableEntry = () => {
     const newEntry = {
       id: tableEntries.length,
-      description: "",
+      subnetName: "",
       size: 21,
       ips: "228",
       range: "10.0.0.0-10.0.10",
@@ -56,7 +57,7 @@ function AddButton() {
     console.log("Delete:" + tableEntries);
   };
 
-  const updateEntryParamSubnetName = (id: number, subnetName: string) => {
+  const updateSubnetName = (id: number, subnetName: string) => {
     const updatedEntries = tableEntries.map((entry) => {
       if (entry.id === id) {
         return { ...entry, subnetName };
@@ -83,7 +84,7 @@ function AddButton() {
     // Aktualisiere zunächst den Eintrag mit der neuen Größe
     const ips = await count_ipaddresses(size);
 
-    const range = generate_next_subnet("10.0.0.0/24", 25, []);
+    const range = await generate_next_subnet("10.0.0.0/24", size, []);
 
     const updatedEntries = tableEntries.map((entry) => {
       if (entry.id === id) {
@@ -104,7 +105,7 @@ function AddButton() {
         size={entry.size}
         ips={entry.ips}
         range={entry.range}
-        updateName={updateName}
+        updateSubnetName={updateSubnetName}
         updateSize={updateSize}
         updateIps={updateIps}
         deleteTableEntry={() => deleteTableEntry(index)}

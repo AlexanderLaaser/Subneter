@@ -1,8 +1,7 @@
 import axios from "axios";
 
 export const address_space = async (
-  ip_range: string,
-  suffix: number,
+  ipaddress_cidr: string,
   isValid?: boolean
 ) => {
   if (isValid) {
@@ -10,7 +9,7 @@ export const address_space = async (
       const response = await axios.get(
         `${
           import.meta.env.VITE_API_SERVER_URL
-        }/api/address_space?ip=${ip_range}&subnet_mask=${suffix}`
+        }/api/address_space?ipaddress_cidr=${ipaddress_cidr}`
       );
       return response.data;
     } catch (error) {
@@ -35,7 +34,7 @@ export const count_ipaddresses = async (suffix: number) => {
 };
 
 export const generate_next_subnet = async (
-  ip_range: string,
+  ipaddress_cidr: string,
   new_suffix_length: number,
   last_ip_ranges_used: []
 ) => {
@@ -43,12 +42,12 @@ export const generate_next_subnet = async (
     const response = await axios.post(
       `${import.meta.env.VITE_API_SERVER_URL}/api/generate_next_subnet`,
       {
-        ip_range,
+        ipaddress_cidr,
         new_suffix_length,
         last_ip_ranges_used,
       }
     );
-    return response.data.nextSubnet.toString;
+    return response.data.nextSubnetRange.toString();
   } catch (error) {
     console.error("Fehler beim API-Call", error);
   }

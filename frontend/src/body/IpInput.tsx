@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import IpStartContext from "../context/IpStartContext";
 import { count_ipaddresses, address_space } from "../api/calls";
 import SizeSelect from "./SizeSelect";
+import useipaddressCidrStore from "../context/ipaddress_cidr_store";
 
 function IpInput() {
   const [suffix, setSuffix] = useState(24);
@@ -22,6 +23,9 @@ function IpInput() {
     const newIp = (e.target as HTMLInputElement).value;
     setStartIp(newIp);
     updateIsValid(newIp);
+    setIpAddressCidr(addressSpace);
+    // Das funktioniert noch nicht so ganz
+    console.log(ipaddressCidr);
   };
 
   const updateIsValid = (newip: string) => {
@@ -29,10 +33,20 @@ function IpInput() {
     return validateIP(newip);
   };
 
+  const { setIpAddressCidr, ipaddressCidr } = useipaddressCidrStore(
+    (state) => ({
+      setIpAddressCidr: state.setIpAddressCidr,
+      ipaddressCidr: state.ipaddress_cidr,
+    })
+  );
+
   useEffect(() => {
     const fetchAddressSpace = async () => {
       try {
-        const addressSpace = await address_space(startIp, suffix, isValid);
+        const addressSpace = await address_space(
+          startIp + "/" + suffix,
+          isValid
+        );
         setAddressSpace(addressSpace);
       } catch (error) {
         console.error("Failed to fetch address space:", error);
