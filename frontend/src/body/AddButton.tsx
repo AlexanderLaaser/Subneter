@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import TableEntry from "./TableEntry";
 import { generate_next_subnet, count_ipaddresses } from "../api/calls";
-import ipaddressCidrStore from "../context/ipaddress_cidr_store";
+import usedIpAddressCidrStore from "../context/usedIpAddressCidrStore";
 
 interface TableEntryType {
   id: number;
@@ -12,6 +12,10 @@ interface TableEntryType {
 }
 
 function AddButton() {
+  useEffect(() => {
+    console.log(tableEntries);
+  });
+
   // init table entries
   const initialTableEntries: TableEntryType[] = [
     {
@@ -19,24 +23,17 @@ function AddButton() {
       subnetName: "",
       size: 27,
       ips: "32",
-      range: "10.0.0.0-10.0.10",
-    },
-    {
-      id: 1,
-      subnetName: "",
-      size: 27,
-      ips: "32",
-      range: "10.0.0.0-10.0.10",
+      range: "10.0.0.0 - 10.0.0.31",
     },
   ];
+
+  const usedIpAddressCidr = usedIpAddressCidrStore(
+    (state) => state.used_ipaddresses_cidr
+  );
 
   // TableEntries State
   const [tableEntries, setTableEntries] =
     useState<TableEntryType[]>(initialTableEntries);
-
-  useEffect(() => {
-    console.log(tableEntries);
-  });
 
   // Adding entry for const tableEntries
   const addTableEntry = () => {
