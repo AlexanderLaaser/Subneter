@@ -1,13 +1,14 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import type {} from "@redux-devtools/extension";
 
-interface IpAddressCidrState {
+interface IpAddressCidrStoreInterface {
   used_ipaddresses_cidr: string[];
   addIpAddressCidr: (cidr: string) => void;
   removeIpAddressCidr: (cidr: string) => void;
 }
 
-const usedIpAddressCidrStore = create<IpAddressCidrState>()(
+const usedIpAddressCidrStore = create<IpAddressCidrStoreInterface>()(
   devtools(
     persist(
       (set) => ({

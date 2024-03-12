@@ -2,17 +2,18 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import type {} from "@redux-devtools/extension";
 
-interface IpAddressCidrState {
+interface VnetIpaddressCidrStoreInterface {
   ipaddress_cidr: string;
-  setIpAddressCidr: (cidr: string) => void;
+  setIpAddressCidr: (ipaddress_cidr: string) => void;
 }
 
-const useipaddressCidrStore = create<IpAddressCidrState>()(
+const vnetIpaddressCidrStore = create<VnetIpaddressCidrStoreInterface>()(
   devtools(
     persist(
       (set) => ({
         ipaddress_cidr: "",
-        setIpAddressCidr: (cidr) => set({ ipaddress_cidr: cidr }),
+        setIpAddressCidr: (ipaddress_cidr_param) =>
+          set({ ipaddress_cidr: ipaddress_cidr_param }),
       }),
       {
         name: "ipaddress-cidr-storage",
@@ -21,4 +22,4 @@ const useipaddressCidrStore = create<IpAddressCidrState>()(
   )
 );
 
-export default useipaddressCidrStore;
+export default vnetIpaddressCidrStore;

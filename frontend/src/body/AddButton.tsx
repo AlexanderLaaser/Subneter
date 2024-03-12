@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import TableEntry from "./TableEntry";
 import { generate_next_subnet, count_ipaddresses } from "../api/calls";
-import usedIpAddressCidrStore from "../context/usedIpAddressCidrStore";
+import UsedSubnetIpAddressCidrStore from "../store/UsedSubnetIpAddressCidrStore";
+import VnetIpaddressCidrStore from "../store/VnetIpaddressCidrStore";
+import IpStartStore from "../store/IpStartStore";
+import SuffixStore from "../store/SuffixStore";
 
 interface TableEntryType {
   id: number;
@@ -27,8 +30,22 @@ function AddButton() {
     },
   ];
 
-  const usedIpAddressCidr = usedIpAddressCidrStore(
-    (state) => state.used_ipaddresses_cidr
+  const { ipStart } = IpStartStore((state) => ({
+    setIpStart: state.setIpStart,
+    ipStart: state.ipStart,
+  }));
+
+  const { suffix } = SuffixStore((state) => ({
+    setSuffix: state.setSuffix,
+    suffix: state.suffix,
+  }));
+
+  const addUsedSubnetIpAddressCidrStore = UsedSubnetIpAddressCidrStore(
+    (state) => state.addIpAddressCidr
+  );
+
+  const getVnetIpaddressCidrStore = VnetIpaddressCidrStore(
+    (state) => state.ipaddress_cidr
   );
 
   // TableEntries State
@@ -79,9 +96,12 @@ function AddButton() {
   // Adding ips to tableEntry state
   const updateIps = async (id: number, size: number) => {
     // Aktualisiere zunächst den Eintrag mit der neuen Größe
+    console.log(getVnetIpaddressCidrStore);
+
     const ips = await count_ipaddresses(size);
 
-    const range = await generate_next_subnet("10.0.0.0/24", size, []);
+    // Calling backend api to receive ip range for given cidr
+    const range = await generate_next_subnet(ipStart + "/" + suffix, size, []);
 
     const updatedEntries = tableEntries.map((entry) => {
       if (entry.id === id) {

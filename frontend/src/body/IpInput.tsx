@@ -1,15 +1,37 @@
-import { useContext, useEffect, useState } from "react";
-import IpStartContext from "../context/IpStartContext";
+import { useEffect, useState } from "react";
 import { count_ipaddresses, address_space } from "../api/calls";
 import SizeSelect from "./SizeSelect";
-import useipaddressCidrStore from "../context/ipaddress_cidr_store";
+import VnetIpaddressCidrStore from "../store/VnetIpaddressCidrStore";
+import IpStartStore from "../store/IpStartStore";
+import SuffixStore from "../store/SuffixStore";
 
 function IpInput() {
-  const [suffix, setSuffix] = useState(24);
   const [isValid, setIsValid] = useState(true);
   const [addressSpace, setAddressSpace] = useState("10.0.0.0 - 10.0.0.255");
-  const [address_count, setAddressCount] = useState("256");
-  const { startIp, setStartIp } = useContext(IpStartContext);
+  const [addressCount, setAddressCount] = useState("256");
+
+  const updateIsValid = (newip: string) => {
+    setIsValid(validateIP(newip));
+    return validateIP(newip);
+  };
+
+  // Store functions
+  const { setIpAddressCidr, ipaddressCidr } = VnetIpaddressCidrStore(
+    (state) => ({
+      setIpAddressCidr: state.setIpAddressCidr,
+      ipaddressCidr: state.ipaddress_cidr,
+    })
+  );
+
+  const { setIpStart, ipStart } = IpStartStore((state) => ({
+    setIpStart: state.setIpStart,
+    ipStart: state.ipStart,
+  }));
+
+  const { setSuffix, suffix } = SuffixStore((state) => ({
+    setSuffix: state.setSuffix,
+    suffix: state.suffix,
+  }));
 
   //function for validating the entered ip
   const validateIP = (ip: string) => {
@@ -21,33 +43,36 @@ function IpInput() {
   //function that sets the ip and the validState
   const handleIpInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newIp = (e.target as HTMLInputElement).value;
-    setStartIp(newIp);
+    setIpStart(newIp);
     updateIsValid(newIp);
-    setIpAddressCidr(addressSpace);
-    // Das funktioniert noch nicht so ganz
-    console.log(ipaddressCidr);
   };
 
-  const updateIsValid = (newip: string) => {
-    setIsValid(validateIP(newip));
-    return validateIP(newip);
+  //function that sets the suffix
+  const handleSuffixChange = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const suffix = parseInt((e.target as HTMLSelectElement).value);
+    setSuffix(suffix);
+    const addressCount = await count_ipaddresses(suffix);
+    setAddressCount(addressCount);
   };
-
-  const { setIpAddressCidr, ipaddressCidr } = useipaddressCidrStore(
-    (state) => ({
-      setIpAddressCidr: state.setIpAddressCidr,
-      ipaddressCidr: state.ipaddress_cidr,
-    })
-  );
 
   useEffect(() => {
     const fetchAddressSpace = async () => {
       try {
         const addressSpace = await address_space(
-          startIp + "/" + suffix,
+          ipStart + "/" + suffix,
           isValid
         );
         setAddressSpace(addressSpace);
+        setIpStart(ipStart);
+        setSuffix(suffix);
+        setIpAddressCidr(ipStart + "/" + suffix);
+        // Das funktioniert noch nicht so ganz, da die CIDR Range ausgegeben werden muss, nicht die gesamte Range
+        console.log("vnetipaddressCidr");
+        console.log(ipaddressCidr);
+        console.log(suffix);
+        console.log(ipStart);
       } catch (error) {
         console.error("Failed to fetch address space:", error);
       }
@@ -56,17 +81,7 @@ function IpInput() {
     if (isValid) {
       fetchAddressSpace();
     }
-  }, [startIp, suffix, isValid]);
-
-  //function that sets the suffix
-  const handleSuffix = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const suffix = parseInt((e.target as HTMLSelectElement).value);
-    setSuffix(suffix);
-    console.log("Suffix:" + suffix);
-    const test = await count_ipaddresses(suffix);
-    console.log(test);
-    setAddressCount(test);
-  };
+  }, [ipStart, suffix, isValid]);
 
   return (
     <>
@@ -99,11 +114,11 @@ function IpInput() {
                 tailWindConfig={
                   "sm:text-base outline-none border border-zinc-950 text-sm rounded focus:border-orange-600 pr-16 pl-4 h-10"
                 }
-                onChangeFunction={handleSuffix}
+                onChangeFunction={handleSuffixChange}
               ></SizeSelect>
 
               <div className="text-blue-700 font-bold text-sm pt-2">
-                {address_count}
+                {addressCount}
               </div>
             </div>
           </div>
