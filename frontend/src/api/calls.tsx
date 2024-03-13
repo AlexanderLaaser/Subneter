@@ -36,7 +36,7 @@ export const count_ipaddresses = async (suffix: number) => {
 export const generate_next_subnet = async (
   ipaddress_cidr: string,
   new_suffix_length: number,
-  last_ip_ranges_used: []
+  last_ip_ranges_used: string[]
 ) => {
   try {
     const response = await axios.post(

@@ -7,7 +7,6 @@ interface InterfaceTableEntryProps {
   ips: string;
   range: string;
   updateSubnetName: (id: number, description: string) => void;
-  updateSize: (id: number, size: number) => void;
   updateIps: (id: number, size: number) => void;
   deleteTableEntry: () => void;
   totalEntries: number;
@@ -20,7 +19,6 @@ function TableEntry({
   ips,
   range,
   updateSubnetName,
-  updateSize,
   updateIps,
   deleteTableEntry,
   totalEntries,
@@ -32,7 +30,6 @@ function TableEntry({
   };
 
   const handleSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    updateSize(id, parseInt(event.target.value));
     updateIps(id, parseInt(event.target.value));
   };
 

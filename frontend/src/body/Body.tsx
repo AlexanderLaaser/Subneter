@@ -1,11 +1,11 @@
 import IpInput from "./IpInput";
-import Tab from "./Tab";
+import Table from "./Table";
 
 function Body() {
   return (
     <div className="bg-blue-100 h-screen ">
       <IpInput></IpInput>
-      <Tab></Tab>
+      <Table></Table>
     </div>
   );
 }

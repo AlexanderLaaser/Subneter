@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import TableEntry from "./TableEntry";
 import { generate_next_subnet, count_ipaddresses } from "../api/calls";
 import UsedSubnetIpAddressCidrStore from "../store/UsedSubnetIpAddressCidrStore";
-import VnetIpaddressCidrStore from "../store/VnetIpaddressCidrStore";
 import IpStartStore from "../store/IpStartStore";
 import SuffixStore from "../store/SuffixStore";
+import useTableEntriesStore from "../store/TabelEntriesStore";
 
 interface TableEntryType {
   id: number;
@@ -16,6 +16,7 @@ interface TableEntryType {
 
 function AddButton() {
   useEffect(() => {
+    console.log("TableEntries:");
     console.log(tableEntries);
   });
 
@@ -30,6 +31,8 @@ function AddButton() {
     },
   ];
 
+  // Store Functions
+
   const { ipStart } = IpStartStore((state) => ({
     setIpStart: state.setIpStart,
     ipStart: state.ipStart,
@@ -40,36 +43,19 @@ function AddButton() {
     suffix: state.suffix,
   }));
 
-  const addUsedSubnetIpAddressCidrStore = UsedSubnetIpAddressCidrStore(
-    (state) => state.addIpAddressCidr
-  );
+  const { addUsedIpAddressCidr, used_ipaddresses_cidr } =
+    UsedSubnetIpAddressCidrStore((state) => ({
+      addUsedIpAddressCidr: state.addIpAddressCidr,
+      used_ipaddresses_cidr: state.used_ipaddresses_cidr,
+    }));
 
-  const getVnetIpaddressCidrStore = VnetIpaddressCidrStore(
-    (state) => state.ipaddress_cidr
-  );
-
-  // TableEntries State
-  const [tableEntries, setTableEntries] =
-    useState<TableEntryType[]>(initialTableEntries);
-
-  // Adding entry for const tableEntries
-  const addTableEntry = () => {
-    const newEntry = {
-      id: tableEntries.length,
-      subnetName: "",
-      size: 21,
-      ips: "228",
-      range: "10.0.0.0-10.0.10",
-    };
-    setTableEntries([...tableEntries, newEntry]);
-    console.log(tableEntries);
-  };
-
-  const deleteTableEntry = (index: number) => {
-    const newTableEntries = tableEntries.filter((_, i) => i !== index);
-    setTableEntries(newTableEntries);
-    console.log("Delete:" + tableEntries);
-  };
+  const { addTableEntry, deleteTableEntry, getTableEntry, tableEntries } =
+    useTableEntriesStore((state) => ({
+      addTableEntry: state.addTableEntry,
+      deleteTableEntry: state.deleteTableEntry,
+      getTableEntry: state.getTableEntry,
+      tableEntries: state.tableEntries,
+    }));
 
   const updateSubnetName = (id: number, subnetName: string) => {
     const updatedEntries = tableEntries.map((entry) => {
@@ -78,30 +64,19 @@ function AddButton() {
       }
       return entry;
     });
-    setTableEntries(updatedEntries);
-  };
-
-  // Adding size to tableEntry state
-  const updateSize = (id: number, size: number) => {
-    // updating size parameter in table
-    const updatedEntries = tableEntries.map((entry) => {
-      if (entry.id === id) {
-        return { ...entry, size };
-      }
-      return entry;
-    });
-    setTableEntries(updatedEntries);
+    addTableEntry(updatedEntries);
   };
 
   // Adding ips to tableEntry state
   const updateIps = async (id: number, size: number) => {
-    // Aktualisiere zunächst den Eintrag mit der neuen Größe
-    console.log(getVnetIpaddressCidrStore);
-
     const ips = await count_ipaddresses(size);
 
     // Calling backend api to receive ip range for given cidr
-    const range = await generate_next_subnet(ipStart + "/" + suffix, size, []);
+    const range = await generate_next_subnet(
+      ipStart + "/" + suffix,
+      size,
+      used_ipaddresses_cidr
+    );
 
     const updatedEntries = tableEntries.map((entry) => {
       if (entry.id === id) {
@@ -110,6 +85,9 @@ function AddButton() {
       return entry;
     });
     setTableEntries(updatedEntries);
+    setTableEntries(updatedEntries);
+    addUsedIpAddressCidr(range.split(" - ")[0] + "/" + size, id);
+    console.log(used_ipaddresses_cidr);
   };
 
   // Rendering TableEntries depending on amount of value of Table Entries
@@ -123,7 +101,6 @@ function AddButton() {
         ips={entry.ips}
         range={entry.range}
         updateSubnetName={updateSubnetName}
-        updateSize={updateSize}
         updateIps={updateIps}
         deleteTableEntry={() => deleteTableEntry(index)}
         totalEntries={tableEntries.length}

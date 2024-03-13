@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AddButton from "./AddButton";
+import AddButton from "./TableEntries";
 import TableHead from "./TableHead";
 import JSONField from "./JSONField";
 

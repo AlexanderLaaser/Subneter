@@ -11,7 +11,7 @@ const vnetIpaddressCidrStore = create<VnetIpaddressCidrStoreInterface>()(
   devtools(
     persist(
       (set) => ({
-        ipaddress_cidr: "",
+        ipaddress_cidr: "10.0.0.0/24",
         setIpAddressCidr: (ipaddress_cidr_param) =>
           set({ ipaddress_cidr: ipaddress_cidr_param }),
       }),
