@@ -1,10 +1,10 @@
-import IpInput from "./IpInput";
+import VnetInput from "./VnetInput";
 import Table from "./Table";
 
 function Body() {
   return (
     <div className="bg-blue-100 h-screen ">
-      <IpInput></IpInput>
+      <VnetInput></VnetInput>
       <Table></Table>
     </div>
   );

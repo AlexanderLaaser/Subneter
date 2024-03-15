@@ -14,11 +14,24 @@ interface TableEntriesStore {
   addTableEntry: (newEntry: Omit<TableEntryType, "id">) => void; // 'id' wird automatisch zugewiesen
   deleteTableEntry: (index: number) => void;
   getTableEntry: (id: number) => TableEntryType | undefined;
+  updateTableEntry: (TableEntry: UpdateTableEntryType) => void;
+}
+
+interface UpdateTableEntryType extends Partial<TableEntryType> {
+  id: number;
 }
 
 const useTableEntriesStore = create<TableEntriesStore>()(
   devtools((set, get) => ({
-    tableEntries: [], // Leeres Array für die Initialisierung
+    tableEntries: [
+      {
+        id: 0,
+        subnetName: "",
+        size: 27,
+        ips: "32",
+        range: "10.0.0.0 - 10.0.0.31",
+      },
+    ],
 
     addTableEntry: (entryData: Omit<TableEntryType, "id">) =>
       set((state) => {
@@ -45,6 +58,12 @@ const useTableEntriesStore = create<TableEntriesStore>()(
       const tableEntries = get().tableEntries;
       return tableEntries.find((entry) => entry.id === id);
     },
+    updateTableEntry: (updatedEntry: UpdateTableEntryType) =>
+      set((state) => ({
+        tableEntries: state.tableEntries.map((entry) =>
+          entry.id === updatedEntry.id ? { ...entry, ...updatedEntry } : entry
+        ),
+      })),
   }))
 );
 
