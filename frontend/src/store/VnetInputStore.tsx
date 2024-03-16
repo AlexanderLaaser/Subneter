@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 import type {} from "@redux-devtools/extension";
 
 interface VnetType {
@@ -15,23 +15,21 @@ interface vnetInputStoreInterface {
 
 const vnetStore = create<vnetInputStoreInterface>()(
   devtools(
-    persist(
-      (set) => ({
-        vnet: {
-          vnetIpStart: "10.0.0.0",
-          vnetSuffix: 24,
-        },
-        setVnetIpStart: (vnetIpStart) =>
-          set((state) => ({
-            vnet: { ...state.vnet, vnetIpStart: vnetIpStart },
-          })),
-        setVnetSuffix: (vnetSuffix) =>
-          set((state) => ({ vnet: { ...state.vnet, vnetSuffix: vnetSuffix } })),
-      }),
-      {
-        name: "vnetIpInput",
-      }
-    )
+    (set) => ({
+      vnet: {
+        vnetIpStart: "10.0.0.0",
+        vnetSuffix: 24,
+      },
+      setVnetIpStart: (vnetIpStart) =>
+        set((state) => ({
+          vnet: { ...state.vnet, vnetIpStart: vnetIpStart },
+        })),
+      setVnetSuffix: (vnetSuffix) =>
+        set((state) => ({ vnet: { ...state.vnet, vnetSuffix: vnetSuffix } })),
+    }),
+    {
+      name: "vnetIpInput",
+    }
   )
 );
 

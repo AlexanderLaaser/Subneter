@@ -3,37 +3,34 @@ import { devtools } from "zustand/middleware";
 import type {} from "@redux-devtools/extension";
 
 interface IpAddressCidrStoreInterface {
-  used_ipaddresses_cidr: string[];
-  addIpAddressCidr: (cidr: string, index: number) => void;
+  usedIpaddressesCidr: string[];
+  addIpAddressCidr: (cidr: string, index?: number) => void;
   removeIpAddressCidr: (cidr: string) => void;
 }
 
 const usedIpAddressCidrStore = create<IpAddressCidrStoreInterface>()(
   devtools(
     (set) => ({
-      used_ipaddresses_cidr: ["10.0.0.0/27"],
-      // Anpassung der addIpAddressCidr Funktion, um den Index als optionalen Parameter zu akzeptieren
+      usedIpaddressesCidr: ["10.0.0.0/27"],
       addIpAddressCidr: (cidr: string, index?: number) =>
         set((state) => {
-          // Wenn ein Index angegeben wird, aktualisiere das Element an dieser Stelle
           if (
             typeof index === "number" &&
             index >= 0 &&
-            index < state.used_ipaddresses_cidr.length
+            index < state.usedIpaddressesCidr.length
           ) {
-            const updatedIpAddressesCidr = [...state.used_ipaddresses_cidr];
+            const updatedIpAddressesCidr = [...state.usedIpaddressesCidr];
             updatedIpAddressesCidr[index] = cidr;
-            return { used_ipaddresses_cidr: updatedIpAddressesCidr };
+            return { usedIpaddressesCidr: updatedIpAddressesCidr };
           } else {
-            // Wenn kein Index angegeben wird, füge das CIDR am Ende der Liste hinzu
             return {
-              used_ipaddresses_cidr: [...state.used_ipaddresses_cidr, cidr],
+              used_ipaddresses_cidr: [...state.usedIpaddressesCidr, cidr],
             };
           }
         }),
       removeIpAddressCidr: (cidr) =>
         set((state) => ({
-          used_ipaddresses_cidr: state.used_ipaddresses_cidr.filter(
+          usedIpaddressesCidr: state.usedIpaddressesCidr.filter(
             (c) => c !== cidr
           ),
         })),

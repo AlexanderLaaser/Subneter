@@ -5,7 +5,7 @@ import VnetIpStartStore from "../store/VnetInputStore";
 
 function IpInput() {
   const [isValid, setIsValid] = useState(true);
-  const [addressSpace, setAddressSpace] = useState("10.0.0.0 - 10.0.0.63");
+  const [addressSpace, setAddressSpace] = useState("10.0.0.0 - 10.0.0.255");
   const [addressCount, setAddressCount] = useState("256");
 
   const updateIsValid = (newip: string) => {
@@ -88,14 +88,14 @@ function IpInput() {
                 </div>
               ) : (
                 <div className="text-red-500 font-bold text-sm pt-2">
-                  Ungültige IP-Adresse
+                  Invalid IP Address
                 </div>
               )}
             </div>
             <div className="">
               <SizeSelect
                 elementID={"ip_size_input"}
-                defaultValue="24"
+                defaultValue={24}
                 tailWindConfig={
                   "sm:text-base outline-none border border-zinc-950 text-sm rounded focus:border-orange-600 pr-16 pl-4 h-10"
                 }

@@ -1,6 +1,6 @@
 interface SizeSelectProps {
   elementID: string;
-  defaultValue: string;
+  defaultValue: number;
   tailWindConfig: string;
   onChangeFunction: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }

@@ -11,7 +11,7 @@ interface TableEntryType {
 
 interface TableEntriesStore {
   tableEntries: TableEntryType[];
-  addTableEntry: (newEntry: Omit<TableEntryType, "id">) => void; // 'id' wird automatisch zugewiesen
+  addTableEntry: (newEntry: Omit<TableEntryType, "id">) => void;
   deleteTableEntry: (index: number) => void;
   getTableEntry: (id: number) => TableEntryType | undefined;
   updateTableEntry: (TableEntry: UpdateTableEntryType) => void;
@@ -41,7 +41,6 @@ const useTableEntriesStore = create<TableEntriesStore>()(
             -1
           ) + 1;
 
-        // Erstellen eines neuen Eintrags mit der nächsten ID und den übergebenen Daten
         const newEntry: TableEntryType = { id: nextId, ...entryData };
 
         return {

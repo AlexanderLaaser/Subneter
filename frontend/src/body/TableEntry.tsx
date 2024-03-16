@@ -48,7 +48,7 @@ function TableEntry({
           <div className="flex pl-6 flex-initial w-28 w-min-28">
             <SizeSelect
               elementID={"ip_size_input"}
-              defaultValue="27"
+              defaultValue={size}
               tailWindConfig={
                 "w-18 h-8 outline-none border border-grey text-sm rounded-lg focus:border-orange-600"
               }
