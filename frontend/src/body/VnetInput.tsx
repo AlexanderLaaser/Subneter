@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { count_ipaddresses, address_space } from "../api/calls";
+import { getIpaddressesCount, getAddressSpace } from "../api/calls";
 import SizeSelect from "./SizeSelect";
 import VnetIpStartStore from "../store/VnetInputStore";
 
@@ -40,14 +40,14 @@ function IpInput() {
   ) => {
     const suffix = parseInt((e.target as HTMLSelectElement).value);
     setVnetSuffix(suffix);
-    const addressCount = await count_ipaddresses(suffix);
+    const addressCount = await getIpaddressesCount(suffix);
     setAddressCount(addressCount);
   };
 
   useEffect(() => {
     const fetchAddressSpace = async () => {
       try {
-        const addressSpace = await address_space(
+        const addressSpace = await getAddressSpace(
           vnet.vnetIpStart + "/" + vnet.vnetSuffix,
           isValid
         );

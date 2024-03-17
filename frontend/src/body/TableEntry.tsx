@@ -1,3 +1,4 @@
+import { useState } from "react";
 import SizeSelect from "./SizeSelect";
 
 interface InterfaceTableEntryProps {
@@ -23,14 +24,24 @@ function TableEntry({
   deleteTableEntry,
   totalEntries,
 }: InterfaceTableEntryProps) {
+  const [error, setError] = useState("");
   const handleDescriptionChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     updateSubnetName(id, event.target.value);
   };
 
-  const handleSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    updateIps(id, parseInt(event.target.value));
+  const handleSizeChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    try {
+      await updateIps(id, parseInt(event.target.value));
+      setError("");
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      }
+    }
   };
 
   return (
@@ -58,20 +69,23 @@ function TableEntry({
           <div className="flex pl-6 flex-initial w-28 text-blue-700 font-bold">
             {ips}
           </div>
-          <div className="flex pl-6 flex-initial w-80 ">{range}</div>
+          {error ? (
+            <div className="flex pl-6 flex-initial w-80 text-red-500 font-bold">
+              {error}
+            </div>
+          ) : (
+            <div className="flex pl-6 flex-initial w-80 ">{range}</div>
+          )}
         </div>
-        {totalEntries > 0 ? (
-          <div className=" flex pl-2 items-center justify-center mt-3">
-            <button
-              className="inline-flex items-center justify-center w-6 h-6 mr-2 text-slate-50 transition-colors duration-150 bg-red-700 rounded-lg focus:shadow-outline hover:bg-orange-600"
-              onClick={deleteTableEntry}
-            >
-              <span className="text-2xl h-10">-</span>
-            </button>
-          </div>
-        ) : (
-          <div className=" flex pl-10 items-center justify-center mt-3"></div>
-        )}
+
+        <div className=" flex pl-2 items-center justify-center mt-3">
+          <button
+            className="inline-flex items-center justify-center w-6 h-6 mr-2 text-slate-50 transition-colors duration-150 bg-red-700 rounded-lg focus:shadow-outline hover:bg-orange-600"
+            onClick={deleteTableEntry}
+          >
+            <span className="text-2xl h-10">-</span>
+          </button>
+        </div>
       </div>
     </>
   );

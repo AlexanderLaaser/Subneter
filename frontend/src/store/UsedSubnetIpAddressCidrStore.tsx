@@ -5,7 +5,7 @@ import type {} from "@redux-devtools/extension";
 interface IpAddressCidrStoreInterface {
   usedIpaddressesCidr: string[];
   addIpAddressCidr: (cidr: string, index?: number) => void;
-  removeIpAddressCidr: (cidr: string) => void;
+  removeIpAddressCidr: (index: number) => void;
 }
 
 const usedIpAddressCidrStore = create<IpAddressCidrStoreInterface>()(
@@ -24,14 +24,14 @@ const usedIpAddressCidrStore = create<IpAddressCidrStoreInterface>()(
             return { usedIpaddressesCidr: updatedIpAddressesCidr };
           } else {
             return {
-              used_ipaddresses_cidr: [...state.usedIpaddressesCidr, cidr],
+              usedIpaddressesCidr: [...state.usedIpaddressesCidr, cidr],
             };
           }
         }),
-      removeIpAddressCidr: (cidr) =>
+      removeIpAddressCidr: (index: number) =>
         set((state) => ({
           usedIpaddressesCidr: state.usedIpaddressesCidr.filter(
-            (c) => c !== cidr
+            (ele, ind) => ind !== index
           ),
         })),
     }),

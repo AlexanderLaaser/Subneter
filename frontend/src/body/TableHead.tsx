@@ -7,7 +7,7 @@ function TableHead() {
             Name
           </div>
           <div className="flex pl-6 flex-initial w-28 w-min-28 text-zinc-500 font-bold">
-            Größe
+            Size
           </div>
           <div className="flex pl-6 flex-initial w-28 w-min-28 text-zinc-500 font-bold">
             IPs

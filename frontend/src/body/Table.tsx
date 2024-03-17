@@ -4,7 +4,7 @@ import TableHead from "./TableHead";
 import JSONField from "./JSONField";
 
 function Tab() {
-  const [activeTab, setActiveTab] = useState("calculator-tab");
+  const [activeTab, setActiveTab] = useState("json-tab");
 
   const handleTabClick = (tab: React.SetStateAction<string>) => {
     setActiveTab(tab);

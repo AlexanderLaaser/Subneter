@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const address_space = async (
+export const getAddressSpace = async (
   ipaddress_cidr: string,
   isValid?: boolean
 ) => {
@@ -20,7 +20,7 @@ export const address_space = async (
   }
 };
 
-export const count_ipaddresses = async (suffix: number) => {
+export const getIpaddressesCount = async (suffix: number) => {
   try {
     const response = await axios.get(
       `${
@@ -33,7 +33,7 @@ export const count_ipaddresses = async (suffix: number) => {
   }
 };
 
-export const generate_next_subnet = async (
+export const generateNextSubnet = async (
   ipaddress_cidr: string,
   new_suffix_length: number,
   last_ip_ranges_used: string[]
@@ -47,8 +47,21 @@ export const generate_next_subnet = async (
         last_ip_ranges_used,
       }
     );
-    return response.data.nextSubnetRange.toString();
+
+    if ((response.status = 200)) {
+      return response.data.nextSubnetRange.toString();
+    } else {
+      throw new Error("Failed to fetch data!");
+    }
   } catch (error) {
-    console.error("Fehler beim API-Call", error);
+    if (axios.isAxiosError(error) && error.response) {
+      if (error.response.status === 400) {
+        throw new Error("Inputs invalid. Please check again!");
+      } else if (error.response.status === 500) {
+        throw new Error("Size doesn't match vnet range!");
+      }
+    } else {
+      throw new Error("Network error!");
+    }
   }
 };
