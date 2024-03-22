@@ -3,6 +3,11 @@ name: deploy-infra
 on:
   push:
     branches:
+      - develop
+      - first-tf-deployment
+
+  pull_request:
+    branches:
       - main
 
 jobs:
