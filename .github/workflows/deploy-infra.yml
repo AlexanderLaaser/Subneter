@@ -1,0 +1,36 @@
+name: deploy-infra
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Install Terraform"
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: latest
+
+      - name: "Install TFlint"
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
+      - name: Terraform Init
+        run: terraform init -chdir=./infrastructure/terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -chdir=./infrastructure/terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -chdir=./infrastructure/terraform apply -auto-approve tfplan
+        env:
+          ARM_CLIENT_ID: ${{ vars.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
