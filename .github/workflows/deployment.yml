@@ -3,6 +3,10 @@ name: Deploy terraform resources to azure
 on:
   push:
     branches:
+      - develop
+
+  pull_request:
+    branches: 
       - main
 
 jobs:
