@@ -34,7 +34,9 @@ jobs:
 
       - name: Change to Terraform directory
         run: cd infrastructure/terraform
-             ls
+      
+      - name: ls
+        run: ls
       
       - name: Terraform Init
         run: terraform init
