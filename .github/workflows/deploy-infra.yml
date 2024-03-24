@@ -22,9 +22,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: "Printing Tenant ID"
-        run: echo "${{ vars.ARM_TENANT_ID }}"
-
       - name: "Install Terraform"
         uses: hashicorp/setup-terraform@v1
         with:
@@ -35,6 +32,9 @@ jobs:
         with:
           tflint_version: latest
 
+      - name: Change to Terraform directory
+        run: cd infrastructure/terraform
+      
       - name: Terraform Init
         run: terraform init
 
