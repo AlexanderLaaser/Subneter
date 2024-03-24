@@ -6,10 +6,10 @@ provider "azurerm" {
 
 terraform {
   backend "azurerm" {
-    resource_group_name  = azurerm_resource_group.tfbackend.name
-    storage_account_name = azurerm_storage_account.tfbackend.name
-    container_name       = azurerm_storage_container.tfbackend.name
-    key                  = "${var.stage}.terraform.tfstate"
+    resource_group_name  = "rg-tfbackend"
+    storage_account_name = "sttfbackendsubneter"
+    container_name       = "terraform-state"
+    key                  = "dev.terraform.tfstate"
   }
 }
 

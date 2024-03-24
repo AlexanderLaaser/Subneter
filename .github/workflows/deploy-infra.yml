@@ -24,6 +24,9 @@ jobs:
         with:
           tflint_version: latest
 
+      - name: terraform validate
+        run: terraform validate -chdir=./infrastructure/terraform init
+      
       - name: Terraform Init
         run: terraform init -chdir=./infrastructure/terraform init
 
