@@ -50,8 +50,38 @@ jobs:
       #    framework: terraform
       
       - name: Terraform Plan
-        run: terraform plan -chdir=./infrastructure/terraform plan -out=tfplan
-
-      - name: Terraform Apply
-        run: terraform apply -chdir=./infrastructure/terraform apply -auto-approve tfplan
+        id: tf-plan
+        run: |
+          export exitcode=0
+          terraform plan -detailed-exitcode -no-color -out tfplan || export exitcode=$?
+          echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
+          
+          if [ $exitcode -eq 1 ]; then
+            echo Terraform Plan Failed!
+            exit 1
+          else 
+            exit 0
+          fi
         
+    # Save plan to artifacts  
+      - name: Publish Terraform Plan
+        uses: actions/upload-artifact@v3
+        with:
+          name: tfplan
+          path: tfplan
+      
+      - name: Publish Terraform Plan to Task Summary
+        env:
+          SUMMARY: ${{ steps.tf-plan-string.outputs.summary }}
+        run: |
+          echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v3
+        with:
+          name: tfplan
+    
+        # Terraform Apply
+      - name: Terraform Apply
+        run: terraform apply tfplan
+          
