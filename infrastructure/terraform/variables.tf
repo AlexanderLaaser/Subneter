@@ -1,6 +1,6 @@
 variable "stage" {
-  type        = string
-  description = "stage"
+  type    = string
+  default = "dev"
 }
 
 variable "location" {
