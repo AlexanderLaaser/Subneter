@@ -32,20 +32,17 @@ jobs:
         with:
           tflint_version: latest
 
-      - name: Change to Terraform directory
-        run: cd infrastructure
-      
-      - name: ls
-        run: ls
-      
       - name: Terraform Init
         run: terraform init
+        working-directory: ./infrastructure/terraform
 
       - name: Terraform Validate
         run: terraform validate
+        working-directory: ./infrastructure/terraform
 
       - name: Terraform Format
         run: terraform fmt -check -recursive
+        working-directory: ./infrastructure/terraform
       
       # Perform a security scan of the terraform code using checkov
       #- name: Run Checkov action
@@ -67,6 +64,8 @@ jobs:
           else 
             exit 0
           fi
+        working-directory: ./infrastructure/terraform
+        
         
     # Save plan to artifacts  
       - name: Publish Terraform Plan
