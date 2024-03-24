@@ -29,7 +29,6 @@ jobs:
       - name: 'Log into Azure using github secret AZURE_CREDENTIALS'
         uses: Azure/login@v1
         with:
-          creds: | 
             client-id: ${{ vars.ARM_CLIENT_ID }}
             client-secret: ${{ secrets.ARM_CLIENT_SECRET }}
             subscription-id: ${{ vars.ARM_SUBSCRIPTION_ID }}
