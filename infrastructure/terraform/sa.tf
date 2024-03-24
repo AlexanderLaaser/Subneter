@@ -4,7 +4,7 @@ resource "azurerm_storage_account" "tfbackend" {
   location                      = var.location
   account_tier                  = var.sa_tier
   account_replication_type      = "LRS"
-  public_network_access_enabled = true
+  public_network_access_enabled = false
 
   tags = {
     environment = var.stage
