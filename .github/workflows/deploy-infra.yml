@@ -33,7 +33,7 @@ jobs:
           tflint_version: latest
 
       - name: Change to Terraform directory
-        run: cd infrastructure/terraform
+        run: cd infrastructure
       
       - name: ls
         run: ls
