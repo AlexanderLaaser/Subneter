@@ -1,7 +1,5 @@
 name: deploy-infra
 
-#Stage Param setzen
-
 on:
   workflow_dispatch:
 
