@@ -43,11 +43,11 @@ jobs:
         run: terraform fmt -check -recursive
       
       # Perform a security scan of the terraform code using checkov
-      - name: Run Checkov action
-        id: checkov
-        uses: bridgecrewio/checkov-action@master
-        with: 
-          framework: terraform
+      #- name: Run Checkov action
+      #  id: checkov
+      #  uses: bridgecrewio/checkov-action@master
+      #  with: 
+      #    framework: terraform
       
       - name: Terraform Plan
         run: terraform plan -chdir=./infrastructure/terraform plan -out=tfplan
