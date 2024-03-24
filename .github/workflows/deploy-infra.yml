@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: "Printing Tenant ID"
-        run: echo env.ARM_TENANT_ID
+        run: echo "${{ vars.ARM_TENANT_ID }}"
 
       - name: "Install Terraform"
         uses: hashicorp/setup-terraform@v1
