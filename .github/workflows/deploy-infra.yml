@@ -30,10 +30,8 @@ jobs:
         uses: Azure/login@v1
         with:
             client-id: ${{ vars.ARM_CLIENT_ID }}
-            client-secret: ${{ secrets.ARM_CLIENT_SECRET }}
             subscription-id: ${{ vars.ARM_SUBSCRIPTION_ID }}
             tenant-id: ${{ vars.ARM_TENANT_ID }}
-          enable-AzPSSession: true
       
       - name: Terraform Init
         run: terraform init
