@@ -1,10 +1,8 @@
 name: deploy-infra
 
 on:
-  push:
-    branches:
-      - develop
-      - first-tf-deployment
+  # Configure Manual Trigger
+  workflow_dispatch:
 
   pull_request:
     branches:
