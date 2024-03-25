@@ -9,10 +9,6 @@ on:
     branches:
       - main
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -33,9 +29,7 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-            client-id: ${{ vars.ARM_CLIENT_ID }}
-            subscription-id: ${{ vars.ARM_SUBSCRIPTION_ID }}
-            tenant-id: ${{ vars.ARM_TENANT_ID }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
       
       - name: Terraform Init
         run: terraform init
@@ -49,7 +43,6 @@ jobs:
         run: terraform fmt -check -recursive
         working-directory: ./infrastructure/terraform
       
-      # Perform a security scan of the terraform code using checkov
       #- name: Run Checkov action
       #  id: checkov
       #  uses: bridgecrewio/checkov-action@master
@@ -60,9 +53,7 @@ jobs:
         id: tf-plan
         run: terraform plan -out plan.infra
         working-directory: ./infrastructure/terraform
-        
-        
-    # Save plan to artifacts  
+         
       - name: Publish Terraform Plan
         uses: actions/upload-artifact@v3
         with:
