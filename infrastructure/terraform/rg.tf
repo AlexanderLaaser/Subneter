@@ -1,8 +1,3 @@
-module "naming" {
-  source = "Azure/naming/azurerm"
-  suffix = [var.stage]
-}
-
 resource "azurerm_resource_group" "tfbackend" {
   name     = "rg-tfbackend"
   location = var.location
@@ -13,7 +8,7 @@ resource "azurerm_resource_group" "tfbackend" {
 }
 
 resource "azurerm_resource_group" "main" {
-  name     = module.naming.resource_group.name
+  name     = "rg-dev"
   location = var.location
 
   tags = {
