@@ -18,6 +18,7 @@ env:
 
 jobs:
   deploy:
+    name: Deploy Azure Infrastructure
     runs-on: ubuntu-latest
     environment: development
     steps:
