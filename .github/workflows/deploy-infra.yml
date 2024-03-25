@@ -19,7 +19,7 @@ jobs:
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: v1.7.5
+          terraform_version: latest
 
       - name: Install TFlint
         uses: terraform-linters/setup-tflint@v4
