@@ -9,6 +9,10 @@ on:
     branches:
       - main
 
+permissions:
+      id-token: write
+      contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -16,17 +20,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: "Install Terraform"
+      - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: latest
 
-      - name: "Install TFlint"
+      - name: Install TFlint
         uses: terraform-linters/setup-tflint@v4
         with:
           tflint_version: latest
 
-      - name: 'Log into Azure using github secret AZURE_CREDENTIALS'
+      - name: Login to Azure
         uses: Azure/login@v1
         with:
             client-id: ${{ vars.ARM_CLIENT_ID }}
