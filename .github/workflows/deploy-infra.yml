@@ -65,14 +65,14 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: tfplan
-          path: tfplan
+          path: ./infrastructure/terraform/plan.infra
       
       - name: Download Terraform Plan
         uses: actions/download-artifact@v3
         with:
           name: tfplan
-    
-        # Terraform Apply
+
       - name: Terraform Apply
-        run: terraform apply tfplan
+        run: terraform apply -auto-approve plan.infra
+        working-directory: ./infrastructure/terraform
           
