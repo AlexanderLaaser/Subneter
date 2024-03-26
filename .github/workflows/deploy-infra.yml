@@ -14,6 +14,7 @@ env:
   ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
   ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
+  SA_BACKEND_NAME: sttfbackendsubneter
 
 
 jobs:
@@ -39,6 +40,10 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       
+      - name: Enable Storage Account Access
+        run: |
+          az storage account update --subscription ${{env.ARM_SUBSCRIPTION_ID}} --name ${{env.SA_BACKEND_NAME}} --public-network-access Enabled
+   
       - name: Terraform Init
         run: terraform init
         working-directory: ./infrastructure/terraform
@@ -77,3 +82,7 @@ jobs:
         run: terraform apply -auto-approve plan.infra
         working-directory: ./infrastructure/terraform
           
+      - name: Disable Storage Account Access
+        run: |
+          az storage account update --subscription ${{env.ARM_SUBSCRIPTION_ID}} --name ${{env.SA_BACKEND_NAME}} --public-network-access Disabled
+   
