@@ -8,8 +8,3 @@ variable "location" {
   default = "West Europe"
 }
 
-variable "sa_tier" {
-  type    = string
-  default = "Standard"
-}
-
