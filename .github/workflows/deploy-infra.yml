@@ -1,39 +1,88 @@
 name: deploy-infra
 
 on:
-  # Configure Manual Trigger
   workflow_dispatch:
 
+  push:
+  
   pull_request:
     branches:
       - main
 
+env:
+  ARM_CLIENT_ID: ${{ vars.ARM_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
+  SA_BACKEND_NAME: sttfbackendsubneter
+
+
 jobs:
   deploy:
+    name: Deploy Azure Infrastructure
     runs-on: ubuntu-latest
+    environment: development
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: "Install Terraform"
-        uses: hashicorp/setup-terraform@v1
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: latest
 
-      - name: "Install TFlint"
+      - name: Install TFlint
         uses: terraform-linters/setup-tflint@v4
         with:
           tflint_version: latest
 
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Enable Storage Account Access
+        run: |
+          az storage account update --subscription ${{env.ARM_SUBSCRIPTION_ID}} --name ${{env.SA_BACKEND_NAME}} --public-network-access Enabled
+   
       - name: Terraform Init
-        run: terraform init -chdir=./infrastructure/terraform init
+        run: terraform init
+        working-directory: ./infrastructure/terraform
 
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./infrastructure/terraform
+
+      - name: Terraform Format
+        run: terraform fmt -check -recursive
+        working-directory: ./infrastructure/terraform
+      
+      #- name: Run Checkov action
+      #  id: checkov
+      #  uses: bridgecrewio/checkov-action@master
+      #  with: 
+      #    framework: terraform
+      
       - name: Terraform Plan
-        run: terraform plan -chdir=./infrastructure/terraform plan -out=tfplan
+        id: tf-plan
+        run: terraform plan -out plan.infra
+        working-directory: ./infrastructure/terraform
+         
+      - name: Publish Terraform Plan
+        uses: actions/upload-artifact@v3
+        with:
+          name: tfplan
+          path: ./infrastructure/terraform/plan.infra
+      
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v3
+        with:
+          name: tfplan
 
       - name: Terraform Apply
-        run: terraform apply -chdir=./infrastructure/terraform apply -auto-approve tfplan
-        env:
-          ARM_CLIENT_ID: ${{ vars.ARM_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-          ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
-          ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
+        run: terraform apply -auto-approve plan.infra
+        working-directory: ./infrastructure/terraform
+          
+      - name: Disable Storage Account Access
+        run: |
+          az storage account update --subscription ${{env.ARM_SUBSCRIPTION_ID}} --name ${{env.SA_BACKEND_NAME}} --public-network-access Disabled
+   
