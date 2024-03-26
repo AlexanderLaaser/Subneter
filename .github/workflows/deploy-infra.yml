@@ -5,7 +5,7 @@ on:
 
   push:
     paths:
-      - '**.tf' # This line tells GitHub Actions to only trigger for changes to files with a .tf extension.
+      - '**.tf'
       
   pull_request:
     branches:
