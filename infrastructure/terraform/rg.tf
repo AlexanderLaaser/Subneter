@@ -1,6 +1,6 @@
 module "naming" {
   source = "Azure/naming/azurerm"
-  suffix = [var.stage]
+  suffix = ["subneter-" + var.stage]
 }
 
 resource "azurerm_resource_group" "tfbackend" {
