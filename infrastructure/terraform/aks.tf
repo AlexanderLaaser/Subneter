@@ -1,4 +1,4 @@
-resource "azurerm_kubernetes_cluster" "example" {
+resource "azurerm_kubernetes_cluster" "main" {
   name                = module.naming.kubernetes_cluster.name
   location            = var.location
   resource_group_name = azurerm_resource_group.aks.name
@@ -25,7 +25,7 @@ resource "azurerm_kubernetes_cluster" "example" {
 
 }
 
-resource "azurerm_role_assignment" "example" {
+resource "azurerm_role_assignment" "aksacrpull" {
   principal_id                     = azurerm_kubernetes_cluster.main.kubelet_identity[0].object_id
   role_definition_name             = "AcrPull"
   scope                            = azurerm_container_registry.acr.id
