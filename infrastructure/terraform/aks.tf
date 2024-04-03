@@ -1,3 +1,7 @@
+locals {
+  user_object_id = "7b2baf8f-4831-40cc-98e6-77f3340f7b2d"
+}
+
 resource "azurerm_kubernetes_cluster" "main" {
   name                = module.naming.kubernetes_cluster.name
   location            = var.location
@@ -30,4 +34,10 @@ resource "azurerm_role_assignment" "aksacrpull" {
   role_definition_name             = "AcrPull"
   scope                            = azurerm_container_registry.acr.id
   skip_service_principal_aad_check = true
+}
+
+resource "azurerm_role_assignment" "laasercontributor" {
+  scope                = azurerm_kubernetes_cluster.main.id
+  role_definition_name = "Contributor"
+  principal_id         = local.user_object_id
 }
