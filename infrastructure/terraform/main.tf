@@ -4,6 +4,8 @@ provider "azurerm" {
   }
 }
 
+provider "kubernetes" {}
+
 module "naming" {
   source = "Azure/naming/azurerm"
   suffix = ["subneter${var.stage}"]
