@@ -20,8 +20,8 @@ env:
   TF_VAR_clientid: ${{ vars.ARM_CLIENT_ID }}
 
 jobs:
-  deploy:
-    name: Deploy Azure Infrastructure
+  deploy-terraform:
+    name: Deploy Azure Infrastructure with Terraform
     runs-on: ubuntu-latest
     environment: development
     steps:
@@ -88,4 +88,25 @@ jobs:
       - name: Disable Storage Account Access
         run: |
           az storage account update --subscription ${{env.ARM_SUBSCRIPTION_ID}} --name ${{env.SA_BACKEND_NAME}} --public-network-access Disabled
-   
+  
+  deploy-argo-cd:
+      name: Install Argo CD on Kubernetes
+      needs: deploy-terraform
+      runs-on: ubuntu-latest
+      environment: development
+      steps:
+        - uses: actions/checkout@v4
+        - name: Install kubectl
+          uses: azure/setup-kubectl@v1
+        - name: Login to Azure (Kubernetes Context Setup)
+          uses: azure/aks-set-context@v1
+          with:
+            creds: ${{ toJson(secrets.AZURE_CREDENTIALS) }}
+            cluster-name: ${{ vars.AZURE_AKS_NAME }}
+            resource-group: ${{ vars.AZURE_AKS_RG_NAME }}
+        - name: Install Argo CD
+          run: |
+            kubectl create namespace argocd || true
+            kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+        - name: Validate Argo CD Installation
+          run: kubectl rollout status deployment/argocd-server -n argocd
