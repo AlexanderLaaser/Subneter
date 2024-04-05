@@ -5,3 +5,9 @@ resource "azurerm_container_registry" "acr" {
   sku                 = "Standard"
   admin_enabled       = false
 }
+
+resource "azurerm_role_assignment" "acrpushgithub" {
+  scope              = azurerm_container_registry.acr.id
+  role_definition_id = "AcrPush"
+  principal_id       = var.clientid
+}

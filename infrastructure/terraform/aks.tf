@@ -36,19 +36,4 @@ resource "azurerm_role_assignment" "aksacrpull" {
   skip_service_principal_aad_check = true
 }
 
-resource "kubernetes_cluster_role_binding" "userlaaseraccess" {
-  metadata {
-    name = "userlaaseraccess"
-  }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "cluster-admin"
-  }
-  subject {
-    kind = "User"
-    name = "alexander.laaser@pexon-consulting.de"
-  }
-}
-
 

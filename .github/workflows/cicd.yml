@@ -1,0 +1,37 @@
+name: cicd
+
+on:
+  workflow_dispatch:
+
+  push:
+    paths:
+      - '**.backend'
+      - '**.frontend'
+      - '**.helmsubneter'
+
+  pull_request:
+    branches:
+      - main
+
+env:
+  ARM_CLIENT_ID: ${{ vars.ARM_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
+  SA_BACKEND_NAME: sttfbackendsubneter
+
+
+jobs:
+  deploy:
+    name: Deploy app
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      
+      
+      
