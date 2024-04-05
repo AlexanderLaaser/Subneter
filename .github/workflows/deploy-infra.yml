@@ -101,7 +101,7 @@ jobs:
         - name: Login to Azure (Kubernetes Context Setup)
           uses: azure/aks-set-context@v1
           with:
-            creds: ${{ toJson(secrets.AZURE_CREDENTIALS) }}
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
             cluster-name: ${{ vars.AZURE_AKS_NAME }}
             resource-group: ${{ vars.AZURE_AKS_RG_NAME }}
         - name: Install Argo CD
