@@ -1,4 +1,4 @@
-name: deploy-infra
+name: Deploy Azure Infrastructure
 
 on:
   workflow_dispatch:
@@ -6,7 +6,6 @@ on:
   push:
     paths:
       - '**.tf'
-      - '.github'
       
   pull_request:
     branches:
