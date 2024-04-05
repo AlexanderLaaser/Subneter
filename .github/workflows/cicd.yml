@@ -1,4 +1,4 @@
-name: cicd
+name: Build and Push Docker images
 
 on:
   workflow_dispatch:
@@ -7,31 +7,37 @@ on:
     paths:
       - '**.backend'
       - '**.frontend'
-      - '**.helmsubneter'
 
   pull_request:
     branches:
       - main
 
-env:
-  ARM_CLIENT_ID: ${{ vars.ARM_CLIENT_ID }}
-  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-  ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
-  ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
-  SA_BACKEND_NAME: sttfbackendsubneter
-
-
 jobs:
-  deploy:
-    name: Deploy app
+  build-and-push:
     runs-on: ubuntu-latest
     environment: development
     steps:
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Log in to Azure Container Registry
+      run: |
+        az acr login --name ${{ vars.ACR_NAME }}
       
+    - name: Build and Push React Frontend Docker Image
+      run: |
+        docker build -t ${{ vars.AZURE_REGISTRY_SERVER }}/myfrontend:latest ./path-to-your-frontend-directory
+        docker push ${{ vars.AZURE_REGISTRY_SERVER }}/myfrontend:latest
+
+    - name: Build and Push Flask Backend Docker Image
+      run: |
+        docker build -t ${{ vars.AZURE_REGISTRY_SERVER }}/mybackend:latest ./path-to-your-backend-directory
+        docker push ${{ vars.AZURE_REGISTRY_SERVER }}/mybackend:latest
       
       
       

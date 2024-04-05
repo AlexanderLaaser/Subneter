@@ -6,8 +6,9 @@ resource "azurerm_container_registry" "acr" {
   admin_enabled       = false
 }
 
-resource "azurerm_role_assignment" "acrpushgithub" {
-  scope              = azurerm_container_registry.acr.id
-  role_definition_id = "/subscriptions/a50ff473-cc05-46ed-a7a6-8c5ed3c3907b/providers/Microsoft.Authorization/roleDefinitions/8311e382-0749-4cb8-b61a-304f252e45ec"
-  principal_id       = "2bce2d97-b38f-4a47-8655-c0ccc833cb7d" #var.clientid"
+resource "azurerm_role_assignment" "aksacrpull" {
+  principal_id                     = azurerm_kubernetes_cluster.main.kubelet_identity[0].object_id
+  role_definition_name             = "AcrPull"
+  scope                            = azurerm_container_registry.acr.id
+  skip_service_principal_aad_check = true
 }
