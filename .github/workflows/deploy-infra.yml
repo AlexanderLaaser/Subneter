@@ -18,8 +18,7 @@ env:
   ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
   SA_BACKEND_NAME: sttfbackendsubneter
-  TF_VAR_clientid: ${{ vars.ARM_OBJECT_ID_SUBNETER }}
-
+  TF_VAR_clientid: ${{ vars.ARM_CLIENT_ID }}
 
 jobs:
   deploy:
