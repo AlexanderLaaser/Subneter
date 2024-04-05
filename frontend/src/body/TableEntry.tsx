@@ -22,7 +22,6 @@ function TableEntry({
   updateSubnetName,
   updateIps,
   deleteTableEntry,
-  totalEntries,
 }: InterfaceTableEntryProps) {
   const [error, setError] = useState("");
   const handleDescriptionChange = (

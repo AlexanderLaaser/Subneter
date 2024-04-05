@@ -8,3 +8,7 @@ variable "location" {
   default = "West Europe"
 }
 
+variable "clientid" {
+  type = string
+}
+

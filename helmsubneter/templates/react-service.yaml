@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.react.name }}-service
+spec:
+  type: {{ .Values.react.service.type }}
+  ports:
+    - port: {{ .Values.react.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ .Values.react.name }}

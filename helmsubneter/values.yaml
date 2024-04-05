@@ -1,0 +1,20 @@
+flask:
+  name: flask-backend
+  replicaCount: 1
+  image:
+    repository: subneter-backend
+    tag: latest
+  containerPort: 5000
+  service: 
+    type: ClusterIP
+    port: 5000
+react:
+  name: react-frontend
+  replicaCount: 1
+  image:
+    repository: subneter-frontend
+    tag: latest
+  containerPort: 80
+  service: 
+    type: ClusterIP
+    port: 80

@@ -77,7 +77,7 @@ function AddButton() {
       const ips = await getIpaddressesCount(size);
 
       const usedIpAddressesWithoutOwnRange = usedIpaddressesCidr.filter(
-        (ele, ind) => ind !== id
+        (_ele, ind) => ind !== id
       );
 
       // Calling backend api to receive ip range for given cidr
@@ -95,11 +95,11 @@ function AddButton() {
   };
 
   // not used at the moment -> Meant for updating exisiting ip ranges when clicked on delete
-  const refreshSizeOfExistingEntries = async () => {
-    tableEntriesStore.forEach((entry) => {
-      updateIps(entry.id, entry.size);
-    });
-  };
+  // const refreshSizeOfExistingEntries = async () => {
+  //   tableEntriesStore.forEach((entry) => {
+  //     updateIps(entry.id, entry.size);
+  //   });
+  // };
 
   const deleteTableEntry = (id: number) => {
     deleteTableEntryStore(id);

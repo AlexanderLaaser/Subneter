@@ -31,7 +31,7 @@ const usedIpAddressCidrStore = create<IpAddressCidrStoreInterface>()(
       removeIpAddressCidr: (index: number) =>
         set((state) => ({
           usedIpaddressesCidr: state.usedIpaddressesCidr.filter(
-            (ele, ind) => ind !== index
+            (_ele, ind) => ind !== index
           ),
         })),
     }),

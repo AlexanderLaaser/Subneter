@@ -1,5 +1,4 @@
 import ipaddress
-import math
 
 #Calculating first ip
 def get_start_iP(ipaddress_cidr):
