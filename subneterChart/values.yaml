@@ -14,7 +14,7 @@ react:
   image:
     repository: acrsubneterdev.azurecr.io/react
     tag: latest
-  containerPort: 80
+  containerPort: 5173
   service: 
     type: ClusterIP
     port: 80
