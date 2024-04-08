@@ -2,7 +2,7 @@ flask:
   name: flask-backend
   replicaCount: 1
   image:
-    repository: subneter-backend
+    repository:  acrsubneterdev.azurecr.io/flask
     tag: latest
   containerPort: 5000
   service: 
@@ -12,7 +12,7 @@ react:
   name: react-frontend
   replicaCount: 1
   image:
-    repository: subneter-frontend
+    repository: acrsubneterdev.azurecr.io/react
     tag: latest
   containerPort: 80
   service: 
