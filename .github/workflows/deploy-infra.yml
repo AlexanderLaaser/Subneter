@@ -18,6 +18,7 @@ env:
   ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
   SA_BACKEND_NAME: sttfbackendsubneter
   TF_VAR_clientid: ${{ vars.ARM_CLIENT_ID }}
+  skip_tf: 'true'
 
 jobs:
   deploy-terraform:
