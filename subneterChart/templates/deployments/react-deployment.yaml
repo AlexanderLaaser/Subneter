@@ -17,3 +17,4 @@ spec:
           image: "{{ .Values.react.image.repository }}:{{ .Values.react.image.tag }}"
           ports:
             - containerPort: {{ .Values.react.containerPort }}
+              name: http-frontend

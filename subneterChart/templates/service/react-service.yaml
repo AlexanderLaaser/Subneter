@@ -6,7 +6,7 @@ spec:
   type: {{ .Values.react.service.type }}
   ports:
     - port: {{ .Values.react.service.port }}
-      targetPort: http
+      targetPort: http-frontend
       protocol: TCP
       name: http
   selector:
