@@ -18,3 +18,9 @@ spec:
           ports:
             - containerPort: {{ .Values.react.containerPort }}
               name: frontend
+          env:
+          - name: VITE_API_SERVER_URL
+            valueFrom:
+              configMapKeyRef:
+                name: frontend-config
+                key: VITE_API_SERVER_URL
