@@ -11,3 +11,4 @@ spec:
       name: frontend
   selector:
     app: {{ .Values.react.name }}
+  type: LoadBalancer
