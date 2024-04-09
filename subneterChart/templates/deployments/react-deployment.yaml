@@ -17,7 +17,6 @@ spec:
           image: "{{ .Values.react.image.repository }}:{{ .Values.react.image.tag }}"
           ports:
             - containerPort: {{ .Values.react.containerPort }}
-              name: frontend
           env:
           - name: VITE_API_SERVER_URL
             valueFrom:

@@ -17,4 +17,3 @@ spec:
           image: "{{ .Values.flask.image.repository }}:{{ .Values.flask.image.tag }}"
           ports:
             - containerPort: {{ .Values.flask.containerPort }}
-              name: backend
