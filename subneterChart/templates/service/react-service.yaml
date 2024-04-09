@@ -8,6 +8,6 @@ spec:
     - port: {{ .Values.react.service.port }}
       targetPort: frontend
       protocol: TCP
-      name: http
+      name: frontend
   selector:
     app: {{ .Values.react.name }}

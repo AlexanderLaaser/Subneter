@@ -6,8 +6,8 @@ spec:
   type: {{ .Values.flask.service.type }}
   ports:
     - port: {{ .Values.flask.service.port }}
-      targetPort: http
+      targetPort: backend
       protocol: TCP
-      name: http
+      name: backend
   selector:
     app: {{ .Values.flask.name }}
