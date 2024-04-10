@@ -6,8 +6,7 @@ metadata:
 spec:
   ingressClassName: webapprouting.kubernetes.azure.com
   rules:
-  - host: subneter.de
-    http:
+  - http:
       paths:
       - backend:
           service:
@@ -17,4 +16,4 @@ spec:
               number: {{ .Values.react.service.port }}  
         path: /
         pathType: Prefix
-        
+      
