@@ -9,17 +9,19 @@ spec:
   - host: subneter.de
     http:
       paths:
-      - path: /api
-        pathType: Prefix
-        backend:
+      - backend:
           service:
             name: {{ .Values.flask.name }}-service
             port:
               number: {{ .Values.flask.service.port }}
-      - path: /
+        path: /api
         pathType: Prefix
-        backend:
+        
+      - backend:
           service:
             name: {{ .Values.react.name }}-service
             port:
-              number: {{ .Values.react.service.port }}
+              number: {{ .Values.react.service.port }}  
+        path: /
+        pathType: Prefix
+        

@@ -2,15 +2,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.flask.name }}-deployment
+  namespace: {{ .Values.app.name }}
 spec:
   replicas: {{ .Values.flask.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.flask.name }}
+      app: {{ .Values.app.name }}
   template:
     metadata:
       labels:
-        app: {{ .Values.flask.name }}
+        app: {{ .Values.app.name }}
     spec:
       containers:
         - name: {{ .Values.flask.name }}
