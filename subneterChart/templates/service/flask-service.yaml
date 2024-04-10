@@ -8,7 +8,5 @@ spec:
   ports:
     - port: {{ .Values.flask.service.port }}
       targetPort: {{ .Values.flask.containerPort }}
-      protocol: TCP
-      name: backend
   selector:
     app: {{ .Values.flask.name }}
