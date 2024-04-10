@@ -19,7 +19,7 @@ env:
   SA_BACKEND_NAME: sttfbackendsubneter
   TF_VAR_clientid: ${{ vars.ARM_CLIENT_ID }}
   skip_tf: 'true'
-
+  
 jobs:
   deploy-terraform:
     name: Deploy Azure Infrastructure with Terraform
@@ -95,6 +95,7 @@ jobs:
       needs: deploy-terraform
       runs-on: ubuntu-latest
       environment: development
+      if: ${{ vars.DEPLOY_ARGO }} == 'true'
       steps:
         - uses: actions/checkout@v4
         - name: Install kubectl

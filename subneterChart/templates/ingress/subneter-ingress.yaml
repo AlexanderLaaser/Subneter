@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.app.name }}-ingress
+  namespace: {{ .Values.app.name }}
+spec:
+  ingressClassName: webapprouting.kubernetes.azure.com
+  rules:
+  - host: subneter.de
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: flask-backend-service
+            port:
+              number: 5000
