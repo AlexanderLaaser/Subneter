@@ -9,4 +9,4 @@ spec:
     - port: {{ .Values.react.service.port }}
       targetPort: {{ .Values.react.containerPort }}
   selector:
-    app: {{ .Values.app.name }}
+    app: {{ .Values.react.name }}

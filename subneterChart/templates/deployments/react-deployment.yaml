@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: Deployme:int
 metadata:
   name: {{ .Values.react.name }}-deployment
   namespace: {{ .Values.app.name }}
@@ -7,11 +7,11 @@ spec:
   replicas: {{ .Values.react.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.app.name }}
+      app: {{ .Values.react.name }}
   template:
     metadata:
       labels:
-        app: {{ .Values.app.name }}
+        app: {{ .Values.react.name }}
     spec:
       containers:
         - name: {{ .Values.react.name }}

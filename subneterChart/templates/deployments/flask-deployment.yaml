@@ -7,11 +7,11 @@ spec:
   replicas: {{ .Values.flask.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.app.name }}
+      app: {{ .Values.flask.name }}
   template:
     metadata:
       labels:
-        app: {{ .Values.app.name }}
+        app: {{ .Values.flask.name }}
     spec:
       containers:
         - name: {{ .Values.flask.name }}
