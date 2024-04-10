@@ -16,4 +16,11 @@ spec:
               number: {{ .Values.react.service.port }}  
         path: /
         pathType: Prefix
-      
+      - backend:
+          service:
+            name: {{ .Values.flask.name }}-service
+            namespace: {{ .Values.app.name }}
+            port:
+              number: {{ .Values.flask.service.port }}  
+        path: /api
+        pathType: Prefix
