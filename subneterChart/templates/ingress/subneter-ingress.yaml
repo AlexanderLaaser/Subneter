@@ -13,6 +13,13 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: flask-backend-service
+            name: {{ .Values.flask.name }}-service
             port:
-              number: 5000
+              number: {{ .Values.flask.service.port }}
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Values.react.name }}-service
+            port:
+              number: {{ .Values.react.service.port }}
