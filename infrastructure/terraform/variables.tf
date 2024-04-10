@@ -13,5 +13,5 @@ variable "clientid" {
 }
 
 variable "http_application_routing_enabled" {
-  default = true
+  default = false
 }
