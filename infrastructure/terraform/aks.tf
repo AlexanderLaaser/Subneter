@@ -3,10 +3,11 @@ locals {
 }
 
 resource "azurerm_kubernetes_cluster" "main" {
-  name                = module.naming.kubernetes_cluster.name
-  location            = var.location
-  resource_group_name = azurerm_resource_group.aks.name
-  dns_prefix          = "subneter"
+  name                             = module.naming.kubernetes_cluster.name
+  location                         = var.location
+  resource_group_name              = azurerm_resource_group.aks.name
+  dns_prefix                       = "subneter"
+  http_application_routing_enabled = var.http_application_routing_enabled
 
   default_node_pool {
     name       = "default"
