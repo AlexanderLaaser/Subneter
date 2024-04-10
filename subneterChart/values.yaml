@@ -16,7 +16,7 @@ react:
     tag: latest
   containerPort: 5173
   service: 
-    type: ClusterIP
+    type: LoadBalancer
     port: 80
 app:
   name: subneter
