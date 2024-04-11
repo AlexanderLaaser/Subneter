@@ -6,7 +6,6 @@ on:
       DEPLOY_INIT_MANUALLY:
         type: boolean
         description: Initial Deploy of Nginx and Argo
-        default: false
 
   push:
     paths:
@@ -107,24 +106,24 @@ jobs:
           az aks approuting enable -g ${{vars.AZURE_AKS_RG_NAME}} -n ${{vars.AZURE_AKS_NAME}}
 
   deploy-argo-cd:
-      name: Install Argo CD on Kubernetes Cluster
-      needs: deploy-nginx
-      runs-on: ubuntu-latest
-      environment: development
-      if: ${{ vars.INIT_DEPLOY == 'true' || inputs.DEPLOY_INIT_MANUALLY == 'true' }} 
-      steps:
-        - uses: actions/checkout@v4
-        - name: Install kubectl
-          uses: azure/setup-kubectl@v1
-        - name: Login to Azure (Kubernetes Context Setup)
-          uses: azure/aks-set-context@v1
-          with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
-            cluster-name: ${{ vars.AZURE_AKS_NAME }}
-            resource-group: ${{ vars.AZURE_AKS_RG_NAME }}
-        - name: Install Argo CD
-          run: |
-            kubectl create namespace argocd || true
-            kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-        - name: Validate Argo CD Installation
-          run: kubectl rollout status deployment/argocd-server -n argocd
+    name: Install Argo CD on Kubernetes Cluster
+    needs: deploy-nginx
+    runs-on: ubuntu-latest
+    environment: development
+    if: ${{ vars.INIT_DEPLOY == 'true' || inputs.DEPLOY_INIT_MANUALLY == 'true' }} 
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v1
+      - name: Login to Azure (Kubernetes Context Setup)
+        uses: azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          cluster-name: ${{ vars.AZURE_AKS_NAME }}
+          resource-group: ${{ vars.AZURE_AKS_RG_NAME }}
+      - name: Install Argo CD
+        run: |
+          kubectl create namespace argocd || true
+          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+      - name: Validate Argo CD Installation
+        run: kubectl rollout status deployment/argocd-server -n argocd
