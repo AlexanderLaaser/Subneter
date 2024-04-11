@@ -95,6 +95,12 @@ jobs:
     if: ${{ vars.INIT_DEPLOY == 'true' || github.event.inputs.DEPLOY_INIT_MANUALLY == 'true' }} 
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
       - name: Login to Azure (Kubernetes Context Setup)
         uses: azure/aks-set-context@v1
         with:
