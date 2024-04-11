@@ -92,7 +92,7 @@ jobs:
     needs: deploy-terraform
     runs-on: ubuntu-latest
     environment: development
-    if: ${{ vars.INIT_DEPLOY == 'true' || inputs.DEPLOY_INIT_MANUALLY == 'true' }} 
+    if: ${{ vars.INIT_DEPLOY == 'true' || github.event.inputs.DEPLOY_INIT_MANUALLY == 'true' }} 
     steps:
       - uses: actions/checkout@v4
       - name: Login to Azure (Kubernetes Context Setup)
@@ -110,7 +110,7 @@ jobs:
     needs: deploy-nginx
     runs-on: ubuntu-latest
     environment: development
-    if: ${{ vars.INIT_DEPLOY == 'true' || inputs.DEPLOY_INIT_MANUALLY == 'true' }} 
+    if: ${{ vars.INIT_DEPLOY == 'true' || github.event.inputs.DEPLOY_INIT_MANUALLY == 'true' }} 
     steps:
       - uses: actions/checkout@v4
       - name: Install kubectl
