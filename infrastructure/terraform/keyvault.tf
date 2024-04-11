@@ -17,24 +17,24 @@ resource "azurerm_key_vault_access_policy" "subneterlaaseraccess" {
   object_id    = var.objectid
 
   key_permissions = [
-    "get",
+    "Get",
   ]
 
   secret_permissions = [
-    "get",
+    "Get",
   ]
 
   certificate_permissions = [
-    "get",
-    "list",
-    "delete",
-    "create",
-    "update",
-    "import",
-    "managecontacts",
-    "getissuers",
-    "listissuers",
-    "setissuers",
-    "deleteissuers"
+    "Get",
+    "List",
+    "Delete",
+    "Create",
+    "Update",
+    "Import",
+    "Managecontacts",
+    "Getissuers",
+    "Listissuers",
+    "Setissuers",
+    "Deleteissuers"
   ]
 }
