@@ -24,6 +24,10 @@ resource "azurerm_kubernetes_cluster" "main" {
     azure_rbac_enabled = true
   }
 
+  key_vault_secrets_provider {
+    secret_rotation_enabled = false
+  }
+
   tags = {
     environment = var.stage
   }
