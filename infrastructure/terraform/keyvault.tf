@@ -31,10 +31,5 @@ resource "azurerm_key_vault_access_policy" "subneterlaaseraccess" {
     "Create",
     "Update",
     "Import",
-    "Managecontacts",
-    "Getissuers",
-    "Listissuers",
-    "Setissuers",
-    "Deleteissuers"
   ]
 }
