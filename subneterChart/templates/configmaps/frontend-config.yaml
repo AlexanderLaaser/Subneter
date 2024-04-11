@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: frontend-config
 data:
-  VITE_API_SERVER_URL: "http://{{ .Values.flask.name }}-service:{{ .Values.flask.service.port }}"
+  VITE_API_SERVER_URL: "http://subneter.de"
