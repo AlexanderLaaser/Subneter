@@ -20,20 +20,8 @@ resource "azurerm_key_vault_access_policy" "access_policy_sp_aks_mi" {
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = data.azuread_service_principal_aks_mi.sp_aks_mi.object_id
 
-  key_permissions = [
-    "Get",
-  ]
-
-  secret_permissions = [
-    "Get",
-  ]
-
   certificate_permissions = [
     "Get",
     "List",
-    "Delete",
-    "Create",
-    "Update",
-    "Import",
   ]
 }
