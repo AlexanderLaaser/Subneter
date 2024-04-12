@@ -1,6 +1,6 @@
 app:
   name: subneter
-  tenantid: 
+  tenantid: f1640c14-f2cd-4607-b90a-ec03d1b46437
 flask:
   name: flask-backend
   replicaCount: 1
@@ -22,5 +22,5 @@ react:
     type: ClusterIP
     port: 80
 secretprovider:
-  managedIdentityid: 
-  keyvaultname: 
+  managedIdentityid: ca962ecb-4ff2-4e75-8d80-9741378e307c
+  keyvaultname: kv-subneterdev
