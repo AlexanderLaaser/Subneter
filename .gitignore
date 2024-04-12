@@ -187,4 +187,4 @@ cython_debug/
 
 # infrastructure
 .terraform
-.Cert
+.cert
