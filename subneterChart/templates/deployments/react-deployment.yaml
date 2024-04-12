@@ -18,9 +18,20 @@ spec:
           image: "{{ .Values.react.image.repository }}:{{ .Values.react.image.tag }}"
           ports:
             - containerPort: {{ .Values.react.containerPort }}
+          volumeMounts:
+          - name: {{ $.Values.app.name }}-secretproviderclass
+            mountPath: "/mnt/certificates"
+            readOnly: true
           env:
           - name: VITE_API_SERVER_URL
             valueFrom:
               configMapKeyRef:
                 name: frontend-config
                 key: VITE_API_SERVER_URL
+      volumes:
+      - name: {{ $.Values.app.name }}-secretproviderclass
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: {{ $.Values.app.name }}-secretproviderclass
