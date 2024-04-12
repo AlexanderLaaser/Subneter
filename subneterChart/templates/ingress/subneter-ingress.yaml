@@ -5,6 +5,10 @@ metadata:
   namespace: {{ .Values.app.name }}
 spec:
   ingressClassName: webapprouting.kubernetes.azure.com
+  tls:
+  - hosts:
+    - subnete.de
+    secretName: subneter
   rules:
   - http:
       paths:
@@ -24,3 +28,10 @@ spec:
               number: {{ .Values.flask.service.port }}  
         path: /api
         pathType: Prefix
+  volumes:
+    - name: {{ $.Values.app.name }}-secretproviderclass
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: {{ $.Values.app.name }}-secretproviderclass
