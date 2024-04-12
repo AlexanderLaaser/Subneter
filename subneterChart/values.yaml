@@ -22,5 +22,5 @@ react:
     type: ClusterIP
     port: 80
 secretprovider:
-  managedIdentityid: ca962ecb-4ff2-4e75-8d80-9741378e307c
+  managedidentityid: ca962ecb-4ff2-4e75-8d80-9741378e307c
   keyvaultname: kv-subneterdev
