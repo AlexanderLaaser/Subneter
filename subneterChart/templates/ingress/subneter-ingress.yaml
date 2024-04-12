@@ -7,7 +7,7 @@ spec:
   ingressClassName: webapprouting.kubernetes.azure.com
   tls:
   - hosts:
-    - subnete.de
+    - subneter.de
     secretName: subneter
   rules:
   - http:
