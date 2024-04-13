@@ -24,3 +24,4 @@ react:
 secretprovider:
   managedidentityid: eab559dd-0d4e-431c-8805-76fb3f7ae1b5
   keyvaultname: kv-subneterdev
+  keyVaultCertificateUri: https://kv-subneterdev.vault.azure.net/certificates/subnetercert/72e4523e07944a798c6067b9873cf959
