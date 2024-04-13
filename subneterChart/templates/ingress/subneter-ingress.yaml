@@ -10,7 +10,7 @@ spec:
   tls:
   - hosts:
     - subneter.de
-    secretName: subnetercert
+    secretName: keyvault-subneter-ingress
   rules:
   - http:
       paths:
