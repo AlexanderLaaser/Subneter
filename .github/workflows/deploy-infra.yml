@@ -108,9 +108,14 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           cluster-name: ${{ vars.AZURE_AKS_NAME }}
           resource-group: ${{ vars.AZURE_AKS_RG_NAME }}
+      
+      - name: Receive Keyvault ID
+        run: |
+          echo "KEYVAULT_ID=$(az keyvault show --name ${{vars.KEYVAULT_NAME}} --query 'id' -o tsv)" >> $GITHUB_ENV
+      
       - name: Install Nginx
         run: |
-          az aks approuting enable -g ${{vars.AZURE_AKS_RG_NAME}} -n ${{vars.AZURE_AKS_NAME}}
+          az aks approuting enable -g ${{vars.AZURE_AKS_RG_NAME}} -n ${{vars.AZURE_AKS_NAME}} --enable-kv --attach-kv ${{env.KEYVAULT_ID}}
 
   deploy-argo-cd:
     name: Install Argo CD on Kubernetes Cluster
@@ -131,6 +136,8 @@ jobs:
       - name: Install Argo CD
         run: |
           kubectl create namespace argocd || true
+          - name: Validate Argo CD Installation
           kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+      
       - name: Validate Argo CD Installation
         run: kubectl rollout status deployment/argocd-server -n argocd
