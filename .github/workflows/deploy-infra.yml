@@ -88,8 +88,8 @@ jobs:
         run: |
           az storage account update --subscription ${{env.ARM_SUBSCRIPTION_ID}} --name ${{vars.SA_BACKEND_NAME}} --public-network-access Disabled
   
-  deploy-nginx:
-    name: Install Nginx on Kubernetes Cluster
+  deploy-nginx-approuting:
+    name: Enable approuting with nginx
     needs: deploy-terraform
     runs-on: ubuntu-latest
     environment: development
@@ -117,9 +117,17 @@ jobs:
         run: |
           az aks approuting enable -g ${{vars.AZURE_AKS_RG_NAME}} -n ${{vars.AZURE_AKS_NAME}} --enable-kv --attach-kv ${{env.KEYVAULT_ID}}
 
+      - name: Receive DNS zone id
+        run: |
+          echo "Zone_ID=$(az network dns zone show -g ${{vars.AZURE_MAIN_RG_NAME}} -n ${{vars.AZURE_PUBLIC_DNS_ZONE}} --query 'id' -o tsv)" >> $GITHUB_ENV
+      
+      - name: Link DNS Zone to NGINX
+        run: |
+          az aks approuting zone add -g ${{vars.AZURE_AKS_RG_NAME}} -n ${{vars.AZURE_AKS_NAME}} --ids=${{ env.Zone_ID }} --attach-zones
+  
   deploy-argo-cd:
     name: Install Argo CD on Kubernetes Cluster
-    needs: deploy-nginx
+    needs: deploy-nginx-approuting
     runs-on: ubuntu-latest
     environment: development
     if: ${{ vars.INIT_DEPLOY == 'true' || github.event.inputs.DEPLOY_INIT_MANUALLY == 'true' }} 
