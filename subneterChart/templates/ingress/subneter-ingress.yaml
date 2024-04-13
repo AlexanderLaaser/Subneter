@@ -12,7 +12,8 @@ spec:
     - subneter.de
     secretName: keyvault-subneter-ingress
   rules:
-  - http:
+  - host: subneter.de
+    http:
       paths:
       - backend:
           service:
