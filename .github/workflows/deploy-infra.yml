@@ -52,6 +52,8 @@ jobs:
         run: |
           az storage account update --subscription ${{env.ARM_SUBSCRIPTION_ID}} --name ${{vars.SA_BACKEND_NAME}} --public-network-access Enabled
    
+        timeout-minutes: 10
+      
       - name: Terraform Init
         run: terraform init
         working-directory: ./infrastructure/terraform
