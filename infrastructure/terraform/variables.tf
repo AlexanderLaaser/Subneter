@@ -12,3 +12,10 @@ variable "clientid" {
   type = string
 }
 
+variable "objectid" {
+  type = string
+}
+
+variable "http_application_routing_enabled" {
+  default = false
+}

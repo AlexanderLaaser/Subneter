@@ -1,0 +1,27 @@
+app:
+  name: subneter
+  tenantid: f1640c14-f2cd-4607-b90a-ec03d1b46437
+flask:
+  name: flask-backend
+  replicaCount: 1
+  image:
+    repository:  acrsubneterdev.azurecr.io/flask
+    tag: latest
+  containerPort: 5000
+  service: 
+    type: ClusterIP
+    port: 80
+react:
+  name: react-frontend
+  replicaCount: 1
+  image:
+    repository: acrsubneterdev.azurecr.io/react
+    tag: latest
+  containerPort: 5173
+  service: 
+    type: ClusterIP
+    port: 80
+secretprovider:
+  managedidentityid: eab559dd-0d4e-431c-8805-76fb3f7ae1b5
+  keyvaultname: kv-subneterdev
+  keyVaultCertificateUri: https://kv-subneterdev.vault.azure.net/certificates/subnetercert/72e4523e07944a798c6067b9873cf959

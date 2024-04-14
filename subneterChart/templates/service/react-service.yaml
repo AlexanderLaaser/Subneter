@@ -2,12 +2,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.react.name }}-service
+  namespace: {{ .Values.app.name }}
 spec:
   type: {{ .Values.react.service.type }}
   ports:
     - port: {{ .Values.react.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+      targetPort: {{ .Values.react.containerPort }}
   selector:
     app: {{ .Values.react.name }}

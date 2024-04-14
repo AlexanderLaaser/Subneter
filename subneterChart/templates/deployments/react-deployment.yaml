@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.react.name }}-deployment
+  namespace: {{ .Values.app.name }}
+spec:
+  replicas: {{ .Values.react.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.react.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.react.name }}
+    spec:
+      containers:
+        - name: {{ .Values.react.name }}
+          image: "{{ .Values.react.image.repository }}:{{ .Values.react.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.react.containerPort }}
+          volumeMounts:
+          - name: {{ $.Values.app.name }}-secretproviderclass
+            mountPath: "/mnt/certificates"
+            readOnly: true
+          env:
+          - name: VITE_API_SERVER_URL
+            valueFrom:
+              configMapKeyRef:
+                name: frontend-config
+                key: VITE_API_SERVER_URL
+      volumes:
+      - name: {{ $.Values.app.name }}-secretproviderclass
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: {{ $.Values.app.name }}-secretproviderclass

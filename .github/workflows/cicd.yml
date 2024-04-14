@@ -31,13 +31,13 @@ jobs:
       
     - name: Build and Push React Frontend Docker Image
       run: |
-        docker build -t ${{ vars.AZURE_REGISTRY_SERVER }}/myfrontend:latest ./path-to-your-frontend-directory
-        docker push ${{ vars.AZURE_REGISTRY_SERVER }}/myfrontend:latest
+        docker build -t ${{ vars.AZURE_REGISTRY_SERVER }}/react:latest ${{ vars.FRONTEND_PATH }}
+        docker push ${{ vars.AZURE_REGISTRY_SERVER }}/react:latest
 
     - name: Build and Push Flask Backend Docker Image
       run: |
-        docker build -t ${{ vars.AZURE_REGISTRY_SERVER }}/mybackend:latest ./path-to-your-backend-directory
-        docker push ${{ vars.AZURE_REGISTRY_SERVER }}/mybackend:latest
+        docker build -t ${{ vars.AZURE_REGISTRY_SERVER }}/flask:latest ${{ vars.BACKEND_PATH }}
+        docker push ${{ vars.AZURE_REGISTRY_SERVER }}/flask:latest
       
       
       

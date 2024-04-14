@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.azure.com/tls-cert-keyvault-uri: {{ .Values.secretprovider.keyVaultCertificateUri }}
+  name: {{ .Values.app.name }}-ingress
+  namespace: {{ .Values.app.name }}
+spec:
+  ingressClassName: webapprouting.kubernetes.azure.com
+  tls:
+  - hosts:
+    - subneter.de
+    secretName: keyvault-subneter-ingress
+  rules:
+  - host: subneter.de
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ .Values.react.name }}-service
+            namespace: {{ .Values.app.name }}
+            port:
+              number: {{ .Values.react.service.port }}  
+        path: /
+        pathType: Prefix
+      - backend:
+          service:
+            name: {{ .Values.flask.name }}-service
+            namespace: {{ .Values.app.name }}
+            port:
+              number: {{ .Values.flask.service.port }}  
+        path: /api
+        pathType: Prefix
