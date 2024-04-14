@@ -1,23 +1,26 @@
 # subneter
+Application for calculating ip addresses in virtual networks with JSON-export functionalities
 
-Application for calculating ip addresses in Virtual Networks with export functionalities
+# technical overview
+Frontend: Vite with Next JS
+Backend: Flask API
+CI: GitHub Actions
+Infrastructure: Azure
+Deployment technology: Kubernetes with Helm
+IaC: Terraform
+GitOps/CD: ArgoCD
 
-# environmental variables in .env.local file
+# infrastructure architecture
 
+
+# environmental variables
 VITE_API_SERVER_URL
 
-# Solved Next JS Problems
-
+# Solved Problems
 1. State handling in React with setState und useEffect
 2. State handling in multi component architecture with useContext API and Zustand (a state managing library)
 3. Implementing persistant state management
+4. Building declarative CICD Chain with ArgoCD
 
-# Install Python in wsl machine
-
-sudo apt install python3-venv
-python3 -m venv venv
-source venv/bin/activate
-pip install Flask
-
-# External libraries
-zustand (https://github.com/pmndrs/zustand?tab=readme-ov-file) = state management library
+# External libraries used
+zustand -> state management library
