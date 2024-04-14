@@ -16,8 +16,14 @@ resource "azurerm_key_vault_access_policy" "access_policy_sp_aks_mi" {
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = "eab559dd-0d4e-431c-8805-76fb3f7ae1b5"
 
+  secret_permissions = [
+    "Get",
+    "List",
+  ]
+
   certificate_permissions = [
     "Get",
     "List",
   ]
 }
+
