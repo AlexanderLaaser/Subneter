@@ -5,8 +5,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'montserrat': ['Montserrat'],
-    },},
+        'montserrat': ['Montserrat'], 'archivo-black': ['Archivo Black']
+      },
+    },
   },
   plugins: [],
 }
