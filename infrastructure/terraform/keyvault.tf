@@ -19,7 +19,7 @@ resource "azurerm_key_vault" "subnetervault" {
 resource "azurerm_key_vault_access_policy" "access_policy_sp_aks_mi" {
   key_vault_id = azurerm_key_vault.subnetervault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = data.azurerm_user_assigned_identity.aks_mi.object_id
+  object_id    = data.azurerm_user_assigned_identity.aks_mi.principal_id
 
   secret_permissions = [
     "Get",
