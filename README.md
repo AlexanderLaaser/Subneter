@@ -1,7 +1,7 @@
-# subneter
+# Subneter
 Application for calculating ip addresses in virtual networks with JSON-export functionalities
 
-# technical overview
+# Technical overview
 Frontend: Vite with Next JS
 Backend: Flask API
 CI: GitHub Actions
@@ -10,10 +10,11 @@ Deployment technology: Kubernetes with Helm
 IaC: Terraform
 GitOps/CD: ArgoCD
 
-# infrastructure architecture
+# Infrastructure architecture
+![Subneter Architecture (1)](https://github.com/AlexanderLaaser/Subneter/assets/45990752/886ae516-89df-4f30-98c0-00728d621f33)
 
 
-# environmental variables
+# Environmental variables
 VITE_API_SERVER_URL
 
 # Solved Problems
