@@ -1,36 +1,36 @@
 import Logo from "../styles/logo.png";
+import "../styles/index.css";
 
 function Header() {
   return (
-    <nav className="flex p-6">
-      <img className="h-14" src={Logo} alt="Your Logo" />
-      <div className="font-archivo-black flex items-center text-4xl text-white	pl-8">
-        subneter
+    <nav className="flex justify-between items-center p-6 font-montserrat ">
+      <div className="flex items-center">
+        <img className="h-14 w-14" src={Logo} alt="Your Logo" />
+          <div className="flex items-center text-3xl font-sky-800 pl-6 text-sky-800	">
+          subneter
+          </div>
       </div>
-      <div className="flex">
-        <ul
-        className="list-style-none ms-auto flex flex-row ps-0 md:ps-4"
-        data-twe-navbar-nav-ref>
-        <li className="px-2" data-twe-nav-item-ref>
-          <button
+
+      <div className="flex text-black space-x-10 ">
+        <button className="mx-2 hover:text-orange-600">Home</button>
+        <button className="mx-2 hover:text-orange-600">Calculator</button>
+        <button className="mx-2 hover:text-orange-600">How?</button>
+      </div>
+      
+      <div className="flex space-x-6">
+          <button 
               type="button"
-              data-twe-ripple-init
-              data-twe-ripple-color="light"
-              className="me-3 inline-block rounded px-2 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-primary hover:text-primary-600 focus:text-primary-600 focus:outline-none focus:ring-0 active:text-primary-700 dark:text-secondary-600 dark:hover:text-secondary-500 dark:focus:text-secondary-500 dark:active:text-secondary-500">
+              className=" text-sky-800 font-bold font-montserrat hover:text-orange-600">
               Login
             </button>
             <button
               type="button"
-              data-twe-ripple-init
-              data-twe-ripple-color="light"
-              className="me-3 inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 motion-reduce:transition-none dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong">
-              Sign up for free
+              className="bg-sky-800 text-white rounded-lg hover:bg-orange-600 w-24">
+              Sign up
             </button>
             <button
               type="button"
-              data-twe-ripple-init
-              data-twe-ripple-color="light"
-              className="me-3 inline-block rounded bg-neutral-800 px-3 py-2.5 text-xs font-medium uppercase leading-normal text-neutral-50 shadow-dark-3 transition duration-150 ease-in-out hover:bg-neutral-700 hover:shadow-dark-2 focus:bg-neutral-700 focus:shadow-dark-2 focus:outline-none focus:ring-0 active:bg-neutral-900 active:shadow-dark-2 motion-reduce:transition-none dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong">
+              className="me-3 inline-block rounded-lg bg-neutral-800 px-3 py-2.5 text-xs font-medium uppercase leading-normal text-neutral-50 shadow-dark-3 transition duration-150 ease-in-out hover:bg-orange-600 focus:bg-neutral-700 focus:shadow-dark-2 focus:outline-none focus:ring-0 active:bg-neutral-900 active:shadow-dark-2 motion-reduce:transition-none dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong">
               <span className="[&>svg]:w-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -41,8 +41,6 @@ function Header() {
                 </svg>
               </span>
             </button>
-        </li>
-        </ul>
       </div>
     </nav>
   );

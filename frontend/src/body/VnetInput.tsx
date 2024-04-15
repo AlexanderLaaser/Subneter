@@ -72,8 +72,10 @@ function IpInput() {
     <>
       <div className="flex w-full items-center justify-center font-montserrat">
         <div className="pt-14">
+          <div className="text-lg text-sky-800 font-bold">Vnet Range</div>
           <div className="flex items-center justify-center">
-            <div className="mr-2">
+
+            <div className="mr-4">
               <input
                 id="ip_adress"
                 type="text"
@@ -104,6 +106,14 @@ function IpInput() {
 
               <div className="text-blue-700 font-bold text-sm pt-2">
                 {addressCount}
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <div className=" flex pl-4 content-center items-center mt-4 font-montserrat">
+                <button
+                  className="inline-flex items-center justify-center w-32 h-10 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600">
+                  <span className="text-l">Add Range</span>
+                </button>
               </div>
             </div>
           </div>
