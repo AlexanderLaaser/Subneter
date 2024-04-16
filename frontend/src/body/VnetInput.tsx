@@ -6,6 +6,7 @@ import VnetIpStartStore from "../store/VnetInputStore";
 function IpInput() {
   const [isValid, setIsValid] = useState(true);
   const [error, setError] = useState("");
+  const [vnetSizeError, setVnetSizeError] = useState(true);
   const [addressSpace, setAddressSpace] = useState("10.0.0.0 - 10.0.0.255");
   const [addressCount, setAddressCount] = useState("256");
 
@@ -40,9 +41,15 @@ function IpInput() {
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const suffix = parseInt((e.target as HTMLSelectElement).value);
-    setVnetSuffix(suffix);
     const addressCount = await getIpaddressesCount(suffix);
+    setVnetSuffix(suffix);
     setAddressCount(addressCount);
+  };
+
+  // function that checks if the entered vnet size is too small for already used subnet sizes
+  const checkNewVnetSize = (suffix: number) => {
+    //man könnte mit der neuebn Suffix einen getnextSubnetFunction callen, wenn die einen 500er wirft, dann fehlermeldung -> State mit vnetSizeError (Als Var Im Store), der wird dann true
+    // Beim löschen oder verändern, wird dann wieder diese Function ausgeführt, und wenn kein 500er zurückkommt, dann vnetSizeError auf False
   };
 
   useEffect(() => {

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import SizeSelect from "./SizeSelect";
+import DeleteImage from "../styles/delete.png";
+import { MdDelete } from "react-icons/md";
 
 interface InterfaceTableEntryProps {
   id: number;
@@ -82,7 +84,9 @@ function TableEntry({
             className="inline-flex items-center justify-center w-6 h-6 mr-2 text-slate-50 transition-colors duration-150 bg-red-700 rounded-lg focus:shadow-outline hover:bg-orange-600"
             onClick={deleteTableEntry}
           >
-            <span className="text-2xl h-10">-</span>
+            <span className="h-4">
+              <MdDelete />
+            </span>
           </button>
         </div>
       </div>
