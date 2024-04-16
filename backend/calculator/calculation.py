@@ -16,9 +16,6 @@ def count_ipaddresses(suffix):
 
 def generate_next_subnet(ip_range, new_prefix_length, last_ip_ranges_used):
     network = ipaddress.ip_network(ip_range, strict=True)
-    
-    if new_prefix_length <= network.prefixlen:
-        raise ValueError("Desired subnet prefix length is too big or equal to the given IP range prefix length.")
 
     allocated_subnets = [ipaddress.ip_network(subnet, strict=True) for subnet in last_ip_ranges_used]
 
