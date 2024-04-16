@@ -2,12 +2,12 @@ import ipaddress
 
 #Calculating first ip
 def get_start_iP(ipaddress_cidr):
-    network = ipaddress.ip_network(ipaddress_cidr, strict=False)
+    network = ipaddress.ip_network(ipaddress_cidr, strict=True)
     return str(network.network_address)
 
 #Calculating last ip
 def get_end_ip(ipaddress_cidr):
-    network = ipaddress.ip_network(ipaddress_cidr, strict=False)
+    network = ipaddress.ip_network(ipaddress_cidr, strict=True)
     return str(network.broadcast_address)
 
 # suffix needs to be a string
@@ -15,13 +15,12 @@ def count_ipaddresses(suffix):
     return 2 ** (32 - int(suffix))
 
 def generate_next_subnet(ip_range, new_prefix_length, last_ip_ranges_used):
-    network = ipaddress.ip_network(ip_range, strict=False)
+    network = ipaddress.ip_network(ip_range, strict=True)
     
     if new_prefix_length <= network.prefixlen:
         raise ValueError("Desired subnet prefix length is too big or equal to the given IP range prefix length.")
 
-    # Konvertieren der letzten genutzten IP-Ranges in ipaddress.IPv4Network Objekte
-    allocated_subnets = [ipaddress.ip_network(subnet, strict=False) for subnet in last_ip_ranges_used]
+    allocated_subnets = [ipaddress.ip_network(subnet, strict=True) for subnet in last_ip_ranges_used]
 
     def allocate_next_subnet():
         for potential_subnet in network.subnets(new_prefix=new_prefix_length):
@@ -31,7 +30,6 @@ def generate_next_subnet(ip_range, new_prefix_length, last_ip_ranges_used):
         return None
 
     next_subnet = allocate_next_subnet()
-    #next_subnet_start = get_start_iP()
     return str(next_subnet) if next_subnet else None
 
 # Beispielaufruf der Funktion

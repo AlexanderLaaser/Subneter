@@ -1,5 +1,18 @@
 import axios from "axios";
 
+export const getIpaddressesCount = async (suffix: number) => {
+  try {
+    const response = await axios.get(
+      `${
+        import.meta.env.VITE_API_SERVER_URL
+      }/api/count_ipaddresses?subnet_mask=${suffix}`
+    );
+    return response.data.count.toString();
+  } catch (error) {
+    console.error("Fehler beim API-Call", error);
+  }
+};
+
 export const getAddressSpace = async (
   ipaddress_cidr: string,
   isValid?: boolean
@@ -11,25 +24,25 @@ export const getAddressSpace = async (
           import.meta.env.VITE_API_SERVER_URL
         }/api/address_space?ipaddress_cidr=${ipaddress_cidr}`
       );
-      return response.data;
+
+      if ((response.status = 200)) {
+        return response.data;
+      } else {
+        throw new Error("Failed to fetch data!");
+      }
     } catch (error) {
-      console.error("Fehler beim API-Call", error);
+      if (axios.isAxiosError(error) && error.response) {
+        if (error.response.status === 400) {
+          throw new Error("Inputs invalid. Please check again!");
+        } else if (error.response.status === 500) {
+          throw new Error("Invalid CICR Block!");
+        }
+      } else {
+        throw new Error("Network error!");
+      }
     }
   } else {
     return "";
-  }
-};
-
-export const getIpaddressesCount = async (suffix: number) => {
-  try {
-    const response = await axios.get(
-      `${
-        import.meta.env.VITE_API_SERVER_URL
-      }/api/count_ipaddresses?subnet_mask=${suffix}`
-    );
-    return response.data.count.toString();
-  } catch (error) {
-    console.error("Fehler beim API-Call", error);
   }
 };
 

@@ -5,6 +5,7 @@ import VnetIpStartStore from "../store/VnetInputStore";
 
 function IpInput() {
   const [isValid, setIsValid] = useState(true);
+  const [error, setError] = useState("");
   const [addressSpace, setAddressSpace] = useState("10.0.0.0 - 10.0.0.255");
   const [addressCount, setAddressCount] = useState("256");
 
@@ -51,15 +52,14 @@ function IpInput() {
           vnet.vnetIpStart + "/" + vnet.vnetSuffix,
           isValid
         );
+        setError("");
         setAddressSpace(addressSpace);
         setVnetIpStart(vnet.vnetIpStart);
         setVnetSuffix(vnet.vnetSuffix);
-        // Das funktioniert noch nicht so ganz, da die CIDR Range ausgegeben werden muss, nicht die gesamte Range
-        console.log("vnetipaddressCidr");
-        console.log(vnet.vnetSuffix);
-        console.log(vnet.vnetIpStart);
       } catch (error) {
-        console.error("Failed to fetch address space:", error);
+        if (error instanceof Error) {
+          setError(error.message);
+        }
       }
     };
 
@@ -74,7 +74,6 @@ function IpInput() {
         <div className="pt-14">
           <div className="text-lg text-sky-800 font-bold mb-4">Vnet Range</div>
           <div className="flex items-center justify-center">
-
             <div className="mr-4">
               <input
                 id="ip_adress"
@@ -84,13 +83,17 @@ function IpInput() {
                 className="text-sm sm:text-base relative border rounded placeholder-gray-400 focus:border-orange-600 focus:outline-none pl-4 pr-20 border-zinc-950 h-10"
                 onChange={handleIpInput}
               ></input>
-              {isValid ? (
-                <div className="text-sky-800 font-bold text-m pt-2">
-                  {addressSpace}
-                </div>
-              ) : (
+              {isValid === false ? (
                 <div className="text-red-500 font-bold text-m pt-2">
                   Invalid IP Address
+                </div>
+              ) : error !== "" ? (
+                <div className="text-red-500 font-bold text-m pt-2">
+                  {error}
+                </div>
+              ) : (
+                <div className="text-sky-800 font-bold text-m pt-2">
+                  {addressSpace}
                 </div>
               )}
             </div>
@@ -110,8 +113,7 @@ function IpInput() {
             </div>
             <div className="flex">
               <div className="flex pl-4 mb-8 font-montserrat">
-                <button
-                  className="inline-flex items-center justify-center w-32 h-10 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600">
+                <button className="inline-flex items-center justify-center w-32 h-10 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600">
                   <span className="text-l">Add Range</span>
                 </button>
               </div>
