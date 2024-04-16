@@ -23,9 +23,9 @@ function Tab() {
             >
               <li className="me-2" role="presentation">
                 <button
-                  className={`font-extrabold inline-block p-4 border-b-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
+                  className={`font-extrabold text-lg inline-block p-4 border-b-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
                     activeTab === "calculator-tab"
-                      ? "text-blue-600 border-blue-600"
+                      ? "text-sky-800 border-sky-800"
                       : ""
                   }`}
                   id="calculator-tab"
@@ -36,14 +36,14 @@ function Tab() {
                   aria-selected={activeTab === "calculator-tab"}
                   onClick={() => handleTabClick("calculator-tab")}
                 >
-                  Subnet Calculator
+                  Subnets
                 </button>
               </li>
               <li className="me-2" role="presentation">
                 <button
-                  className={`font-extrabold inline-block p-4 border-b-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
+                  className={`font-extrabold text-lg inline-block p-4 border-b-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
                     activeTab === "json-tab"
-                      ? "text-blue-600 border-blue-600"
+                      ? "text-sky-800 border-sky-800"
                       : ""
                   }`}
                   id="json-tab"

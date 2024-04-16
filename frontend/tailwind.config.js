@@ -5,8 +5,10 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'montserrat': ['Montserrat'],
-    },},
+        montserrat: ['Montserrat', 'sans-serif'],
+        poppins: ['Poppins', 'poppins'],
+      }
+    },
   },
   plugins: [],
 }

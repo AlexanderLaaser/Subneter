@@ -72,8 +72,10 @@ function IpInput() {
     <>
       <div className="flex w-full items-center justify-center font-montserrat">
         <div className="pt-14">
+          <div className="text-lg text-sky-800 font-bold mb-4">Vnet Range</div>
           <div className="flex items-center justify-center">
-            <div className="mr-2">
+
+            <div className="mr-4">
               <input
                 id="ip_adress"
                 type="text"
@@ -83,11 +85,11 @@ function IpInput() {
                 onChange={handleIpInput}
               ></input>
               {isValid ? (
-                <div className="text-blue-700 font-bold text-sm pt-2">
+                <div className="text-sky-800 font-bold text-m pt-2">
                   {addressSpace}
                 </div>
               ) : (
-                <div className="text-red-500 font-bold text-sm pt-2">
+                <div className="text-red-500 font-bold text-m pt-2">
                   Invalid IP Address
                 </div>
               )}
@@ -97,13 +99,21 @@ function IpInput() {
                 elementID={"ip_size_input"}
                 defaultValue={24}
                 tailWindConfig={
-                  "sm:text-base outline-none border border-zinc-950 text-sm rounded focus:border-orange-600 pr-16 pl-4 h-10"
+                  "sm:text-base outline-none border border-zinc-950 text-m rounded focus:border-orange-600 pr-16 pl-4 h-10"
                 }
                 onChangeFunction={handleSuffixChange}
               ></SizeSelect>
 
-              <div className="text-blue-700 font-bold text-sm pt-2">
+              <div className="text-sky-800 font-bold text-m pt-2">
                 {addressCount}
+              </div>
+            </div>
+            <div className="flex">
+              <div className="flex pl-4 mb-8 font-montserrat">
+                <button
+                  className="inline-flex items-center justify-center w-32 h-10 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600">
+                  <span className="text-l">Add Range</span>
+                </button>
               </div>
             </div>
           </div>

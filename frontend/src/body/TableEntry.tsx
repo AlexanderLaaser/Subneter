@@ -46,7 +46,7 @@ function TableEntry({
   return (
     <>
       <div className="flex justify-center content-center w-full">
-        <div className="flex items-center font-montserrat w-full max-w-screen-md bg-white mt-3 rounded-lg h-12 ml-10">
+        <div className="flex items-center font-montserrat w-full max-w-screen-md bg-white border border-sky-800 mt-3 rounded-lg h-12 ml-10">
           <div className="flex pl-4 flex-initial w-5/12">
             <input
               value={subnetName}
@@ -65,7 +65,7 @@ function TableEntry({
               onChangeFunction={handleSizeChange}
             ></SizeSelect>
           </div>
-          <div className="flex pl-6 flex-initial w-28 text-blue-700 font-bold">
+          <div className="flex pl-6 flex-initial w-28 text-sky-800 font-bold">
             {ips}
           </div>
           {error ? (

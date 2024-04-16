@@ -132,7 +132,7 @@ function AddButton() {
       <div className="flex justify-center">
         <div className=" flex pl-2 content-center items-center mt-4 font-montserrat">
           <button
-            className="inline-flex items-center justify-center w-32 h-10 mr-2 text-slate-50 transition-colors duration-150 bg-blue-700 rounded-lg focus:shadow-outline hover:bg-orange-600"
+            className="inline-flex items-center justify-center w-32 h-10 mr-2 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600"
             onClick={handleAddClick}
           >
             <span className="text-l">Add Subnet</span>
