@@ -14,13 +14,11 @@ def get_end_ip(ipaddress_cidr):
 def count_ipaddresses(suffix):
     return 2 ** (32 - int(suffix))
 
-def generate_next_subnet(ip_range, new_prefix_length, last_ip_ranges_used):
-    network = ipaddress.ip_network(ip_range, strict=True)
-
-    allocated_subnets = [ipaddress.ip_network(subnet, strict=True) for subnet in last_ip_ranges_used]
-
+def generate_next_subnet(vnet_range, new_prefix_length, ip_ranges_used):
+    vnet_network_object = ipaddress.ip_network(vnet_range, strict=True)
+    allocated_subnets = [ipaddress.ip_network(subnet, strict=True) for subnet in ip_ranges_used]
     def allocate_next_subnet():
-        for potential_subnet in network.subnets(new_prefix=new_prefix_length):
+        for potential_subnet in vnet_network_object.subnets(new_prefix=new_prefix_length):
             if not any(potential_subnet.overlaps(allocated_subnet) for allocated_subnet in allocated_subnets):
                 allocated_subnets.append(potential_subnet)
                 return potential_subnet
@@ -29,15 +27,12 @@ def generate_next_subnet(ip_range, new_prefix_length, last_ip_ranges_used):
     next_subnet = allocate_next_subnet()
     return str(next_subnet) if next_subnet else None
 
-# Beispielaufruf der Funktion
-ip_range = "192.168.1.0/24"
-new_prefix_length = 25  # Neue Subnetzgröße als Präfixlänge
-last_ip_ranges_used = ["192.168.1.0/25"]  # Beispiel für bereits genutzte Bereiche
+def compare_vnet_range_with_subnet_ranges_used(vnet_range, ip_ranges_used ): 
+    vnet_network_object = ipaddress.ip_network(vnet_range, strict=True)
+    total_vnet_addresses = vnet_network_object.num_addresses
+    total_subnet_addresses = sum(ipaddress.ip_network(subnet).num_addresses for subnet in ip_ranges_used)
+    return total_vnet_addresses >= total_subnet_addresses
 
-next_subnet = generate_next_subnet(ip_range, new_prefix_length, last_ip_ranges_used)
-print("Next available subnet:", next_subnet)
-
-#Testing 
-print(get_start_iP("127.0.0.0/25"))
-print(get_end_ip("127.0.0.0/25"))
-print(count_ipaddresses(20))
+vnet_cidr = "10.0.0.0/24"
+last_ip_ranges_used = ["10.0.0.0/24","10.0.0.128/25"]
+print(compare_vnet_range_with_subnet_ranges_used(vnet_cidr,last_ip_ranges_used))

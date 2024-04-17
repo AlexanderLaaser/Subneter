@@ -129,6 +129,14 @@ function AddButton() {
   return (
     <>
       {renderTableEntries()}{" "}
+      {vnet.suffixIsValid === false ? (
+        <div className="flex justify-center mt-2 h-8">
+          <div className="flex justify-center text-white bg-red-500 font-montserrat w-full max-w-screen-md rounded-lg pt-1">
+            Vnet Suffix is too small for given subnets. Pls exchange subnet
+            sizes!
+          </div>
+        </div>
+      ) : null}
       <div className="flex justify-center">
         <div className=" flex pl-2 content-center items-center mt-4 font-montserrat">
           <button

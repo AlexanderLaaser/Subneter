@@ -47,17 +47,17 @@ export const getAddressSpace = async (
 };
 
 export const generateNextSubnet = async (
-  ipaddress_cidr: string,
+  vnet_cidr: string,
   new_suffix_length: number,
-  last_ip_ranges_used: string[]
+  ip_ranges_used: string[]
 ) => {
   try {
     const response = await axios.post(
       `${import.meta.env.VITE_API_SERVER_URL}/api/generate_next_subnet`,
       {
-        ipaddress_cidr,
+        vnet_cidr,
         new_suffix_length,
-        last_ip_ranges_used,
+        ip_ranges_used,
       }
     );
 
@@ -72,6 +72,39 @@ export const generateNextSubnet = async (
         throw new Error("Inputs invalid. Please check again!");
       } else if (error.response.status === 500) {
         throw new Error("Size doesn't match vnet range!");
+      }
+    } else {
+      throw new Error("Network error!");
+    }
+  }
+};
+
+export const compareVnetRangeWithSubnetRangeeUsed = async (
+  vnet_cidr: string,
+  ip_ranges_used: string[]
+) => {
+  try {
+    const response = await axios.post(
+      `${
+        import.meta.env.VITE_API_SERVER_URL
+      }/api/compare_vnet_range_with_subnet_ranges_used`,
+      {
+        vnet_cidr,
+        ip_ranges_used,
+      }
+    );
+
+    if ((response.status = 200)) {
+      return response.data.result;
+    } else {
+      throw new Error("Failed to fetch data!");
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      if (error.response.status === 400) {
+        throw new Error("Inputs invalid. Please check again!");
+      } else if (error.response.status === 500) {
+        throw new Error("Something went wrong! Please try again");
       }
     } else {
       throw new Error("Network error!");
