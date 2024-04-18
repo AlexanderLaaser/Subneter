@@ -1,8 +1,11 @@
+import VnetStore from "../store/VnetInputStore";
+
 interface SizeSelectProps {
   elementID: string;
   defaultValue: number;
   tailWindConfig: string;
   onChangeFunction: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  type: string;
 }
 
 function SizeSelect({
@@ -10,9 +13,20 @@ function SizeSelect({
   defaultValue,
   tailWindConfig,
   onChangeFunction,
+  type,
 }: SizeSelectProps) {
+  const { vnet } = VnetStore((state) => ({
+    vnet: state.vnet,
+  }));
+
   const suffixOptions = [];
-  for (let i = 14; i <= 32; i++) {
+  var maxSuffixValue = vnet.vnetSuffix;
+
+  if (type === "vnet") {
+    maxSuffixValue = 14;
+  }
+
+  for (let i = maxSuffixValue; i <= 32; i++) {
     suffixOptions.push(
       <option key={i} value={i}>
         {i}

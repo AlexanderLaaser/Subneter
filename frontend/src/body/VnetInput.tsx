@@ -19,7 +19,7 @@ function IpInput() {
     return validateIP(newip);
   };
 
-  // store function for VnetIpStartStore
+  // store function for UsedIpAddressCidrStore
   const { usedIpaddressesCidr } = UsedIpAddressCidrStore((state) => ({
     usedIpaddressesCidr: state.usedIpaddressesCidr,
   }));
@@ -120,6 +120,7 @@ function IpInput() {
                 tailWindConfig={
                   "sm:text-base outline-none border border-zinc-950 text-m rounded focus:border-orange-600 pr-16 pl-4 h-10"
                 }
+                type="vnet"
                 onChangeFunction={handleSuffixChange}
               ></SizeSelect>
 

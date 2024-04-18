@@ -94,18 +94,9 @@ function AddButton() {
     }
   };
 
-  // not used at the moment -> Meant for updating exisiting ip ranges when clicked on delete
-  // const refreshSizeOfExistingEntries = async () => {
-  //   tableEntriesStore.forEach((entry) => {
-  //     updateIps(entry.id, entry.size);
-  //   });
-  // };
-
   const deleteTableEntry = (id: number) => {
     deleteTableEntryStore(id);
     removeIpAddressCidrStore(id);
-    //console.log("ausgeführt!");
-    //refreshSizeOfExistingEntries();
   };
 
   // Rendering TableEntries depending on amount of value of Table Entries
