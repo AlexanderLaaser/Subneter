@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import SizeSelect from "./SizeSelect";
 import { MdDelete } from "react-icons/md";
-import { compareVnetRangeWithSubnetRangeeUsed } from "../api/calls";
-import UsedIpAddressCidrStore from "../store/UsedSubnetIpAddressCidrStore";
+import { compareVnetRangeWithSubnetRangeUsed } from "../api/calls";
 import VnetStore from "../store/VnetInputStore";
+import useTableEntriesStore from "../store/TabelEntriesStore";
 
 interface InterfaceTableEntryProps {
   id: number;
@@ -27,6 +27,11 @@ function TableEntry({
   updateIps,
   deleteTableEntry,
 }: InterfaceTableEntryProps) {
+  const { tableEntriesStore } = useTableEntriesStore((state) => ({
+    updateTableEntryStore: state.updateTableEntry,
+    tableEntriesStore: state.tableEntries,
+  }));
+
   const [error, setError] = useState("");
   const [selectedSize, setSelectedSize] = useState(size);
 
@@ -36,23 +41,24 @@ function TableEntry({
     updateSubnetName(id, event.target.value);
   };
 
+  const usedRanges = tableEntriesStore.map((entry) => {
+    const firstIp = entry.range.split(" - ")[0];
+    return `${firstIp}/${entry.size}`;
+  });
+
   //store functions
   const { setSuffixIsValid, vnet } = VnetStore((state) => ({
     vnet: state.vnet,
     setSuffixIsValid: state.setSuffixIsValid,
   }));
 
-  const { usedIpaddressesCidr } = UsedIpAddressCidrStore((state) => ({
-    usedIpaddressesCidr: state.usedIpaddressesCidr,
-  }));
-
   const handleSizeChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     try {
+      setSelectedSize(parseInt(event.target.value));
       await updateIps(id, parseInt(event.target.value));
       setError("");
-      setSelectedSize(parseInt(event.target.value));
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
@@ -64,9 +70,9 @@ function TableEntry({
     const checkSuffixisValid = async () => {
       try {
         setSuffixIsValid(
-          await compareVnetRangeWithSubnetRangeeUsed(
+          await compareVnetRangeWithSubnetRangeUsed(
             vnet.vnetIpStart + "/" + vnet.vnetSuffix,
-            usedIpaddressesCidr
+            usedRanges
           )
         );
       } catch (error) {
@@ -113,7 +119,7 @@ function TableEntry({
             <div className="flex pl-6 flex-initial w-80 ">{range}</div>
           )}
         </div>
-        {usedIpaddressesCidr.length > 1 ? (
+        {usedRanges.length > 1 ? (
           <div className=" flex pl-2 items-center justify-center mt-3">
             <button
               className="inline-flex items-center justify-center w-6 h-6 mr-2 text-slate-50 transition-colors duration-150 bg-red-500 rounded-lg focus:shadow-outline hover:bg-orange-600"

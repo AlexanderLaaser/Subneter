@@ -48,9 +48,11 @@ const useTableEntriesStore = create<TableEntriesStore>()(
         };
       }),
 
-    deleteTableEntry: (index: number) =>
+    deleteTableEntry: (idToRemove: number) =>
       set((state) => ({
-        tableEntries: state.tableEntries.filter((_, i) => i !== index),
+        tableEntries: state.tableEntries.filter(
+          (entry) => entry.id !== idToRemove
+        ),
       })),
 
     getTableEntry: (id: number) => {

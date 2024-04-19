@@ -79,7 +79,7 @@ export const generateNextSubnet = async (
   }
 };
 
-export const compareVnetRangeWithSubnetRangeeUsed = async (
+export const compareVnetRangeWithSubnetRangeUsed = async (
   vnet_cidr: string,
   ip_ranges_used: string[]
 ) => {

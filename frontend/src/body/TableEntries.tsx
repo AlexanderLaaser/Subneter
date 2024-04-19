@@ -1,6 +1,5 @@
 import TableEntry from "./TableEntry";
 import { generateNextSubnet, getIpaddressesCount } from "../api/calls";
-import UsedSubnetIpAddressCidrStore from "../store/UsedSubnetIpAddressCidrStore";
 import VnetIpStartStore from "../store/VnetInputStore";
 import useTableEntriesStore from "../store/TabelEntriesStore";
 import { useEffect } from "react";
@@ -9,23 +8,11 @@ function AddButton() {
   useEffect(() => {
     console.log("TableEntries:");
     console.log(tableEntriesStore);
-    console.log("UsedRanges");
-    console.log(usedIpaddressesCidr);
   });
 
   // Store functions
   const { vnet } = VnetIpStartStore((state) => ({
     vnet: state.vnet,
-  }));
-
-  const {
-    addUsedIpAddressCidrStore,
-    usedIpaddressesCidr,
-    removeIpAddressCidrStore,
-  } = UsedSubnetIpAddressCidrStore((state) => ({
-    addUsedIpAddressCidrStore: state.addIpAddressCidr,
-    removeIpAddressCidrStore: state.removeIpAddressCidr,
-    usedIpaddressesCidr: state.usedIpaddressesCidr,
   }));
 
   const {
@@ -41,12 +28,19 @@ function AddButton() {
     tableEntriesStore: state.tableEntries,
   }));
 
+  const usedRanges = tableEntriesStore.map((entry) => {
+    const firstIp = entry.range.split(" - ")[0];
+    return `${firstIp}/${entry.size}`;
+  });
+
+  const usedRangesWithoutOwnRange = (id: number) =>
+    usedRanges.filter((_ele, ind) => ind !== id);
+
   const handleAddClick = async () => {
-    const size = 26;
+    const size = 32;
     const newTableEntry = await createNewTableEntry(size);
 
     addTableEntryStore(newTableEntry);
-    addUsedIpAddressCidrStore(newTableEntry.range.split(" - ")[0] + "/" + size);
   };
 
   const createNewTableEntry = async (size: number) => {
@@ -54,7 +48,7 @@ function AddButton() {
     const range = await generateNextSubnet(
       vnet.vnetIpStart + "/" + vnet.vnetSuffix,
       size,
-      usedIpaddressesCidr
+      usedRanges
     );
 
     const newTableEntry = {
@@ -76,19 +70,14 @@ function AddButton() {
     try {
       const ips = await getIpaddressesCount(size);
 
-      const usedIpAddressesWithoutOwnRange = usedIpaddressesCidr.filter(
-        (_ele, ind) => ind !== id
-      );
-
       // Calling backend api to receive ip range for given cidr
       const range = await generateNextSubnet(
         vnet.vnetIpStart + "/" + vnet.vnetSuffix,
         size,
-        usedIpAddressesWithoutOwnRange
+        usedRangesWithoutOwnRange(id)
       );
 
       updateTableEntryStore({ id, size, ips, range });
-      addUsedIpAddressCidrStore(range.split(" - ")[0] + "/" + size, id);
     } catch (error) {
       throw error;
     }
@@ -96,7 +85,6 @@ function AddButton() {
 
   const deleteTableEntry = (id: number) => {
     deleteTableEntryStore(id);
-    removeIpAddressCidrStore(id);
   };
 
   // Rendering TableEntries depending on amount of value of Table Entries

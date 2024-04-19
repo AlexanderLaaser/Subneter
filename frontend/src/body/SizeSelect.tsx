@@ -20,13 +20,13 @@ function SizeSelect({
   }));
 
   const suffixOptions = [];
-  var maxSuffixValue = vnet.vnetSuffix;
+  // var maxSuffixValue = vnet.vnetSuffix;
 
-  if (type === "vnet") {
-    maxSuffixValue = 14;
-  }
+  // if (type === "vnet") {
+  //   maxSuffixValue = 14;
+  // }
 
-  for (let i = maxSuffixValue; i <= 32; i++) {
+  for (let i = 14; i <= 32; i++) {
     suffixOptions.push(
       <option key={i} value={i}>
         {i}

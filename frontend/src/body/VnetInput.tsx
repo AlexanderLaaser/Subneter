@@ -2,13 +2,28 @@ import { useEffect, useState } from "react";
 import {
   getIpaddressesCount,
   getAddressSpace,
-  compareVnetRangeWithSubnetRangeeUsed,
+  compareVnetRangeWithSubnetRangeUsed,
 } from "../api/calls";
 import SizeSelect from "./SizeSelect";
 import VnetStore from "../store/VnetInputStore";
-import UsedIpAddressCidrStore from "../store/UsedSubnetIpAddressCidrStore";
+import useTableEntriesStore from "../store/TabelEntriesStore";
 
 function IpInput() {
+  // store function for VnetIpStartStore
+  const { setVnetSuffix, setVnetIpStart, setSuffixIsValid, vnet } = VnetStore(
+    (state) => ({
+      vnet: state.vnet,
+      setVnetSuffix: state.setVnetSuffix,
+      setVnetIpStart: state.setVnetIpStart,
+      setSuffixIsValid: state.setSuffixIsValid,
+    })
+  );
+
+  const { tableEntriesStore } = useTableEntriesStore((state) => ({
+    updateTableEntryStore: state.updateTableEntry,
+    tableEntriesStore: state.tableEntries,
+  }));
+
   const [isValid, setIsValid] = useState(true);
   const [error, setError] = useState("");
   const [addressSpace, setAddressSpace] = useState("10.0.0.0 - 10.0.0.255");
@@ -19,20 +34,10 @@ function IpInput() {
     return validateIP(newip);
   };
 
-  // store function for UsedIpAddressCidrStore
-  const { usedIpaddressesCidr } = UsedIpAddressCidrStore((state) => ({
-    usedIpaddressesCidr: state.usedIpaddressesCidr,
-  }));
-
-  // store function for VnetIpStartStore
-  const { setVnetSuffix, setVnetIpStart, setSuffixIsValid, vnet } = VnetStore(
-    (state) => ({
-      vnet: state.vnet,
-      setVnetSuffix: state.setVnetSuffix,
-      setVnetIpStart: state.setVnetIpStart,
-      setSuffixIsValid: state.setSuffixIsValid,
-    })
-  );
+  const usedRanges = tableEntriesStore.map((entry) => {
+    const firstIp = entry.range.split(" - ")[0];
+    return `${firstIp}/${entry.size}`;
+  });
 
   //function for validating the entered ip
   const validateIP = (ip: string) => {
@@ -67,9 +72,9 @@ function IpInput() {
         setError("");
         setAddressSpace(addressSpace);
         setSuffixIsValid(
-          await compareVnetRangeWithSubnetRangeeUsed(
+          await compareVnetRangeWithSubnetRangeUsed(
             vnet.vnetIpStart + "/" + vnet.vnetSuffix,
-            usedIpaddressesCidr
+            usedRanges
           )
         );
       } catch (error) {
