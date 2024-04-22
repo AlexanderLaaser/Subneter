@@ -4,12 +4,12 @@ Application for calculating ip addresses in virtual networks with JSON-export fu
 
 # Technical overview
 
-Frontend: Vite JS
-Backend: Django
-CI: GitHub Actions
-Infrastructure: Azure Kubernetes with Helm
-IaC: Terraform
-GitOps/CD: ArgoCD
+Frontend: Vite JS \
+Backend: Django \
+CI: GitHub Actions \
+Infrastructure: Azure Kubernetes with Helm \
+IaC: Terraform \
+GitOps/CD: ArgoCD \
 
 # Infrastructure architecture
 
