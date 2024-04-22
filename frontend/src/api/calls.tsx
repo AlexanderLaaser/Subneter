@@ -1,4 +1,19 @@
 import axios from "axios";
+import Cookies from "js-cookie";
+
+axios.defaults.xsrfCookieName = "CSRFTOKEN";
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
+axios.defaults.withCredentials = true;
+
+const token = Cookies.get("CSRFTOKEN");
+
+const header = {
+  headers: {
+    "Content-Type": "application/json",
+    "X-CSRFToken": token,
+  },
+  withCredentials: true,
+};
 
 export const getIpaddressesCount = async (suffix: number) => {
   try {
@@ -26,7 +41,7 @@ export const getAddressSpace = async (
       );
 
       if ((response.status = 200)) {
-        return response.data;
+        return response.data.address_space.toString();
       } else {
         throw new Error("Failed to fetch data!");
       }
@@ -35,7 +50,7 @@ export const getAddressSpace = async (
         if (error.response.status === 400) {
           throw new Error("Inputs invalid. Please check again!");
         } else if (error.response.status === 500) {
-          throw new Error("Invalid CICR Block!");
+          throw new Error("Invalid CICR Block for given size!");
         }
       } else {
         throw new Error("Network error!");
@@ -58,7 +73,8 @@ export const generateNextSubnet = async (
         vnet_cidr,
         new_suffix_length,
         ip_ranges_used,
-      }
+      },
+      header
     );
 
     if ((response.status = 200)) {
@@ -91,7 +107,8 @@ export const compareVnetRangeWithSubnetRangeUsed = async (
       {
         vnet_cidr,
         ip_ranges_used,
-      }
+      },
+      header
     );
 
     if ((response.status = 200)) {

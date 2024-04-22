@@ -11,10 +11,10 @@ interface InterfaceTableEntryProps {
   size: number;
   ips: string;
   range: string;
+  error: string;
   updateSubnetName: (id: number, description: string) => void;
   updateIps: (id: number, size: number) => void;
   deleteTableEntry: () => void;
-  totalEntries: number;
 }
 
 function TableEntry({
@@ -27,13 +27,26 @@ function TableEntry({
   updateIps,
   deleteTableEntry,
 }: InterfaceTableEntryProps) {
-  const { tableEntriesStore } = useTableEntriesStore((state) => ({
-    updateTableEntryStore: state.updateTableEntry,
-    tableEntriesStore: state.tableEntries,
+  //store functions
+  const { vnet, setSuffixIsValid } = VnetStore((state) => ({
+    vnet: state.vnet,
+    setSuffixIsValid: state.setSuffixIsValid,
   }));
 
-  const [error, setError] = useState("");
+  const { tableEntries, getTableEntry, setError } = useTableEntriesStore(
+    (state) => ({
+      tableEntries: state.tableEntries,
+      setError: state.setError,
+      getTableEntry: state.getTableEntry,
+    })
+  );
+
   const [selectedSize, setSelectedSize] = useState(size);
+
+  const usedRanges = tableEntries.map((entry) => {
+    const firstIp = entry.range.split(" - ")[0];
+    return `${firstIp}/${entry.size}`;
+  });
 
   const handleDescriptionChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -41,30 +54,22 @@ function TableEntry({
     updateSubnetName(id, event.target.value);
   };
 
-  const usedRanges = tableEntriesStore.map((entry) => {
-    const firstIp = entry.range.split(" - ")[0];
-    return `${firstIp}/${entry.size}`;
-  });
-
-  //store functions
-  const { setSuffixIsValid, vnet } = VnetStore((state) => ({
-    vnet: state.vnet,
-    setSuffixIsValid: state.setSuffixIsValid,
-  }));
-
   const handleSizeChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     try {
       setSelectedSize(parseInt(event.target.value));
       await updateIps(id, parseInt(event.target.value));
-      setError("");
     } catch (error) {
       if (error instanceof Error) {
-        setError(error.message);
+        setError(id, error.message);
       }
     }
   };
+
+  useEffect(() => {
+    updateIps(id, selectedSize);
+  }, [vnet.vnetSuffix]);
 
   useEffect(() => {
     const checkSuffixisValid = async () => {
@@ -77,23 +82,22 @@ function TableEntry({
         );
       } catch (error) {
         if (error instanceof Error) {
-          setError(error.message);
+          setError(id, error.message);
         }
       }
     };
     checkSuffixisValid();
-    console.log("Subnet Änderung");
   }, [selectedSize]);
 
   return (
     <>
       <div className="flex justify-center w-full">
-        <div className="flex items-center font-montserrat w-full max-w-screen-md bg-white border border-sky-800 mt-3 rounded-lg h-12 ml-10">
-          <div className="flex pl-4 flex-initial w-5/12">
+        <div className="flex items-center font-montserrat w-full max-w-screen-md border border-sky-800 mt-3 rounded-lg h-12 ml-10 bg-white">
+          <div className="flex pl-4 flex-initial w-5/12 ">
             <input
               value={subnetName}
               onChange={handleDescriptionChange}
-              className="w-60 outline-none"
+              className="w-60 bg-transparent"
               placeholder="Name"
             ></input>
           </div>
@@ -111,12 +115,14 @@ function TableEntry({
           <div className="flex pl-6 flex-initial w-28 text-sky-800 font-bold">
             {ips}
           </div>
-          {error ? (
+          {getTableEntry(id)?.error ? (
             <div className="flex pl-6 flex-initial w-80 text-red-500 font-bold">
-              {error}
+              {getTableEntry(id)?.error}
             </div>
           ) : (
-            <div className="flex pl-6 flex-initial w-80 ">{range}</div>
+            <div className="flex pl-6 flex-initial w-80 text-sky-800">
+              {range}
+            </div>
           )}
         </div>
         {usedRanges.length > 1 ? (

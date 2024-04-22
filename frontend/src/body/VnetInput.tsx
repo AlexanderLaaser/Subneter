@@ -8,7 +8,7 @@ import SizeSelect from "./SizeSelect";
 import VnetStore from "../store/VnetInputStore";
 import useTableEntriesStore from "../store/TabelEntriesStore";
 
-function IpInput() {
+function VnetInput() {
   // store function for VnetIpStartStore
   const { setVnetSuffix, setVnetIpStart, setSuffixIsValid, vnet } = VnetStore(
     (state) => ({
@@ -147,4 +147,4 @@ function IpInput() {
   );
 }
 
-export default IpInput;
+export default VnetInput;

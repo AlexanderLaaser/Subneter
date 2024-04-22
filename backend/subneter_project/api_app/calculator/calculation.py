@@ -32,7 +32,3 @@ def compare_vnet_range_with_subnet_ranges_used(vnet_range, ip_ranges_used ):
     total_vnet_addresses = vnet_network_object.num_addresses
     total_subnet_addresses = sum(ipaddress.ip_network(subnet).num_addresses for subnet in ip_ranges_used)
     return total_vnet_addresses >= total_subnet_addresses
-
-vnet_cidr = "10.0.0.0/24"
-last_ip_ranges_used = ["10.0.0.0/24","10.0.0.128/25"]
-print(compare_vnet_range_with_subnet_ranges_used(vnet_cidr,last_ip_ranges_used))

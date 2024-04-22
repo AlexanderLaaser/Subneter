@@ -1,30 +1,36 @@
 import TableEntry from "./TableEntry";
 import { generateNextSubnet, getIpaddressesCount } from "../api/calls";
-import VnetIpStartStore from "../store/VnetInputStore";
+import VnetStore from "../store/VnetInputStore";
 import useTableEntriesStore from "../store/TabelEntriesStore";
 import { useEffect } from "react";
 
-function AddButton() {
+function TableEntries() {
   useEffect(() => {
     console.log("TableEntries:");
     console.log(tableEntriesStore);
   });
 
   // Store functions
-  const { vnet } = VnetIpStartStore((state) => ({
+  const { vnet } = VnetStore((state) => ({
     vnet: state.vnet,
+  }));
+
+  const { checkErrorInEntries } = useTableEntriesStore((state) => ({
+    checkErrorInEntries: state.checkErrorInEntries,
   }));
 
   const {
     addTableEntryStore,
     deleteTableEntryStore,
     updateTableEntryStore,
+    getTableEntriesWithoutOwnID,
     tableEntriesStore,
   } = useTableEntriesStore((state) => ({
     addTableEntryStore: state.addTableEntry,
     deleteTableEntryStore: state.deleteTableEntry,
     getTableEntryStore: state.getTableEntry,
     updateTableEntryStore: state.updateTableEntry,
+    getTableEntriesWithoutOwnID: state.getTableEntriesWithoutOwnID,
     tableEntriesStore: state.tableEntries,
   }));
 
@@ -33,8 +39,15 @@ function AddButton() {
     return `${firstIp}/${entry.size}`;
   });
 
-  const usedRangesWithoutOwnRange = (id: number) =>
-    usedRanges.filter((_ele, ind) => ind !== id);
+  const usedRangesWithoutOwnID = (id: number) => {
+    const tableEntriesWithoutOwnID = getTableEntriesWithoutOwnID(id).map(
+      (entry) => {
+        const firstIp = entry.range.split(" - ")[0];
+        return `${firstIp}/${entry.size}`;
+      }
+    );
+    return tableEntriesWithoutOwnID;
+  };
 
   const handleAddClick = async () => {
     const size = 32;
@@ -51,11 +64,14 @@ function AddButton() {
       usedRanges
     );
 
+    const error = "";
+
     const newTableEntry = {
+      subnetName: "",
+      size,
       ips,
       range,
-      size,
-      subnetName: "",
+      error,
     };
 
     return newTableEntry;
@@ -74,10 +90,10 @@ function AddButton() {
       const range = await generateNextSubnet(
         vnet.vnetIpStart + "/" + vnet.vnetSuffix,
         size,
-        usedRangesWithoutOwnRange(id)
+        usedRangesWithoutOwnID(id)
       );
-
-      updateTableEntryStore({ id, size, ips, range });
+      const error = "";
+      updateTableEntryStore({ id, size, ips, range, error });
     } catch (error) {
       throw error;
     }
@@ -93,6 +109,7 @@ function AddButton() {
       <TableEntry
         key={entry.id}
         id={entry.id}
+        error={""}
         subnetName={entry.subnetName}
         size={entry.size}
         ips={entry.ips}
@@ -100,7 +117,6 @@ function AddButton() {
         updateSubnetName={updateSubnetName}
         updateIps={updateIps}
         deleteTableEntry={() => deleteTableEntry(entry.id)}
-        totalEntries={tableEntriesStore.length}
       />
     ));
   };
@@ -117,17 +133,29 @@ function AddButton() {
         </div>
       ) : null}
       <div className="flex justify-center">
-        <div className=" flex pl-2 content-center items-center mt-4 font-montserrat">
-          <button
-            className="inline-flex items-center justify-center w-32 h-10 mr-2 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600"
-            onClick={handleAddClick}
-          >
-            <span className="text-l">Add Subnet</span>
-          </button>
-        </div>
+        {checkErrorInEntries() ? (
+          <div className=" flex pl-2 content-center items-center mt-4 font-montserrat">
+            <button
+              className="cursor-not-allowed inline-flex items-center justify-center w-32 h-10 mr-2 text-slate-50 transition-colors duration-150 bg-slate-300 rounded-lg focus:shadow-outline"
+              onClick={handleAddClick}
+              disabled
+            >
+              <span className="text-l">Add Subnet</span>
+            </button>
+          </div>
+        ) : (
+          <div className=" flex pl-2 content-center items-center mt-4 font-montserrat">
+            <button
+              className="inline-flex items-center justify-center w-32 h-10 mr-2 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600"
+              onClick={handleAddClick}
+            >
+              <span className="text-l">Add Subnet</span>
+            </button>
+          </div>
+        )}
       </div>
     </>
   );
 }
 
-export default AddButton;
+export default TableEntries;
