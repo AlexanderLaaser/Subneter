@@ -9,7 +9,7 @@ Backend: Django \
 CI: GitHub Actions \
 Infrastructure: Azure Kubernetes with Helm \
 IaC: Terraform \
-GitOps/CD: ArgoCD \
+GitOps/CD: ArgoCD
 
 # Infrastructure architecture
 
