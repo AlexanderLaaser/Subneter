@@ -1,5 +1,6 @@
 import Logo from "../styles/logo.png";
 import "../styles/index.css";
+import LoginPopUp from "../login/LoginPopup";
 
 function Header() {
   return (
@@ -20,15 +21,10 @@ function Header() {
       <div className="flex space-x-6">
         <button
           type="button"
-          className=" text-sky-800 font-bold font-montserrat hover:text-orange-600"
+          className="bg-sky-800 text-white rounded-lg hover:bg-orange-600 w-20"
+          onClick={LoginPopUp}
         >
           Login
-        </button>
-        <button
-          type="button"
-          className="bg-sky-800 text-white rounded-lg hover:bg-orange-600 w-24"
-        >
-          Sign up
         </button>
         <button
           type="button"
