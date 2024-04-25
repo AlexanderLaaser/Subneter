@@ -34,7 +34,7 @@ jobs:
           docker build -t ${{ vars.AZURE_REGISTRY_SERVER }}/react:latest ${{ vars.FRONTEND_PATH }}
           docker push ${{ vars.AZURE_REGISTRY_SERVER }}/react:latest
 
-      - name: Build and Push Flask Backend Docker Image
+      - name: Build and Push django Backend Docker Image
         run: |
           docker build -t ${{ vars.AZURE_REGISTRY_SERVER }}/django:latest ${{ vars.BACKEND_PATH }}
           docker push ${{ vars.AZURE_REGISTRY_SERVER }}/django:latest

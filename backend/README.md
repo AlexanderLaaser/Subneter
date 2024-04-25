@@ -2,5 +2,5 @@
 
 sudo apt install python3 python3-pip ipython3
 sudo apt-get install python-pip
-pip install flask
+pip install django
 source venv/bin/activate
