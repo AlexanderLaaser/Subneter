@@ -1,10 +1,31 @@
 import { useEffect, useState } from "react";
-import { getIpaddressesCount, getAddressSpace } from "../api/calls";
-import SizeSelect from "./SizeSelect";
-import VnetIpStartStore from "../store/VnetInputStore";
+import {
+  getIpaddressesCount,
+  getAddressSpace,
+  compareVnetRangeWithSubnetRangeUsed,
+} from "../../api/calls";
+import SizeSelect from "../elements/SizeSelect";
+import VnetStore from "../../store/VnetInputStore";
+import useTableEntriesStore from "../../store/TabelEntriesStore";
 
-function IpInput() {
+function VnetInput() {
+  // store function for VnetIpStartStore
+  const { setVnetSuffix, setVnetIpStart, setSuffixIsValid, vnet } = VnetStore(
+    (state) => ({
+      vnet: state.vnet,
+      setVnetSuffix: state.setVnetSuffix,
+      setVnetIpStart: state.setVnetIpStart,
+      setSuffixIsValid: state.setSuffixIsValid,
+    })
+  );
+
+  const { tableEntries } = useTableEntriesStore((state) => ({
+    updateTableEntryStore: state.updateTableEntry,
+    tableEntries: state.tableEntries,
+  }));
+
   const [isValid, setIsValid] = useState(true);
+  const [error, setError] = useState("");
   const [addressSpace, setAddressSpace] = useState("10.0.0.0 - 10.0.0.255");
   const [addressCount, setAddressCount] = useState("256");
 
@@ -13,12 +34,10 @@ function IpInput() {
     return validateIP(newip);
   };
 
-  // store function
-  const { setVnetSuffix, setVnetIpStart, vnet } = VnetIpStartStore((state) => ({
-    vnet: state.vnet,
-    setVnetSuffix: state.setVnetSuffix,
-    setVnetIpStart: state.setVnetIpStart,
-  }));
+  const usedRanges = tableEntries.map((entry) => {
+    const firstIp = entry.range.split(" - ")[0];
+    return `${firstIp}/${entry.size}`;
+  });
 
   //function for validating the entered ip
   const validateIP = (ip: string) => {
@@ -40,41 +59,43 @@ function IpInput() {
   ) => {
     const suffix = parseInt((e.target as HTMLSelectElement).value);
     setVnetSuffix(suffix);
-    const addressCount = await getIpaddressesCount(suffix);
-    setAddressCount(addressCount);
+    setAddressCount(await getIpaddressesCount(suffix));
   };
 
-  useEffect(() => {
-    const fetchAddressSpace = async () => {
-      try {
-        const addressSpace = await getAddressSpace(
+  const fetchAddressSpace = async () => {
+    try {
+      const addressSpace = await getAddressSpace(
+        vnet.vnetIpStart + "/" + vnet.vnetSuffix,
+        isValid
+      );
+      setError("");
+      setAddressSpace(addressSpace);
+      setSuffixIsValid(
+        await compareVnetRangeWithSubnetRangeUsed(
           vnet.vnetIpStart + "/" + vnet.vnetSuffix,
-          isValid
-        );
-        setAddressSpace(addressSpace);
-        setVnetIpStart(vnet.vnetIpStart);
-        setVnetSuffix(vnet.vnetSuffix);
-        // Das funktioniert noch nicht so ganz, da die CIDR Range ausgegeben werden muss, nicht die gesamte Range
-        console.log("vnetipaddressCidr");
-        console.log(vnet.vnetSuffix);
-        console.log(vnet.vnetIpStart);
-      } catch (error) {
-        console.error("Failed to fetch address space:", error);
+          usedRanges
+        )
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
       }
-    };
-
+    }
+  };
+  useEffect(() => {
     if (isValid) {
       fetchAddressSpace();
     }
-  }, [vnet.vnetIpStart, vnet.vnetSuffix, isValid]);
+  }, [vnet.vnetIpStart, vnet.vnetSuffix, isValid, tableEntries]);
 
   return (
     <>
       <div className="flex w-full items-center justify-center font-montserrat">
         <div className="pt-14">
-          <div className="text-lg text-sky-800 font-bold mb-4">Vnet Range</div>
+          <div className="text-lg text-sky-800 font-bold mb-4">
+            Network Address
+          </div>
           <div className="flex items-center justify-center">
-
             <div className="mr-4">
               <input
                 id="ip_adress"
@@ -84,13 +105,17 @@ function IpInput() {
                 className="text-sm sm:text-base relative border rounded placeholder-gray-400 focus:border-orange-600 focus:outline-none pl-4 pr-20 border-zinc-950 h-10"
                 onChange={handleIpInput}
               ></input>
-              {isValid ? (
-                <div className="text-sky-800 font-bold text-m pt-2">
-                  {addressSpace}
-                </div>
-              ) : (
+              {isValid === false ? (
                 <div className="text-red-500 font-bold text-m pt-2">
                   Invalid IP Address
+                </div>
+              ) : error !== "" ? (
+                <div className="text-red-500 font-bold text-m pt-2">
+                  {error}
+                </div>
+              ) : (
+                <div className="text-sky-800 font-bold text-m pt-2">
+                  {addressSpace}
                 </div>
               )}
             </div>
@@ -99,8 +124,9 @@ function IpInput() {
                 elementID={"ip_size_input"}
                 defaultValue={24}
                 tailWindConfig={
-                  "sm:text-base outline-none border border-zinc-950 text-m rounded focus:border-orange-600 pr-16 pl-4 h-10"
+                  "${vnet.suffixIsValid === true ? 'border-red-200' : 'border-red-200' } sm:text-base outline-none border border-zinc-950 text-m rounded focus:border-orange-600 pr-16 pl-4 h-10"
                 }
+                type="vnet"
                 onChangeFunction={handleSuffixChange}
               ></SizeSelect>
 
@@ -110,8 +136,7 @@ function IpInput() {
             </div>
             <div className="flex">
               <div className="flex pl-4 mb-8 font-montserrat">
-                <button
-                  className="inline-flex items-center justify-center w-32 h-10 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600">
+                <button className="inline-flex items-center justify-center w-32 h-10 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600">
                   <span className="text-l">Add Range</span>
                 </button>
               </div>
@@ -123,4 +148,4 @@ function IpInput() {
   );
 }
 
-export default IpInput;
+export default VnetInput;

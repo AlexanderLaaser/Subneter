@@ -1,5 +1,5 @@
 #!/bin/bash
 cd backend
 source venv/bin/activate
-cd api
-flask --app app run
+cd subneter_project
+python manage.py runserver

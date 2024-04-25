@@ -7,14 +7,18 @@ interface TableEntryType {
   size: number;
   ips: string;
   range: string;
+  error: string;
 }
 
 interface TableEntriesStore {
   tableEntries: TableEntryType[];
   addTableEntry: (newEntry: Omit<TableEntryType, "id">) => void;
   deleteTableEntry: (index: number) => void;
-  getTableEntry: (id: number) => TableEntryType | undefined;
+  getTableEntry: (id: number) => TableEntryType;
+  getTableEntriesWithoutOwnID: (id: number) => TableEntryType[];
   updateTableEntry: (TableEntry: UpdateTableEntryType) => void;
+  setError: (index: number, error: string) => void;
+  checkErrorInEntries: () => boolean;
 }
 
 interface UpdateTableEntryType extends Partial<TableEntryType> {
@@ -30,6 +34,7 @@ const useTableEntriesStore = create<TableEntriesStore>()(
         size: 27,
         ips: "32",
         range: "10.0.0.0 - 10.0.0.31",
+        error: "",
       },
     ],
 
@@ -48,19 +53,45 @@ const useTableEntriesStore = create<TableEntriesStore>()(
         };
       }),
 
-    deleteTableEntry: (index: number) =>
+    deleteTableEntry: (idToRemove: number) =>
       set((state) => ({
-        tableEntries: state.tableEntries.filter((_, i) => i !== index),
+        tableEntries: state.tableEntries.filter(
+          (entry) => entry.id !== idToRemove
+        ),
       })),
 
     getTableEntry: (id: number) => {
       const tableEntries = get().tableEntries;
-      return tableEntries.find((entry) => entry.id === id);
+      const foundEntry = tableEntries.find((entry) => entry.id === id);
+      if (!foundEntry) {
+        throw new Error(`Kein Eintrag mit der ID ${id} gefunden.`);
+      }
+      return foundEntry;
     },
+
+    getTableEntriesWithoutOwnID: (id: number) => {
+      const tableEntries = get().tableEntries;
+      return tableEntries.filter((entry) => entry.id !== id);
+    },
+
+    checkErrorInEntries: () => {
+      const entriesWithErrors = get().tableEntries.filter(
+        (entry) => entry.error !== ""
+      );
+      return entriesWithErrors.length > 0;
+    },
+
     updateTableEntry: (updatedEntry: UpdateTableEntryType) =>
       set((state) => ({
         tableEntries: state.tableEntries.map((entry) =>
           entry.id === updatedEntry.id ? { ...entry, ...updatedEntry } : entry
+        ),
+      })),
+
+    setError: (id: number, errorMessage: string) =>
+      set((state) => ({
+        tableEntries: state.tableEntries.map((entry) =>
+          entry.id === id ? { ...entry, error: errorMessage } : entry
         ),
       })),
   }))

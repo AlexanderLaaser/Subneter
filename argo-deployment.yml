@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/AlexanderLaaser/Subneter.io.git
-    targetRevision: feature/imagepipe
+    targetRevision: main
     path: subneterChart
   destination:
     server: https://kubernetes.default.svc

@@ -1,23 +1,18 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
-export const getAddressSpace = async (
-  ipaddress_cidr: string,
-  isValid?: boolean
-) => {
-  if (isValid) {
-    try {
-      const response = await axios.get(
-        `${
-          import.meta.env.VITE_API_SERVER_URL
-        }/api/address_space?ipaddress_cidr=${ipaddress_cidr}`
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Fehler beim API-Call", error);
-    }
-  } else {
-    return "";
-  }
+axios.defaults.xsrfCookieName = "CSRFTOKEN";
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
+axios.defaults.withCredentials = true;
+
+const token = Cookies.get("CSRFTOKEN");
+
+const header = {
+  headers: {
+    "Content-Type": "application/json",
+    "X-CSRFToken": token,
+  },
+  withCredentials: true,
 };
 
 export const getIpaddressesCount = async (suffix: number) => {
@@ -33,19 +28,53 @@ export const getIpaddressesCount = async (suffix: number) => {
   }
 };
 
-export const generateNextSubnet = async (
+export const getAddressSpace = async (
   ipaddress_cidr: string,
+  isValid?: boolean
+) => {
+  if (isValid) {
+    try {
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_API_SERVER_URL
+        }/api/address_space?ipaddress_cidr=${ipaddress_cidr}`
+      );
+
+      if ((response.status = 200)) {
+        return response.data.address_space.toString();
+      } else {
+        throw new Error("Failed to fetch data!");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        if (error.response.status === 400) {
+          throw new Error("Inputs invalid. Please check again!");
+        } else if (error.response.status === 500) {
+          throw new Error("Invalid CICR Block for given size!");
+        }
+      } else {
+        throw new Error("Network error!");
+      }
+    }
+  } else {
+    return "";
+  }
+};
+
+export const generateNextSubnet = async (
+  vnet_cidr: string,
   new_suffix_length: number,
-  last_ip_ranges_used: string[]
+  ip_ranges_used: string[]
 ) => {
   try {
     const response = await axios.post(
       `${import.meta.env.VITE_API_SERVER_URL}/api/generate_next_subnet`,
       {
-        ipaddress_cidr,
+        vnet_cidr,
         new_suffix_length,
-        last_ip_ranges_used,
-      }
+        ip_ranges_used,
+      },
+      header
     );
 
     if ((response.status = 200)) {
@@ -58,7 +87,41 @@ export const generateNextSubnet = async (
       if (error.response.status === 400) {
         throw new Error("Inputs invalid. Please check again!");
       } else if (error.response.status === 500) {
-        throw new Error("Size doesn't match vnet range!");
+        throw new Error("Subnet mask doesn't match network address!");
+      }
+    } else {
+      throw new Error("Network error!");
+    }
+  }
+};
+
+export const compareVnetRangeWithSubnetRangeUsed = async (
+  vnet_cidr: string,
+  ip_ranges_used: string[]
+) => {
+  try {
+    const response = await axios.post(
+      `${
+        import.meta.env.VITE_API_SERVER_URL
+      }/api/compare_vnet_range_with_subnet_ranges_used`,
+      {
+        vnet_cidr,
+        ip_ranges_used,
+      },
+      header
+    );
+
+    if ((response.status = 200)) {
+      return response.data.result;
+    } else {
+      throw new Error("Failed to fetch data!");
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      if (error.response.status === 400) {
+        throw new Error("Inputs invalid. Please check again!");
+      } else if (error.response.status === 500) {
+        throw new Error("Something went wrong! Please try again");
       }
     } else {
       throw new Error("Network error!");
