@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.flask.name }}-deployment
+  name: {{ .Values.django.name }}-deployment
   namespace: {{ .Values.app.name }}
 spec:
-  replicas: {{ .Values.flask.replicaCount }}
+  replicas: {{ .Values.django.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.flask.name }}
+      app: {{ .Values.django.name }}
   template:
     metadata:
       labels:
-        app: {{ .Values.flask.name }}
+        app: {{ .Values.django.name }}
     spec:
       containers:
-        - name: {{ .Values.flask.name }}
-          image: "{{ .Values.flask.image.repository }}:{{ .Values.flask.image.tag }}"
+        - name: {{ .Values.django.name }}
+          image: "{{ .Values.django.image.repository }}:{{ .Values.django.image.tag }}"
           ports:
-            - containerPort: {{ .Values.flask.containerPort }}
+            - containerPort: {{ .Values.django.containerPort }}

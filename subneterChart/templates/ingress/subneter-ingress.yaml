@@ -25,9 +25,9 @@ spec:
         pathType: Prefix
       - backend:
           service:
-            name: {{ .Values.flask.name }}-service
+            name: {{ .Values.django.name }}-service
             namespace: {{ .Values.app.name }}
             port:
-              number: {{ .Values.flask.service.port }}  
+              number: {{ .Values.django.service.port }}  
         path: /api
         pathType: Prefix
