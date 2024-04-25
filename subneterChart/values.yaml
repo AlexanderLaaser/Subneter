@@ -1,14 +1,14 @@
 app:
   name: subneter
   tenantid: f1640c14-f2cd-4607-b90a-ec03d1b46437
-flask:
-  name: flask-backend
+django:
+  name: django-backend
   replicaCount: 1
   image:
-    repository:  acrsubneterdev.azurecr.io/flask
+    repository: acrsubneterdev.azurecr.io/django
     tag: latest
-  containerPort: 5000
-  service: 
+  containerPort: 8000
+  service:
     type: ClusterIP
     port: 80
 react:
@@ -18,7 +18,7 @@ react:
     repository: acrsubneterdev.azurecr.io/react
     tag: latest
   containerPort: 5173
-  service: 
+  service:
     type: ClusterIP
     port: 80
 secretprovider:

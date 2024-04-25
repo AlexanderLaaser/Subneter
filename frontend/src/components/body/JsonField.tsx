@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import useTableEntriesStore from "../store/TabelEntriesStore";
+import useTableEntriesStore from "../../store/TabelEntriesStore";
 
-function JSONField() {
+function JsonField() {
   useEffect(() => {
     console.log("JSON:");
     console.log(tableEntriesStore);
@@ -30,4 +30,4 @@ function JSONField() {
   );
 }
 
-export default JSONField;
+export default JsonField;

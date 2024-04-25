@@ -1,5 +1,3 @@
-import "../styles/index.css";
-
 function Footer() {
   return (
     <footer className="flex flex-col font- font-montserrat items-center text-center text-surface dark:bg-neutral-700 dark:text-white">

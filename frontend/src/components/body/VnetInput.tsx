@@ -3,10 +3,10 @@ import {
   getIpaddressesCount,
   getAddressSpace,
   compareVnetRangeWithSubnetRangeUsed,
-} from "../api/calls";
-import SizeSelect from "./SizeSelect";
-import VnetStore from "../store/VnetInputStore";
-import useTableEntriesStore from "../store/TabelEntriesStore";
+} from "../../api/calls";
+import SizeSelect from "../elements/SizeSelect";
+import VnetStore from "../../store/VnetInputStore";
+import useTableEntriesStore from "../../store/TabelEntriesStore";
 
 function VnetInput() {
   // store function for VnetIpStartStore
@@ -19,9 +19,9 @@ function VnetInput() {
     })
   );
 
-  const { tableEntriesStore } = useTableEntriesStore((state) => ({
+  const { tableEntries } = useTableEntriesStore((state) => ({
     updateTableEntryStore: state.updateTableEntry,
-    tableEntriesStore: state.tableEntries,
+    tableEntries: state.tableEntries,
   }));
 
   const [isValid, setIsValid] = useState(true);
@@ -34,7 +34,7 @@ function VnetInput() {
     return validateIP(newip);
   };
 
-  const usedRanges = tableEntriesStore.map((entry) => {
+  const usedRanges = tableEntries.map((entry) => {
     const firstIp = entry.range.split(" - ")[0];
     return `${firstIp}/${entry.size}`;
   });
@@ -62,38 +62,39 @@ function VnetInput() {
     setAddressCount(await getIpaddressesCount(suffix));
   };
 
-  useEffect(() => {
-    const fetchAddressSpace = async () => {
-      try {
-        const addressSpace = await getAddressSpace(
+  const fetchAddressSpace = async () => {
+    try {
+      const addressSpace = await getAddressSpace(
+        vnet.vnetIpStart + "/" + vnet.vnetSuffix,
+        isValid
+      );
+      setError("");
+      setAddressSpace(addressSpace);
+      setSuffixIsValid(
+        await compareVnetRangeWithSubnetRangeUsed(
           vnet.vnetIpStart + "/" + vnet.vnetSuffix,
-          isValid
-        );
-        setError("");
-        setAddressSpace(addressSpace);
-        setSuffixIsValid(
-          await compareVnetRangeWithSubnetRangeUsed(
-            vnet.vnetIpStart + "/" + vnet.vnetSuffix,
-            usedRanges
-          )
-        );
-      } catch (error) {
-        if (error instanceof Error) {
-          setError(error.message);
-        }
+          usedRanges
+        )
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
       }
-    };
-
+    }
+  };
+  useEffect(() => {
     if (isValid) {
       fetchAddressSpace();
     }
-  }, [vnet.vnetIpStart, vnet.vnetSuffix, isValid]);
+  }, [vnet.vnetIpStart, vnet.vnetSuffix, isValid, tableEntries]);
 
   return (
     <>
       <div className="flex w-full items-center justify-center font-montserrat">
         <div className="pt-14">
-          <div className="text-lg text-sky-800 font-bold mb-4">Vnet Range</div>
+          <div className="text-lg text-sky-800 font-bold mb-4">
+            Network Address
+          </div>
           <div className="flex items-center justify-center">
             <div className="mr-4">
               <input
@@ -123,7 +124,7 @@ function VnetInput() {
                 elementID={"ip_size_input"}
                 defaultValue={24}
                 tailWindConfig={
-                  "sm:text-base outline-none border border-zinc-950 text-m rounded focus:border-orange-600 pr-16 pl-4 h-10"
+                  "${vnet.suffixIsValid === true ? 'border-red-200' : 'border-red-200' } sm:text-base outline-none border border-zinc-950 text-m rounded focus:border-orange-600 pr-16 pl-4 h-10"
                 }
                 type="vnet"
                 onChangeFunction={handleSuffixChange}

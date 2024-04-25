@@ -1,13 +1,13 @@
 import TableEntry from "./TableEntry";
-import { generateNextSubnet, getIpaddressesCount } from "../api/calls";
-import VnetStore from "../store/VnetInputStore";
-import useTableEntriesStore from "../store/TabelEntriesStore";
+import { generateNextSubnet, getIpaddressesCount } from "../../api/calls";
+import VnetStore from "../../store/VnetInputStore";
+import useTableEntriesStore from "../../store/TabelEntriesStore";
 import { useEffect } from "react";
 
 function TableEntries() {
   useEffect(() => {
     console.log("TableEntries:");
-    console.log(tableEntriesStore);
+    console.log(tableEntries);
   });
 
   // Store functions
@@ -24,17 +24,17 @@ function TableEntries() {
     deleteTableEntryStore,
     updateTableEntryStore,
     getTableEntriesWithoutOwnID,
-    tableEntriesStore,
+    tableEntries,
   } = useTableEntriesStore((state) => ({
     addTableEntryStore: state.addTableEntry,
     deleteTableEntryStore: state.deleteTableEntry,
     getTableEntryStore: state.getTableEntry,
     updateTableEntryStore: state.updateTableEntry,
     getTableEntriesWithoutOwnID: state.getTableEntriesWithoutOwnID,
-    tableEntriesStore: state.tableEntries,
+    tableEntries: state.tableEntries,
   }));
 
-  const usedRanges = tableEntriesStore.map((entry) => {
+  const usedRanges = tableEntries.map((entry) => {
     const firstIp = entry.range.split(" - ")[0];
     return `${firstIp}/${entry.size}`;
   });
@@ -105,7 +105,7 @@ function TableEntries() {
 
   // Rendering TableEntries depending on amount of value of Table Entries
   const renderTableEntries = () => {
-    return tableEntriesStore.map((entry) => (
+    return tableEntries.map((entry) => (
       <TableEntry
         key={entry.id}
         id={entry.id}
@@ -121,13 +121,27 @@ function TableEntries() {
     ));
   };
 
+  async function updateAllIps() {
+    for (const entry of tableEntries) {
+      try {
+        await updateIps(entry.id, entry.size);
+      } catch (error) {
+        console.error(`Error while updating table entry: ${entry.id}:`, error);
+      }
+    }
+  }
+
+  useEffect(() => {
+    updateAllIps();
+  }, [vnet.vnetIpStart]);
+
   return (
     <>
       {renderTableEntries()}{" "}
       {vnet.suffixIsValid === false ? (
         <div className="flex justify-center mt-2 h-8">
           <div className="flex justify-center text-white bg-red-500 font-montserrat w-full max-w-screen-md rounded-lg pt-1">
-            Vnet Suffix is too small for given subnets. Pls exchange subnet
+            Network Address is too small for given subnets. Pls exchange subnet
             sizes!
           </div>
         </div>

@@ -87,7 +87,7 @@ export const generateNextSubnet = async (
       if (error.response.status === 400) {
         throw new Error("Inputs invalid. Please check again!");
       } else if (error.response.status === 500) {
-        throw new Error("Size doesn't match vnet range!");
+        throw new Error("Subnet mask doesn't match network address!");
       }
     } else {
       throw new Error("Network error!");

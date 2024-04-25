@@ -1,5 +1,3 @@
-import VnetStore from "../store/VnetInputStore";
-
 interface SizeSelectProps {
   elementID: string;
   defaultValue: number;
@@ -13,12 +11,7 @@ function SizeSelect({
   defaultValue,
   tailWindConfig,
   onChangeFunction,
-  type,
 }: SizeSelectProps) {
-  const { vnet } = VnetStore((state) => ({
-    vnet: state.vnet,
-  }));
-
   const suffixOptions = [];
   // var maxSuffixValue = vnet.vnetSuffix;
 

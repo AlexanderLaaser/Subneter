@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import AddButton from "./TableEntries";
 import TableHead from "./TableHead";
-import JSONField from "./JSONField";
+import JsonField from "./JsonField";
 
 function Tab() {
   const [activeTab, setActiveTab] = useState("calculator-tab");
@@ -39,7 +39,7 @@ function Tab() {
                   Subnets
                 </button>
               </li>
-              <li className="me-2" role="presentation">
+              {/*<li className="me-2" role="presentation">
                 <button
                   className={`font-extrabold text-lg inline-block p-4 border-b-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
                     activeTab === "json-tab"
@@ -56,7 +56,7 @@ function Tab() {
                 >
                   JSON
                 </button>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>
@@ -79,7 +79,7 @@ function Tab() {
             role="tabpanel"
             aria-labelledby="json-tab"
           >
-            <JSONField></JSONField>
+            <JsonField></JsonField>
           </div>
         </div>
       </div>
