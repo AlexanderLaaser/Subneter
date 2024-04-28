@@ -15,7 +15,7 @@ function Header() {
         </div>
       </div>
 
-      <div className="flex text-black space-x-10 ">
+      <div className="flex text-black space-x-10">
         <Link to="/" className="mx-2 hover:text-orange-600">
           Home
         </Link>
@@ -25,10 +25,10 @@ function Header() {
       </div>
 
       <div className="flex space-x-6">
-        <div className="flex justify-center w-24 h-8 text-center bg-sky-800 text-white rounded-lg hover:bg-orange-600">
+        <div className="flex justify-center w-24 h-8 text-center bg-sky-800 text-white rounded-lg hover:bg-orange-600 ml-28">
           <Link
             to="/login"
-            state={{ backgroundLocation: location }}
+            state={{ loginpopouplocation: location }}
             className="flex items-center justify-center w-full h-full"
           >
             Login

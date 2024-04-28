@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import microsoftLogo from "../../styles/microsoft-logo.png";
 import googleLogo from "../../styles/google-logo.svg";
 import githubLogo from "../../styles/github-logo.svg";
@@ -9,6 +9,12 @@ function LoginPopUp() {
   function clickToHome() {
     navigate("/");
   }
+
+  const location = useLocation();
+  const state = location.state as {
+    loginpopouplocation?: Location;
+  };
+  const loginpopouplocation = state?.loginpopouplocation;
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto flex font-montserrat backdrop-blur-sm">
@@ -41,35 +47,37 @@ function LoginPopUp() {
             <h3 className="text-xl text-sky-800 font-medium dark:text-white">
               Sign in to Subneter
             </h3>
-            <div>
-              <label
-                htmlFor="email"
-                className="text-sm font-medium text-gray-900 block mb-2 dark:text-gray-300"
-              >
-                Your email
-              </label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:border-orange-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                placeholder="name@company.com"
-              ></input>
-            </div>
-            <div>
-              <label
-                htmlFor="password"
-                className="text-sm font-medium text-gray-900 block mb-2 dark:text-gray-300"
-              >
-                Your password
-              </label>
-              <input
-                type="password"
-                name="password"
-                id="password"
-                placeholder="••••••••"
-                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-              ></input>
+            <div className="flex flex-col space-y-4">
+              <div className="">
+                <label
+                  htmlFor="email"
+                  className="text-sm font-medium text-gray-900 block mb-2 dark:text-gray-300"
+                >
+                  Your email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:border-orange-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                  placeholder="name@company.com"
+                ></input>
+              </div>
+              <div>
+                <label
+                  htmlFor="password"
+                  className="text-sm font-medium text-gray-900 block mb-2 dark:text-gray-300"
+                >
+                  Your password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  placeholder="••••••••"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                ></input>
+              </div>
             </div>
             <div className="flex justify-between">
               <div className="flex items-start">
@@ -98,10 +106,10 @@ function LoginPopUp() {
               </a>
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-row gap-2">
               <button className="inline-flex h-10 rounded-lg w-full items-center justify-center gap-2 border border-sky-800 bg-white p-2 text-sm font-medium text-black outline-none focus:ring-2 focus:ring-[#333] focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60 hover:border-orange-600">
                 <img src={googleLogo} alt="Your Logo" className="h-6 w-6"></img>
-                Continue with Google
+                Google
               </button>
               <button className="inline-flex h-10 rounded-lg w-full items-center justify-center gap-2 border border-sky-800 bg-white p-2 text-sm font-medium text-black outline-none focus:ring-2 focus:ring-[#333] focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60 hover:border-orange-600">
                 <img
@@ -109,11 +117,11 @@ function LoginPopUp() {
                   alt="Your Logo"
                   className="h-6 w-6"
                 ></img>{" "}
-                Continue with Microsoft
+                Microsoft
               </button>
               <button className="inline-flex h-10 rounded-lg w-full items-center justify-center gap-2 border border-sky-800 bg-white p-2 text-sm font-medium text-black outline-none focus:ring-2 focus:ring-[#333] focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60 hover:border-orange-600">
                 <img src={githubLogo} alt="Your Logo" className="h-6 w-6"></img>{" "}
-                Continue with GitHub
+                GitHub
               </button>
             </div>
             <button
@@ -122,13 +130,19 @@ function LoginPopUp() {
             >
               Login
             </button>
-            <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
+            <div className="flex flex-row text-sm font-medium text-gray-500 dark:text-gray-300">
               Not registered?{" "}
               <a
                 href="#"
                 className="text-blue-700 hover:underline hover:text-orange-600  dark:text-blue-500"
               >
-                Create account
+                <Link
+                  to="/register"
+                  className="pl-1"
+                  state={{ registerpopouplocation: loginpopouplocation }}
+                >
+                  Create Account
+                </Link>
               </a>
             </div>
           </form>
