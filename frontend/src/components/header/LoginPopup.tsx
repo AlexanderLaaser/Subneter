@@ -2,12 +2,39 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import microsoftLogo from "../../styles/microsoft-logo.png";
 import googleLogo from "../../styles/google-logo.svg";
 import githubLogo from "../../styles/github-logo.svg";
+import { loginUser } from "../../api/userCalls";
+import { useState } from "react";
 
 function LoginPopUp() {
   const navigate = useNavigate();
 
   function clickToHome() {
     navigate("/");
+  }
+
+  const [loginCreds, setLoginCreds] = useState({
+    username: "",
+    password: "",
+  });
+
+  const handleInputFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setLoginCreds((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    console.log(loginCreds);
+  };
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault(); // Prevent the default form submission
+    try {
+      await loginUser(loginCreds.username, loginCreds.password);
+      clickToHome();
+    } catch (error) {
+      console.error("Login failed:", error);
+      // Optionally handle errors, perhaps showing a message to the user
+    }
   }
 
   const location = useLocation();
@@ -43,6 +70,7 @@ function LoginPopUp() {
           <form
             className="space-y-6 px-6 lg:px-8 pb-4 sm:pb-6 xl:pb-8"
             action="#"
+            onClick={handleSubmit}
           >
             <h3 className="text-xl text-sky-800 font-medium dark:text-white">
               Sign in to Subneter
@@ -53,14 +81,15 @@ function LoginPopUp() {
                   htmlFor="email"
                   className="text-sm font-medium text-gray-900 block mb-2 dark:text-gray-300"
                 >
-                  Your email
+                  Your username
                 </label>
                 <input
-                  type="email"
-                  name="email"
-                  id="email"
+                  type="username"
+                  name="username"
+                  id="username"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:border-orange-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                   placeholder="name@company.com"
+                  onChange={handleInputFieldChange}
                 ></input>
               </div>
               <div>
@@ -76,6 +105,7 @@ function LoginPopUp() {
                   id="password"
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                  onChange={handleInputFieldChange}
                 ></input>
               </div>
             </div>

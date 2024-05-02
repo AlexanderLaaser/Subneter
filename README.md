@@ -23,7 +23,7 @@ GitOps/CD: **ArgoCD**
 4. Migrating from flask to Django
 5. CORS handling with CSFR cookies
 
-## Requirements: Setting envs
+## Requirements: Setting .env files
 
 /frontend:
 VITE_API_SERVER_URL=

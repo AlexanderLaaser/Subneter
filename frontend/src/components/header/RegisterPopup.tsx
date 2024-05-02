@@ -1,11 +1,35 @@
 import { useNavigate } from "react-router-dom";
+import { iUser } from "../../interfaces/iUser";
+import { useState } from "react";
+import { registerUser } from "../../api/userCalls";
 
 function SignUpPopUp() {
   const navigate = useNavigate();
 
-  function clickToHome() {
+  const [user, setUser] = useState<iUser>({
+    firstname: "",
+    lastname: "",
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  function handleClickToHome() {
     navigate("/");
   }
+
+  async function handleClickToRegisterUser() {
+    await registerUser(user);
+  }
+
+  const handleInputFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUser((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    console.log(user);
+  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto flex font-montserrat backdrop-blur-sm">
@@ -15,7 +39,7 @@ function SignUpPopUp() {
             <button
               type="button"
               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
-              onClick={clickToHome}
+              onClick={handleClickToHome}
             >
               <svg
                 className="w-5 h-5"
@@ -33,6 +57,7 @@ function SignUpPopUp() {
           </div>
           <form
             className="space-y-6 px-6 lg:px-8 pb-4 sm:pb-6 xl:pb-8"
+            onClick={handleClickToRegisterUser}
             action="#"
           >
             <h3 className="text-xl text-sky-800 font-medium dark:text-white">
@@ -49,8 +74,9 @@ function SignUpPopUp() {
                   </label>
                   <input
                     type="text"
-                    name="fullname"
-                    id="fullname"
+                    name="firstname"
+                    id="firstname"
+                    onChange={handleInputFieldChange}
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:border-orange-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     placeholder="John"
                   ></input>
@@ -64,8 +90,9 @@ function SignUpPopUp() {
                   </label>
                   <input
                     type="text"
-                    name="fullname"
-                    id="fullname"
+                    name="lastname"
+                    id="lastname"
+                    onChange={handleInputFieldChange}
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:border-orange-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                     placeholder="Doe"
                   ></input>
@@ -80,8 +107,9 @@ function SignUpPopUp() {
                 </label>
                 <input
                   type="text"
-                  name="fullname"
-                  id="fullname"
+                  name="username"
+                  id="username"
+                  onChange={handleInputFieldChange}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:border-orange-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                   placeholder="johndoe123"
                 ></input>
@@ -98,6 +126,7 @@ function SignUpPopUp() {
                   type="email"
                   name="email"
                   id="email"
+                  onChange={handleInputFieldChange}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:border-orange-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                   placeholder="name@company.com"
                 ></input>
@@ -112,9 +141,10 @@ function SignUpPopUp() {
                 <input
                   type="password"
                   name="password"
-                  id="password"
-                  placeholder="••••••••"
+                  id="initpassword"
+                  onChange={handleInputFieldChange}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                  placeholder="••••••••"
                 ></input>
               </div>
               <div>

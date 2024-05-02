@@ -3,7 +3,7 @@ import {
   getIpaddressesCount,
   getAddressSpace,
   compareVnetRangeWithSubnetRangeUsed,
-} from "../../api/calls";
+} from "../../api/calculatorCalls";
 import SizeSelect from "../elements/SizeSelect";
 import VnetStore from "../../store/VnetInputStore";
 import useTableEntriesStore from "../../store/TabelEntriesStore";
