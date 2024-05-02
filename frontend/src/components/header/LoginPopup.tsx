@@ -4,9 +4,11 @@ import googleLogo from "../../styles/google-logo.svg";
 import githubLogo from "../../styles/github-logo.svg";
 import { loginUser } from "../../api/userCalls";
 import { useState } from "react";
+import UserStore from "../../store/UserStore";
 
 function LoginPopUp() {
   const navigate = useNavigate();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   function clickToHome() {
     navigate("/");
@@ -31,11 +33,16 @@ function LoginPopUp() {
     try {
       await loginUser(loginCreds.username, loginCreds.password);
       clickToHome();
+      setuserLoginStatus(true);
     } catch (error) {
       console.error("Login failed:", error);
       // Optionally handle errors, perhaps showing a message to the user
     }
   }
+
+  const { setuserLoginStatus } = UserStore((state) => ({
+    setuserLoginStatus: state.setuserLoginStatus,
+  }));
 
   const location = useLocation();
   const state = location.state as {
@@ -70,7 +77,7 @@ function LoginPopUp() {
           <form
             className="space-y-6 px-6 lg:px-8 pb-4 sm:pb-6 xl:pb-8"
             action="#"
-            onClick={handleSubmit}
+            onSubmit={handleSubmit}
           >
             <h3 className="text-xl text-sky-800 font-medium dark:text-white">
               Sign in to Subneter

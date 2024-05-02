@@ -4,22 +4,16 @@ import { Link, useLocation } from "react-router-dom";
 import { getCurrentUser } from "../../api/userCalls";
 
 import Avatar from "./Avatar";
+import UserStore from "../../store/UserStore";
 
 function Header() {
   const location = useLocation();
-  const [currentUser, setCurrentUser] = useState(false);
 
-  useEffect(() => {
-    getCurrentUser()
-      .then(function (res) {
-        setCurrentUser(true);
-        console.log("Current user set to true"); // Bestätigen, dass dieser Code erreicht wird
-      })
-      .catch(function (error) {
-        setCurrentUser(false);
-        console.log("Error fetching user, set to false");
-      });
-  }, []);
+  const { userLoginStatus, setuserLoginStatus } = UserStore((state) => ({
+    userLoginStatus: state.userLoginStatus,
+    setuserLoginStatus: state.setuserLoginStatus,
+  }));
+
   return (
     <nav className="flex justify-between items-center p-6 font-montserrat">
       <div className="flex items-center">
@@ -38,7 +32,7 @@ function Header() {
           Updates
         </Link>
       </div>
-      {currentUser ? (
+      {userLoginStatus ? (
         <Avatar></Avatar>
       ) : (
         <div className="flex space-x-6">

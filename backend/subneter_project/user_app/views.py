@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['POST'])
 def register_user(request):
@@ -59,7 +60,7 @@ def login_user(request):
         return JsonResponse({'error': 'Invalid login credentials'}, status=401)
 
 @api_view(['GET'])
-@login_required
+@permission_classes([IsAuthenticated])
 def get_current_user(request):
     User = get_user_model()
     user = User.objects.get(username=request.user.username)

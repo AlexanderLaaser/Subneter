@@ -118,7 +118,6 @@ export const logoutUser = async () => {
   try {
     const response = await axios.post(
       `${import.meta.env.VITE_API_SERVER_URL}/api/user/logout_user`,
-      {},
       header
     );
 
