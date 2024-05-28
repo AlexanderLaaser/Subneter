@@ -3,7 +3,7 @@ import AddButton from "./TableEntries";
 import TableHead from "./TableHead";
 import JsonField from "./JsonField";
 
-function Tab() {
+function Table() {
   const [activeTab, setActiveTab] = useState("calculator-tab");
 
   const handleTabClick = (tab: React.SetStateAction<string>) => {
@@ -87,4 +87,4 @@ function Tab() {
   );
 }
 
-export default Tab;
+export default Table;

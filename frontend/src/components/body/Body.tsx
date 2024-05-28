@@ -1,18 +1,23 @@
-import VnetInput from "./VnetInput";
-import Table from "./Table";
-import Header from "../header/Header";
 import Slogan from "./Slogan";
-import Footer from "../footer/Footer";
-import "../../styles/index.css";
+import VnetInput from "./VnetInput";
+import Table from "./table/Table";
+import Sidebar from "./Sidebar";
+import { useUserStore } from "../../store/UserStore";
 
 function Body() {
+  const { userLoginStatus } = useUserStore();
   return (
     <div>
-      <Header />
       <Slogan />
-      <VnetInput></VnetInput>
-      <Table></Table>
-      <Footer></Footer>
+      <VnetInput />
+      <div className="flex">
+        <div className="flex-1">{userLoginStatus ? <Sidebar /> : null}</div>
+
+        <div className="">
+          <Table />
+        </div>
+        <div className="flex-1"></div>
+      </div>
     </div>
   );
 }

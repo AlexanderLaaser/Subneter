@@ -9,7 +9,7 @@ function Header() {
 
   const { userLoginStatus } = useUserStore();
   return (
-    <nav className="flex justify-between items-center p-6 font-montserrat">
+    <nav className="flex justify-between items-center p-6 font-montserrat ">
       <div className="flex items-center">
         <Link to="/">
           <img className="h-14 w-14" src={Logo} alt="Your Logo" />

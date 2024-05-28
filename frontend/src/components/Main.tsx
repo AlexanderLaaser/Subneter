@@ -1,7 +1,7 @@
 import { Route, Routes, useLocation } from "react-router-dom";
 import Login from "./header/LoginPopup";
 import Register from "./header/RegisterPopup";
-import Body from "./body/Body";
+import Page from "./Page";
 
 function Main() {
   const location = useLocation();
@@ -17,7 +17,7 @@ function Main() {
       <Routes
         location={registerpopouplocation || loginpopouplocation || location}
       >
-        <Route path="/" element={<Body />} />
+        <Route path="/" element={<Page />} />
       </Routes>
       {loginpopouplocation && (
         <Routes>
