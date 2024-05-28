@@ -1,5 +1,8 @@
 import TableEntry from "./TableEntry";
-import { generateNextSubnet, getIpaddressesCount } from "../../api/calls";
+import {
+  generateNextSubnet,
+  getIpaddressesCount,
+} from "../../api/calculatorCalls";
 import VnetStore from "../../store/VnetInputStore";
 import useTableEntriesStore from "../../store/TabelEntriesStore";
 import { useEffect } from "react";

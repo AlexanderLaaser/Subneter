@@ -1,7 +1,7 @@
 from django.shortcuts import render # type: ignore
 from django.http import JsonResponse # type: ignore
 from django.views.decorators.http import require_http_methods # type: ignore
-from .calculator.calculation import (get_start_iP, get_end_ip, count_ipaddresses, 
+from .calculations.calculation import (get_start_iP, get_end_ip, count_ipaddresses, 
                                     generate_next_subnet, compare_vnet_range_with_subnet_ranges_used)
 from rest_framework.decorators import api_view
 
@@ -42,4 +42,3 @@ def endpoint_compare_vnet_range_with_subnet_ranges_used(request):
     result = compare_vnet_range_with_subnet_ranges_used(vnet_cidr, ip_ranges_used)
     return JsonResponse({'result': result})
 
-# Implementing tests (if needed) could be done via Django management commands or a separate test suite.

@@ -20,7 +20,7 @@ export const getIpaddressesCount = async (suffix: number) => {
     const response = await axios.get(
       `${
         import.meta.env.VITE_API_SERVER_URL
-      }/api/count_ipaddresses?subnet_mask=${suffix}`
+      }/api/calculator/count_ipaddresses?subnet_mask=${suffix}`
     );
     return response.data.count.toString();
   } catch (error) {
@@ -37,7 +37,7 @@ export const getAddressSpace = async (
       const response = await axios.get(
         `${
           import.meta.env.VITE_API_SERVER_URL
-        }/api/address_space?ipaddress_cidr=${ipaddress_cidr}`
+        }/api/calculator/address_space?ipaddress_cidr=${ipaddress_cidr}`
       );
 
       if ((response.status = 200)) {
@@ -68,7 +68,9 @@ export const generateNextSubnet = async (
 ) => {
   try {
     const response = await axios.post(
-      `${import.meta.env.VITE_API_SERVER_URL}/api/generate_next_subnet`,
+      `${
+        import.meta.env.VITE_API_SERVER_URL
+      }/api/calculator/generate_next_subnet`,
       {
         vnet_cidr,
         new_suffix_length,
@@ -103,7 +105,7 @@ export const compareVnetRangeWithSubnetRangeUsed = async (
     const response = await axios.post(
       `${
         import.meta.env.VITE_API_SERVER_URL
-      }/api/compare_vnet_range_with_subnet_ranges_used`,
+      }/api/calculator/compare_vnet_range_with_subnet_ranges_used`,
       {
         vnet_cidr,
         ip_ranges_used,

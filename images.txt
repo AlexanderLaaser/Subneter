@@ -1,0 +1,5 @@
+crpmtdev.azurecr.io/eza-envirosocial/api:0.0.0-1387-g88951c9e
+postgres:11.5
+crpmtdev.azurecr.io/eza-envirosocial/db-metrics:0.0.0-1387-g88951c9e
+crpmtdev.azurecr.io/eza-envirosocial/frontend:0.0.0-1387-g88951c9e
+crpmtdev.azurecr.io/eza-outbox-producer/eza-outbox-producer:1.5.1

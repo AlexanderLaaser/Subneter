@@ -1,7 +1,8 @@
-from django.contrib import admin # type: ignore
-from django.urls import path, include # type: ignore
+from django.contrib import admin
+from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('api_app.urls')),
+    path('api/calculator/', include('calculator_app.urls')),
+    path('api/user/', include('user_app.urls')),
 ]
