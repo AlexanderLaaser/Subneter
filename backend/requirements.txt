@@ -2,3 +2,4 @@ ipaddress
 django
 djangorestframework
 django-cors-headers
+django-allauth

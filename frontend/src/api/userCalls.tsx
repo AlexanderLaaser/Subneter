@@ -1,27 +1,31 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 import { iUser } from "../interfaces/iUser";
+import Cookies from "js-cookie";
 
 axios.defaults.xsrfCookieName = "CSRFTOKEN";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.withCredentials = true;
 
-const token = Cookies.get("CSRFTOKEN");
-
-const header = {
-  headers: {
-    "Content-Type": "application/json",
-    "X-CSRFToken": token,
+// Axios Interceptor hinzufügen
+axios.interceptors.request.use(
+  (config) => {
+    // CSRF-Token aus den Cookies holen
+    const csrfToken = Cookies.get("CSRFTOKEN");
+    if (csrfToken) {
+      config.headers["X-CSRFToken"] = csrfToken;
+    }
+    return config;
   },
-  withCredentials: true,
-};
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export const registerUser = async (user: iUser) => {
   try {
     const response = await axios.post(
       `${import.meta.env.VITE_API_SERVER_URL}/api/user/register_user`,
-      user,
-      header
+      user
     );
 
     if ((response.status = 200)) {
@@ -53,8 +57,7 @@ export const loginUser = async (username: string, password: string) => {
       {
         username,
         password,
-      },
-      header
+      }
     );
 
     if ((response.status = 200)) {
@@ -65,8 +68,14 @@ export const loginUser = async (username: string, password: string) => {
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       if (error.response) {
-        if (error.response.status === 400) {
-          throw new Error("Inputs invalid. Please check again!");
+        if (
+          error.response.status === 400 ||
+          error.response.status === 401 ||
+          error.response.status === 403
+        ) {
+          const errorMessage =
+            error.response.data?.error || "An error occurred";
+          throw new Error(errorMessage);
         } else if (error.response.status === 500) {
           throw new Error("Server error!");
         }
@@ -82,8 +91,7 @@ export const loginUser = async (username: string, password: string) => {
 export const getCurrentUser = async () => {
   try {
     const response = await axios.get(
-      `${import.meta.env.VITE_API_SERVER_URL}/api/user/get_current_user`,
-      header
+      `${import.meta.env.VITE_API_SERVER_URL}/api/user/get_current_user`
     );
 
     if (response.status === 200) {
@@ -118,15 +126,11 @@ export const logoutUser = async () => {
   try {
     const response = await axios.post(
       `${import.meta.env.VITE_API_SERVER_URL}/api/user/logout_user`,
-      header
+      {}
     );
-
-    if (response.status === 200) {
-      return response.data;
-    } else {
-      throw new Error("Failed to fetch data!");
-    }
+    return response.data;
   } catch (error) {
+    console.error("Logout failed:", error);
     throw error;
   }
 };

@@ -2,53 +2,71 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import microsoftLogo from "../../styles/microsoft-logo.png";
 import googleLogo from "../../styles/google-logo.svg";
 import githubLogo from "../../styles/github-logo.svg";
-import { loginUser } from "../../api/userCalls";
+import { getCurrentUser, loginUser } from "../../api/userCalls";
+import { useUserStore } from "../../store/UserStore";
 import { useState } from "react";
-import UserStore from "../../store/UserStore";
 
 function LoginPopUp() {
   const navigate = useNavigate();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  function clickToHome() {
-    navigate("/");
-  }
-
-  const [loginCreds, setLoginCreds] = useState({
-    username: "",
-    password: "",
-  });
-
-  const handleInputFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setLoginCreds((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    console.log(loginCreds);
-  };
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault(); // Prevent the default form submission
-    try {
-      await loginUser(loginCreds.username, loginCreds.password);
-      clickToHome();
-      setuserLoginStatus(true);
-    } catch (error) {
-      console.error("Login failed:", error);
-      // Optionally handle errors, perhaps showing a message to the user
-    }
-  }
-
-  const { setuserLoginStatus } = UserStore((state) => ({
-    setuserLoginStatus: state.setuserLoginStatus,
-  }));
-
   const location = useLocation();
   const state = location.state as {
     loginpopouplocation?: Location;
   };
   const loginpopouplocation = state?.loginpopouplocation;
+
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const {
+    setUsername,
+    setPassword,
+    setFirstname,
+    setLastname,
+    setEmail,
+    setuserLoginStatus,
+    username,
+    password,
+  } = useUserStore();
+
+  const handleInputFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === "username") {
+      setUsername(value);
+    } else if (name === "password") {
+      setPassword(value);
+    }
+  };
+
+  function clickToHome() {
+    navigate("/");
+  }
+
+  async function setUserData() {
+    const userData = await getCurrentUser();
+    setuserLoginStatus(true);
+
+    if (userData) {
+      setFirstname(userData.user.first_name);
+      setLastname(userData.user.last_name);
+      setEmail(userData.user.email);
+    } else {
+      throw new Error("Failed to retrieve user data");
+    }
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    try {
+      await loginUser(username, password);
+      clickToHome();
+      setUserData();
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("An unknown error occurred. Please try again.");
+      }
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto flex font-montserrat backdrop-blur-sm">
@@ -117,38 +135,28 @@ function LoginPopUp() {
               </div>
             </div>
             <div className="flex justify-between">
-              <div className="flex items-start">
-                <div className="flex items-center h-5">
-                  <input
-                    id="remember"
-                    aria-describedby="remember"
-                    type="checkbox"
-                    className="bg-gray-50 border border-gray-300 focus:ring-3 focus:ring-blue-300 h-4 w-4 rounded dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
-                  ></input>
+              {errorMessage !== "" ? (
+                <div className="flex items-start text-red-500 text-sm">
+                  {errorMessage}
                 </div>
-                <div className="text-sm ml-3">
-                  <label
-                    htmlFor="remember"
-                    className="font-medium text-gray-900 dark:text-gray-300"
-                  >
-                    Remember me
-                  </label>
-                </div>
-              </div>
-              <a
-                href="#"
-                className="text-sm text-blue-700 hover:underline hover:text-orange-600 dark:text-blue-500"
-              >
-                Lost Password?
-              </a>
+              ) : (
+                <div className="flex items-start"></div>
+              )}
+              <a className="text-sm text-zinc-700">Lost Password?</a>
             </div>
 
             <div className="flex flex-row gap-2">
-              <button className="inline-flex h-10 rounded-lg w-full items-center justify-center gap-2 border border-sky-800 bg-white p-2 text-sm font-medium text-black outline-none focus:ring-2 focus:ring-[#333] focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60 hover:border-orange-600">
+              <button
+                disabled
+                className="inline-flex h-10 rounded-lg w-full items-center justify-center gap-2 border border-sky-800 bg-white p-2 text-sm font-medium text-black outline-none focus:ring-2 focus:ring-[#333] focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60 hover:border-orange-600"
+              >
                 <img src={googleLogo} alt="Your Logo" className="h-6 w-6"></img>
                 Google
               </button>
-              <button className="inline-flex h-10 rounded-lg w-full items-center justify-center gap-2 border border-sky-800 bg-white p-2 text-sm font-medium text-black outline-none focus:ring-2 focus:ring-[#333] focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60 hover:border-orange-600">
+              <button
+                disabled
+                className="inline-flex h-10 rounded-lg w-full items-center justify-center gap-2 border border-sky-800 bg-white p-2 text-sm font-medium text-black outline-none focus:ring-2 focus:ring-[#333] focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60 hover:border-orange-600"
+              >
                 <img
                   src={microsoftLogo}
                   alt="Your Logo"
@@ -156,7 +164,10 @@ function LoginPopUp() {
                 ></img>{" "}
                 Microsoft
               </button>
-              <button className="inline-flex h-10 rounded-lg w-full items-center justify-center gap-2 border border-sky-800 bg-white p-2 text-sm font-medium text-black outline-none focus:ring-2 focus:ring-[#333] focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60 hover:border-orange-600">
+              <button
+                disabled
+                className="inline-flex h-10 rounded-lg w-full items-center justify-center gap-2 border border-sky-800 bg-white p-2 text-sm font-medium text-black outline-none focus:ring-2 focus:ring-[#333] focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60 hover:border-orange-600"
+              >
                 <img src={githubLogo} alt="Your Logo" className="h-6 w-6"></img>{" "}
                 GitHub
               </button>

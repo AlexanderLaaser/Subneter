@@ -4,9 +4,9 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.csrf import csrf_exempt
 
 @api_view(['POST'])
 def register_user(request):
@@ -74,7 +74,6 @@ def get_current_user(request):
 
 @api_view(['POST'])
 def logout_user(request):
-    # logout of current user
     logout(request)
     
     return JsonResponse({'message': 'Logged out successfully'}, status=200)

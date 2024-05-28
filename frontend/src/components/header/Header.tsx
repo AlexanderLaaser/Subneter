@@ -1,19 +1,13 @@
-import { useEffect, useState } from "react";
 import Logo from "../../styles/logo.png";
 import { Link, useLocation } from "react-router-dom";
-import { getCurrentUser } from "../../api/userCalls";
 
 import Avatar from "./Avatar";
-import UserStore from "../../store/UserStore";
+import { useUserStore } from "../../store/UserStore";
 
 function Header() {
   const location = useLocation();
 
-  const { userLoginStatus, setuserLoginStatus } = UserStore((state) => ({
-    userLoginStatus: state.userLoginStatus,
-    setuserLoginStatus: state.setuserLoginStatus,
-  }));
-
+  const { userLoginStatus } = useUserStore();
   return (
     <nav className="flex justify-between items-center p-6 font-montserrat">
       <div className="flex items-center">
