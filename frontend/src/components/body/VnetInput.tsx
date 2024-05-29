@@ -90,13 +90,13 @@ function VnetInput() {
 
   return (
     <>
-      <div className="flex w-full items-center justify-center font-montserrat">
+      <div className="flex items-center justify-center font-montserrat">
         <div className="pt-14">
           <div className="text-lg text-sky-800 font-bold mb-4">
             Network Address
           </div>
-          <div className="flex items-center justify-center">
-            <div className="mr-4">
+          <div className="flex flex-row items-center justify-center">
+            <div className=" mr-4">
               <input
                 id="ip_adress"
                 type="text"
@@ -119,12 +119,12 @@ function VnetInput() {
                 </div>
               )}
             </div>
-            <div className="">
+            <div className="flex-1">
               <SizeSelect
                 elementID={"ip_size_input"}
                 defaultValue={24}
                 tailWindConfig={
-                  "${vnet.suffixIsValid === true ? 'border-red-200' : 'border-red-200' } sm:text-base outline-none border border-zinc-950 text-m rounded focus:border-orange-600 pr-16 pl-4 h-10"
+                  "${vnet.suffixIsValid === true ? 'border-red-200' : 'border-red-200' } sm:text-base outline-none border border-zinc-950 text-m rounded focus:border-orange-600 pr-16 pl-4 h-10 "
                 }
                 type="vnet"
                 onChangeFunction={handleSuffixChange}

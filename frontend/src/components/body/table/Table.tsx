@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import AddButton from "./TableEntries";
 import TableHead from "./TableHead";
 import JsonField from "./JsonField";
+import { useUserStore } from "../../../store/UserStore";
 
 function Table() {
   const [activeTab, setActiveTab] = useState("calculator-tab");
+  const { userLoginStatus } = useUserStore();
 
   const handleTabClick = (tab: React.SetStateAction<string>) => {
     setActiveTab(tab);
@@ -39,24 +41,26 @@ function Table() {
                   Subnets
                 </button>
               </li>
-              {/*<li className="me-2" role="presentation">
-                <button
-                  className={`font-extrabold text-lg inline-block p-4 border-b-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
-                    activeTab === "json-tab"
-                      ? "text-sky-800 border-sky-800"
-                      : ""
-                  }`}
-                  id="json-tab"
-                  data-tabs-target="#json"
-                  type="button"
-                  role="tab"
-                  aria-controls="json"
-                  aria-selected={activeTab === "json-tab"}
-                  onClick={() => handleTabClick("json-tab")}
-                >
-                  JSON
-                </button>
-              </li> */}
+              {userLoginStatus ? (
+                <li className="me-2" role="presentation">
+                  <button
+                    className={`font-extrabold text-lg inline-block p-4 border-b-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
+                      activeTab === "json-tab"
+                        ? "text-sky-800 border-sky-800"
+                        : ""
+                    }`}
+                    id="json-tab"
+                    data-tabs-target="#json"
+                    type="button"
+                    role="tab"
+                    aria-controls="json"
+                    aria-selected={activeTab === "json-tab"}
+                    onClick={() => handleTabClick("json-tab")}
+                  >
+                    JSON
+                  </button>
+                </li>
+              ) : null}
             </ul>
           </div>
         </div>

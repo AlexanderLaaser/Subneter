@@ -8,12 +8,13 @@ function Body() {
   const { userLoginStatus } = useUserStore();
   return (
     <div>
-      <Slogan />
-      <VnetInput />
+      {userLoginStatus ? null : <Slogan />}
+
       <div className="flex">
         <div className="flex-1">{userLoginStatus ? <Sidebar /> : null}</div>
 
         <div className="">
+          <VnetInput />
           <Table />
         </div>
         <div className="flex-1"></div>
