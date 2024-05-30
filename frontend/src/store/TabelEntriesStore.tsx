@@ -5,7 +5,7 @@ interface TableEntryType {
   id: number;
   subnetName: string;
   size: number;
-  ips: string;
+  ips: number;
   range: string;
   error: string;
 }
@@ -32,7 +32,7 @@ const useTableEntriesStore = create<TableEntriesStore>()(
         id: 0,
         subnetName: "",
         size: 27,
-        ips: "32",
+        ips: 32,
         range: "10.0.0.0 - 10.0.0.31",
         error: "",
       },

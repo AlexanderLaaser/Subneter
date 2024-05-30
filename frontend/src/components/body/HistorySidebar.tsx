@@ -1,6 +1,6 @@
 function HistorySidebar() {
   return (
-    <div className="flex flex-row min-w-[20rem] min-h-[20rem] pt-16 pl-6">
+    <div className="flex flex-row  min-w-[20rem] min-h-[20rem] pt-16 pl-6">
       <div className="flex flex-col rounded-xl bg-white border border-sky-800 p-4 text-gray-700  shadow-blue-gray-900/5 font-montserrat ">
         <div className="">
           <h5 className="block text-xl text-sky-800 font-semibold  text-blue-gray-900">

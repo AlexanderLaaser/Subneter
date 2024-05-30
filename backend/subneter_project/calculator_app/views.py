@@ -3,7 +3,11 @@ from django.http import JsonResponse # type: ignore
 from django.views.decorators.http import require_http_methods # type: ignore
 from .calculations.calculation import (get_start_iP, get_end_ip, count_ipaddresses, 
                                     generate_next_subnet, compare_vnet_range_with_subnet_ranges_used)
+from .models import Vnet, Subnet
+from .serializers import VnetSerializer, SubnetSerializer
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
 
 @api_view(['GET'])
 def endpoint_start_ip(request):
@@ -41,4 +45,25 @@ def endpoint_compare_vnet_range_with_subnet_ranges_used(request):
     ip_ranges_used = request.data['ip_ranges_used']
     result = compare_vnet_range_with_subnet_ranges_used(vnet_cidr, ip_ranges_used)
     return JsonResponse({'result': result})
+
+class VnetViewSet(viewsets.ModelViewSet):
+    queryset = Vnet.objects.all()
+    serializer_class = VnetSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+
+class SubnetViewSet(viewsets.ModelViewSet):
+    queryset = Subnet.objects.all()
+    serializer_class = SubnetSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(vnet__user=self.request.user)
+
 

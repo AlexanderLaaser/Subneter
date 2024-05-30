@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import SizeSelect from "../../elements/SizeSelect";
-import { MdDelete } from "react-icons/md";
 import { compareVnetRangeWithSubnetRangeUsed } from "../../../api/calculatorCalls";
 import VnetStore from "../../../store/VnetInputStore";
 import useTableEntriesStore from "../../../store/TabelEntriesStore";
+import { MdDelete } from "react-icons/md";
 
 interface InterfaceTableEntryProps {
   id: number;
   subnetName: string;
   size: number;
-  ips: string;
+  ips: number;
   range: string;
   error: string;
   updateSubnetName: (id: number, description: string) => void;

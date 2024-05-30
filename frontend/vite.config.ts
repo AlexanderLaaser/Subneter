@@ -8,10 +8,12 @@ export default defineConfig({
       plugins: [tailwindcss()],
     },
   },
-    server: {
-      host: '127.0.0.1'
-    }
-  
+  server: {
+    host: '127.0.0.1'
+  },
+  optimizeDeps: {
+    exclude: ['js-big-decimal']
+  }
 });
 
 

@@ -12,7 +12,7 @@ function Body() {
       {userLoginStatus ? null : <Slogan />}
 
       <div className="flex">
-        <div className="flex-1">
+        <div className="flex-1 ">
           {userLoginStatus ? <HistorySidebar /> : null}
         </div>
 
@@ -20,9 +20,7 @@ function Body() {
           <VnetInput />
           <Table />
         </div>
-        <div className="flex-1">
-          <UsageSidebar />
-        </div>
+        <div className="flex-1"></div>
       </div>
     </div>
   );
