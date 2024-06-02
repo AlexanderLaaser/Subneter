@@ -140,6 +140,14 @@ function TableEntries() {
 
   return (
     <>
+      <div className="flex justify-center content-center w-full">
+        <div className="flex font-montserrat pt-6 w-full font-bold space-x-6 text-black">
+          <div className="flex-1 pl-4">Name</div>
+          <div className="flex-inital w-12">Mask</div>
+          <div className="flex-inital w-12">IPs</div>
+          <div className="flex-1 pr-4">Range</div>
+        </div>
+      </div>
       {renderTableEntries()}{" "}
       {vnet.vnetSizeIsValid === false ? (
         <div className="flex justify-center mt-2 h-8">

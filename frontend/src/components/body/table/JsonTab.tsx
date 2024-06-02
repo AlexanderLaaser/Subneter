@@ -17,7 +17,7 @@ function JsonField() {
         <div className="flex justify-center content-center w-full">
           <textarea
             value={JSON.stringify(tableEntriesStore, null, 2)}
-            className=" fleexresize-y font-montserrat w-full max-w-screen-md bg-white mt-3 rounded-lg h-auto min-h-[300px]"
+            className=" fleexresize-y font-montserrat w-full  bg-white mt-3 rounded-lg h-auto min-h-[300px]"
           ></textarea>
         </div>
       </div>

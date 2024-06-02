@@ -91,7 +91,7 @@ function VnetInput() {
 
   return (
     <>
-      <div className="flex xl:flex-row sm:flex-col pt-10 font-montserrat xl:space-x-10">
+      <div className="flex  sm:flex-col pt-10 font-montserrat xl:space-x-10 xl:flex-row">
         <div className="flex flex-1 flex-col space-y-4" id="vnetconfig">
           <div className="flex-1 text-lg text-sky-800 font-bold " id="vnetname">
             Vnet Name

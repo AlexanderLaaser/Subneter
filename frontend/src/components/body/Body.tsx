@@ -1,6 +1,6 @@
 import Slogan from "./Slogan";
 import VnetInput from "./VnetInput";
-import Table from "./table/Table";
+import Tab from "./table/Tab";
 import HistorySidebar from "./HistorySidebar";
 import { useUserStore } from "../../store/UserStore";
 
@@ -14,9 +14,9 @@ function Body() {
         <div className="">{userLoginStatus ? <HistorySidebar /> : null}</div>
 
         <div className="flex flex-1 justify-center">
-          <div className="max-w-screen-md">
+          <div className="w-3/4 max-w-screen-lg">
             <VnetInput />
-            <Table />
+            <Tab />
           </div>
         </div>
       </div>

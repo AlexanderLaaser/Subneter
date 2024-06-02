@@ -13,11 +13,6 @@ function SizeSelect({
   onChangeFunction,
 }: SizeSelectProps) {
   const suffixOptions = [];
-  // var maxSuffixValue = vnet.vnetSuffix;
-
-  // if (type === "vnet") {
-  //   maxSuffixValue = 14;
-  // }
 
   for (let i = 14; i <= 32; i++) {
     suffixOptions.push(

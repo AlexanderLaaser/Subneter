@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import AddButton from "./TableEntries";
-import TableHead from "./TableHead";
-import JsonField from "./JsonField";
+import Table from "./SubnetsTab";
+
+import JsonField from "./JsonTab";
 import { useUserStore } from "../../../store/UserStore";
 
-function Table() {
+function Tab() {
   const [activeTab, setActiveTab] = useState("calculator-tab");
   const { userLoginStatus } = useUserStore();
 
@@ -14,7 +14,7 @@ function Table() {
 
   return (
     <>
-      <div className="flex justify-center content-center flex-col font-montserrat">
+      <div className="flex justify-center content-center flex-col font-montserrat ">
         <div className="flex justify-center content-center w-full ">
           <div className="w-full pt-12 ">
             <ul
@@ -72,8 +72,7 @@ function Table() {
             role="tabpanel"
             aria-labelledby="calculator-tab"
           >
-            <TableHead></TableHead>
-            <AddButton></AddButton>
+            <Table />
           </div>
           <div
             className={`flex flex-col ${
@@ -91,4 +90,4 @@ function Table() {
   );
 }
 
-export default Table;
+export default Tab;
