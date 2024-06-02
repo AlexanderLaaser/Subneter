@@ -22,6 +22,7 @@ GitOps/CD: **ArgoCD**
 3. Building declarative CICD Chain with ArgoCD
 4. Migrating from flask to Django
 5. CORS handling with CSFR cookies
+6. Stateless vs. stateful components
 
 ## Requirements: Setting .env files
 

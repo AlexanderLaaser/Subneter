@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 class Vnet(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='vnets')
     name = models.CharField(max_length=255)
-    network_address = models.CharField(max_length=255)
+    startip = models.CharField(max_length=255)
     size = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

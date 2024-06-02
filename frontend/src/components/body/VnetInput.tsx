@@ -5,17 +5,18 @@ import {
   compareVnetRangeWithSubnetRangeUsed,
 } from "../../api/calculatorCalls";
 import SizeSelect from "../elements/SizeSelect";
-import VnetStore from "../../store/VnetInputStore";
-import useTableEntriesStore from "../../store/TabelEntriesStore";
+import VnetStore from "../../store/VnetStore";
+import useTableEntriesStore from "../../store/SubnetStore";
 
 function VnetInput() {
   // store function for VnetIpStartStore
-  const { setVnetSuffix, setVnetIpStart, setSuffixIsValid, vnet } = VnetStore(
+  const { vnet, setVnetSize, setVnetStartIp, setVnetSizeIsValid } = VnetStore(
     (state) => ({
       vnet: state.vnet,
-      setVnetSuffix: state.setVnetSuffix,
-      setVnetIpStart: state.setVnetIpStart,
-      setSuffixIsValid: state.setSuffixIsValid,
+      setVnetStartIp: state.setVnetStartIp,
+      setVnetSize: state.setVnetSize,
+      setVnetName: state.setVnetName,
+      setVnetSizeIsValid: state.setVnetSizeIsValid,
     })
   );
 
@@ -49,7 +50,7 @@ function VnetInput() {
   //function that sets the ip and the validState
   const handleIpInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newIp = (e.target as HTMLInputElement).value;
-    setVnetIpStart(newIp);
+    setVnetStartIp(newIp);
     updateIsValid(newIp);
   };
 
@@ -57,22 +58,22 @@ function VnetInput() {
   const handleSuffixChange = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const suffix = parseInt((e.target as HTMLSelectElement).value);
-    setVnetSuffix(suffix);
-    setAddressCount(await getIpaddressesCount(suffix));
+    const size = parseInt((e.target as HTMLSelectElement).value);
+    setVnetSize(size);
+    setAddressCount(await getIpaddressesCount(size));
   };
 
   const fetchAddressSpace = async () => {
     try {
       const addressSpace = await getAddressSpace(
-        vnet.vnetIpStart + "/" + vnet.vnetSuffix,
+        vnet.vnetStartIp + "/" + vnet.vnetSize,
         isValid
       );
       setError("");
       setAddressSpace(addressSpace);
-      setSuffixIsValid(
+      setVnetSizeIsValid(
         await compareVnetRangeWithSubnetRangeUsed(
-          vnet.vnetIpStart + "/" + vnet.vnetSuffix,
+          vnet.vnetStartIp + "/" + vnet.vnetSize,
           usedRanges
         )
       );
@@ -86,62 +87,81 @@ function VnetInput() {
     if (isValid) {
       fetchAddressSpace();
     }
-  }, [vnet.vnetIpStart, vnet.vnetSuffix, isValid, tableEntries]);
+  }, [vnet.vnetStartIp, vnet.vnetSize, isValid, tableEntries]);
 
   return (
     <>
-      <div className="flex items-center justify-center font-montserrat">
-        <div className="pt-14">
-          <div className="text-lg text-sky-800 font-bold mb-4">
+      <div className="flex xl:flex-row sm:flex-col pt-10 font-montserrat xl:space-x-10">
+        <div className="flex flex-1 flex-col space-y-4" id="vnetconfig">
+          <div className="flex-1 text-lg text-sky-800 font-bold " id="vnetname">
+            Vnet Name
+          </div>
+          <div className="flex-1 border border-zinc-950 rounded">
+            <input
+              id="vnetName"
+              type="text"
+              placeholder="VnetName1"
+              className=" text-sm sm:text-base focus:border-orange-600 focus:outline-none pl-4 rounded h-10"
+            ></input>
+          </div>
+          <div className="flex-1"></div>
+        </div>
+
+        <div className="flex flex-col space-y-4" id="vnetconfig">
+          <div className="flex-1 text-lg text-sky-800 font-bold " id="vnetname">
             Network Address
           </div>
-          <div className="flex flex-row items-center justify-center">
-            <div className=" mr-4">
-              <input
-                id="ip_adress"
-                type="text"
-                placeholder="Starting ip address"
-                defaultValue="10.0.0.0"
-                className="text-sm sm:text-base relative border rounded placeholder-gray-400 focus:border-orange-600 focus:outline-none pl-4 pr-20 border-zinc-950 h-10"
-                onChange={handleIpInput}
-              ></input>
-              {isValid === false ? (
-                <div className="text-red-500 font-bold text-m pt-2">
-                  Invalid IP Address
-                </div>
-              ) : error !== "" ? (
-                <div className="text-red-500 font-bold text-m pt-2">
-                  {error}
-                </div>
-              ) : (
-                <div className="text-sky-800 font-bold text-m pt-2">
-                  {addressSpace}
-                </div>
-              )}
-            </div>
-            <div className="flex-1">
-              <SizeSelect
-                elementID={"ip_size_input"}
-                defaultValue={24}
-                tailWindConfig={
-                  "${vnet.suffixIsValid === true ? 'border-red-200' : 'border-red-200' } sm:text-base outline-none border border-zinc-950 text-m rounded focus:border-orange-600 pr-16 pl-4 h-10 "
-                }
-                type="vnet"
-                onChangeFunction={handleSuffixChange}
-              ></SizeSelect>
-
-              <div className="text-sky-800 font-bold text-m pt-2">
-                {addressCount}
-              </div>
-            </div>
-            <div className="flex">
-              <div className="flex pl-4 mb-8 font-montserrat">
-                <button className="inline-flex items-center justify-center w-32 h-10 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600">
-                  <span className="text-l">Add Range</span>
-                </button>
-              </div>
-            </div>
+          <div className="flex-1 border border-zinc-950 rounded">
+            <input
+              type="text"
+              placeholder="Starting ip address"
+              defaultValue="10.0.0.0"
+              className="text-sm sm:text-base rounded focus:border-orange-600 focus:outline-none pl-4 h-10"
+              onChange={handleIpInput}
+            ></input>
           </div>
+          <div className="flex-1">
+            {isValid === false ? (
+              <div className="text-red-500 font-bold text-m">
+                Invalid IP Address
+              </div>
+            ) : error !== "" ? (
+              <div className="text-red-500 font-bold text-m ">{error}</div>
+            ) : (
+              <div className="text-sky-800 font-bold text-m ">
+                {addressSpace}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-col space-y-4" id="sizeconfig">
+          <div className="flex-1"></div>
+          <div className="flex-1" id="sizeselect">
+            <SizeSelect
+              elementID={"ip_size_input"}
+              defaultValue={24}
+              tailWindConfig={
+                "${vnet.suffixIsValid === true ? 'border-red-200' : 'border-red-200' } sm:text-base outline-none border border-zinc-950 text-m rounded focus:border-orange-600 pl-4 h-10 "
+              }
+              type="vnet"
+              onChangeFunction={handleSuffixChange}
+            ></SizeSelect>
+          </div>
+
+          <div className="flex-1 text-sky-800 font-bold text-m">
+            {addressCount}
+          </div>
+        </div>
+
+        <div className="flex flex-col space-y-4" id="addbutton">
+          <div className="flex-1"></div>
+          <div className="flex-1">
+            <button className=" w-10 h-10 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600">
+              <span className="text-l">+</span>
+            </button>
+          </div>
+          <div className="flex-1"></div>
         </div>
       </div>
     </>

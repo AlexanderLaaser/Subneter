@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import SizeSelect from "../../elements/SizeSelect";
 import { compareVnetRangeWithSubnetRangeUsed } from "../../../api/calculatorCalls";
-import VnetStore from "../../../store/VnetInputStore";
-import useTableEntriesStore from "../../../store/TabelEntriesStore";
+import VnetStore from "../../../store/VnetStore";
+import useTableEntriesStore from "../../../store/SubnetStore";
 import { MdDelete } from "react-icons/md";
 
 interface InterfaceTableEntryProps {

@@ -14,18 +14,18 @@ function Table() {
 
   return (
     <>
-      <div className="flex justify-center content-center flex-col">
+      <div className="flex justify-center content-center flex-col font-montserrat">
         <div className="flex justify-center content-center w-full ">
-          <div className="w-full font-montserrat pt-12 max-w-screen-md">
+          <div className="w-full pt-12 ">
             <ul
-              className="flex flex-wrap -mb-px text-sm text-center text-zinc-950 border-b border-zinc-950 dark:border-zinc-950"
+              className="flex space-x-4 flex-wrap -mb-px text-sm text-center text-zinc-950 border-b border-zinc-950 dark:border-zinc-950"
               id="default-tab"
               data-tabs-toggle="#default-Subnet-calculator-tab"
               role="tablist"
             >
               <li className="me-2" role="presentation">
                 <button
-                  className={`font-extrabold text-lg inline-block p-4 border-b-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
+                  className={`font-extrabold text-lg inline-block border-b-2 pb-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
                     activeTab === "calculator-tab"
                       ? "text-sky-800 border-sky-800"
                       : ""
@@ -44,7 +44,7 @@ function Table() {
               {userLoginStatus ? (
                 <li className="me-2" role="presentation">
                   <button
-                    className={`font-extrabold text-lg inline-block p-4 border-b-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
+                    className={`font-extrabold text-lg inline-block border-b-2 pb-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
                       activeTab === "json-tab"
                         ? "text-sky-800 border-sky-800"
                         : ""

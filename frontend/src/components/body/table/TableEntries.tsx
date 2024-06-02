@@ -3,8 +3,8 @@ import {
   generateNextSubnet,
   getIpaddressesCount,
 } from "../../../api/calculatorCalls";
-import VnetStore from "../../../store/VnetInputStore";
-import useTableEntriesStore from "../../../store/TabelEntriesStore";
+import VnetStore from "../../../store/VnetStore";
+import useTableEntriesStore from "../../../store/SubnetStore";
 import { useEffect } from "react";
 
 function TableEntries() {
@@ -62,7 +62,7 @@ function TableEntries() {
   const createNewTableEntry = async (size: number) => {
     const ips = await getIpaddressesCount(size);
     const range = await generateNextSubnet(
-      vnet.vnetIpStart + "/" + vnet.vnetSuffix,
+      vnet.vnetStartIp + "/" + vnet.vnetSize,
       size,
       usedRanges
     );
@@ -91,7 +91,7 @@ function TableEntries() {
 
       // Calling backend api to receive ip range for given cidr
       const range = await generateNextSubnet(
-        vnet.vnetIpStart + "/" + vnet.vnetSuffix,
+        vnet.vnetStartIp + "/" + vnet.vnetSize,
         size,
         usedRangesWithoutOwnID(id)
       );
@@ -136,12 +136,12 @@ function TableEntries() {
 
   useEffect(() => {
     updateAllIps();
-  }, [vnet.vnetIpStart]);
+  }, [vnet.vnetStartIp]);
 
   return (
     <>
       {renderTableEntries()}{" "}
-      {vnet.suffixIsValid === false ? (
+      {vnet.vnetSizeIsValid === false ? (
         <div className="flex justify-center mt-2 h-8">
           <div className="flex justify-center text-white bg-red-500 font-montserrat w-full max-w-screen-md rounded-lg pt-1">
             Network Address is too small for given subnets. Pls exchange subnet

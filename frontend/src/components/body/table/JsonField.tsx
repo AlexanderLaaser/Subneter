@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useTableEntriesStore from "../../../store/TabelEntriesStore";
+import useTableEntriesStore from "../../../store/SubnetStore";
 
 function JsonField() {
   useEffect(() => {

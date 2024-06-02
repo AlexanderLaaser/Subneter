@@ -5,7 +5,7 @@ import Body from "./body/Body";
 
 function Page() {
   return (
-    <div>
+    <div className="" id="subneter">
       <Header />
       <Body />
       <Footer></Footer>
