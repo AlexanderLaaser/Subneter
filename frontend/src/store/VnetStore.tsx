@@ -1,37 +1,34 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import type {} from "@redux-devtools/extension";
+import iVnet from "../interfaces/iVnet";
 
-interface VnetType {
-  vnetStartIp: string;
-  vnetSize: number;
-  vnetName: string;
-
-  // Checks if suffix changed afterwards fits to exisiting subnets addresses
-  vnetSizeIsValid?: boolean;
-}
-
-interface vnetInputStoreInterface {
-  vnet: VnetType;
-  setVnetStartIp: (vnetStartIp: string) => void;
-  setVnetSize: (vnetSize: number) => void;
-  setVnetName: (vnetName: string) => void;
+interface iVnetStore {
+  vnet: iVnet;
+  vnetSizeIsValid: boolean;
+  setVnetName: (name: string) => void;
+  setVnetNetworkAddress: (networkAddress: string) => void;
+  setVnetSubnetmask: (subnetmask: number) => void;
   setVnetSizeIsValid: (vnetSizeIsValid: boolean) => void;
 }
 
-const vnetStore = create<vnetInputStoreInterface>()(
+const vnetStore = create<iVnetStore>()(
   devtools(
     (set) => ({
+      //Placeholder values
       vnet: {
-        vnetStartIp: "10.0.0.0",
-        vnetSize: 24,
-        vnetName: "",
-        vnetSizeIsValid: true,
+        id: -1,
+        name: "",
+        networkAddress: "10.0.0.0",
+        subnetmask: 24,
       },
-      setVnetStartIp: (vnetStartIp) =>
-        set((state) => ({ vnet: { ...state.vnet, vnetStartIp: vnetStartIp } })),
-      setVnetSize: (vnetSize) =>
-        set((state) => ({ vnet: { ...state.vnet, vnetSize: vnetSize } })),
+      vnetSizeIsValid: true,
+      setVnetNetworkAddress: (networkAddress) =>
+        set((state) => ({
+          vnet: { ...state.vnet, networkAddress: networkAddress },
+        })),
+      setVnetSubnetmask: (subnetmask) =>
+        set((state) => ({ vnet: { ...state.vnet, subnetmask: subnetmask } })),
       setVnetName: (vnetName) =>
         set((state) => ({ vnet: { ...state.vnet, vnetName: vnetName } })),
       setVnetSizeIsValid: (vnetSizeIsValid) =>

@@ -1,7 +1,7 @@
 import Slogan from "./Slogan";
 import VnetInput from "./VnetInput";
 import Tab from "./table/Tab";
-import HistorySidebar from "./HistorySidebar";
+import HistorySidebar from "./NetworkSidebar";
 import { useUserStore } from "../../store/UserStore";
 
 function Body() {

@@ -34,11 +34,11 @@ function TableEntry({
     setSuffixIsValid: state.setVnetSizeIsValid,
   }));
 
-  const { tableEntries, getTableEntry, setError } = useTableEntriesStore(
+  const { tableEntries, getSubnet, setError } = useTableEntriesStore(
     (state) => ({
-      tableEntries: state.tableEntries,
+      tableEntries: state.subnets,
       setError: state.setError,
-      getTableEntry: state.getTableEntry,
+      getSubnet: state.getSubnet,
     })
   );
 
@@ -46,7 +46,7 @@ function TableEntry({
 
   const usedRanges = tableEntries.map((entry) => {
     const firstIp = entry.range.split(" - ")[0];
-    return `${firstIp}/${entry.size}`;
+    return `${firstIp}/${entry.subnetmask}`;
   });
 
   const handleDescriptionChange = (
@@ -70,14 +70,14 @@ function TableEntry({
 
   useEffect(() => {
     updateIps(id, selectedSize);
-  }, [vnet.vnetSize]);
+  }, [vnet.subnetmask]);
 
   useEffect(() => {
     const checkSuffixisValid = async () => {
       try {
         setSuffixIsValid(
           await compareVnetRangeWithSubnetRangeUsed(
-            vnet.vnetStartIp + "/" + vnet.vnetSize,
+            vnet.networkAddress + "/" + vnet.subnetmask,
             usedRanges
           )
         );
@@ -115,9 +115,9 @@ function TableEntry({
           </div>
           <div className="flex-inital w-12 text-sky-800 font-bold">{ips}</div>
           <div className="flex flex-1 flex-row pr-4">
-            {getTableEntry(id)?.error ? (
+            {getSubnet(id)?.error ? (
               <div className="flex-1 text-red-500 font-bold">
-                {getTableEntry(id)?.error}
+                {getSubnet(id)?.error}
               </div>
             ) : (
               <div className="flex-1 text-sky-800">{range}</div>

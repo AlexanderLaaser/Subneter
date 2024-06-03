@@ -6,23 +6,22 @@ import {
 } from "../../api/calculatorCalls";
 import SizeSelect from "../elements/SizeSelect";
 import VnetStore from "../../store/VnetStore";
-import useTableEntriesStore from "../../store/SubnetStore";
+import useSubnetStore from "../../store/SubnetStore";
 
 function VnetInput() {
   // store function for VnetIpStartStore
-  const { vnet, setVnetSize, setVnetStartIp, setVnetSizeIsValid } = VnetStore(
-    (state) => ({
+  const { vnet, setVnetSubnetmask, setVnetNetworkAddress, setVnetSizeIsValid } =
+    VnetStore((state) => ({
       vnet: state.vnet,
-      setVnetStartIp: state.setVnetStartIp,
-      setVnetSize: state.setVnetSize,
+      setVnetNetworkAddress: state.setVnetNetworkAddress,
+      setVnetSubnetmask: state.setVnetSubnetmask,
       setVnetName: state.setVnetName,
       setVnetSizeIsValid: state.setVnetSizeIsValid,
-    })
-  );
+    }));
 
-  const { tableEntries } = useTableEntriesStore((state) => ({
-    updateTableEntryStore: state.updateTableEntry,
-    tableEntries: state.tableEntries,
+  const { subnets } = useSubnetStore((state) => ({
+    getSubnet: state.updateSubnet,
+    subnets: state.subnets,
   }));
 
   const [isValid, setIsValid] = useState(true);
@@ -35,9 +34,9 @@ function VnetInput() {
     return validateIP(newip);
   };
 
-  const usedRanges = tableEntries.map((entry) => {
+  const usedRanges = subnets.map((entry) => {
     const firstIp = entry.range.split(" - ")[0];
-    return `${firstIp}/${entry.size}`;
+    return `${firstIp}/${entry.subnetmask}`;
   });
 
   //function for validating the entered ip
@@ -50,7 +49,7 @@ function VnetInput() {
   //function that sets the ip and the validState
   const handleIpInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newIp = (e.target as HTMLInputElement).value;
-    setVnetStartIp(newIp);
+    setVnetNetworkAddress(newIp);
     updateIsValid(newIp);
   };
 
@@ -59,21 +58,21 @@ function VnetInput() {
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const size = parseInt((e.target as HTMLSelectElement).value);
-    setVnetSize(size);
+    setVnetSubnetmask(size);
     setAddressCount(await getIpaddressesCount(size));
   };
 
   const fetchAddressSpace = async () => {
     try {
       const addressSpace = await getAddressSpace(
-        vnet.vnetStartIp + "/" + vnet.vnetSize,
+        vnet.networkAddress + "/" + vnet.subnetmask,
         isValid
       );
       setError("");
       setAddressSpace(addressSpace);
       setVnetSizeIsValid(
         await compareVnetRangeWithSubnetRangeUsed(
-          vnet.vnetStartIp + "/" + vnet.vnetSize,
+          vnet.networkAddress + "/" + vnet.subnetmask,
           usedRanges
         )
       );
@@ -87,7 +86,7 @@ function VnetInput() {
     if (isValid) {
       fetchAddressSpace();
     }
-  }, [vnet.vnetStartIp, vnet.vnetSize, isValid, tableEntries]);
+  }, [vnet.networkAddress, vnet.subnetmask, isValid, subnets]);
 
   return (
     <>

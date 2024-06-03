@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { iUser } from "../../interfaces/iUser";
+import iUser from "../../interfaces/iUser";
 import { useState } from "react";
 import { registerUser } from "../../api/userCalls";
 

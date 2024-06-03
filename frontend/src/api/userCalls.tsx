@@ -1,5 +1,5 @@
 import axios from "axios";
-import { iUser } from "../interfaces/iUser";
+import iUser from "../interfaces/iUser";
 import Cookies from "js-cookie";
 
 axios.defaults.xsrfCookieName = "CSRFTOKEN";

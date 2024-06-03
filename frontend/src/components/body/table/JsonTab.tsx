@@ -1,14 +1,14 @@
 import { useEffect } from "react";
-import useTableEntriesStore from "../../../store/SubnetStore";
+import useSubnetStore from "../../../store/SubnetStore";
 
 function JsonField() {
   useEffect(() => {
     console.log("JSON:");
-    console.log(tableEntriesStore);
+    console.log(subnets);
   });
 
-  const { tableEntriesStore } = useTableEntriesStore((state) => ({
-    tableEntriesStore: state.tableEntries,
+  const { subnets } = useSubnetStore((state) => ({
+    subnets: state.subnets,
   }));
 
   return (
@@ -16,7 +16,7 @@ function JsonField() {
       <div className="flex justify-center content-center w-full font-montserrat">
         <div className="flex justify-center content-center w-full">
           <textarea
-            value={JSON.stringify(tableEntriesStore, null, 2)}
+            value={JSON.stringify(subnets, null, 2)}
             className=" fleexresize-y font-montserrat w-full  bg-white mt-3 rounded-lg h-auto min-h-[300px]"
           ></textarea>
         </div>

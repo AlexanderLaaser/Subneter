@@ -13,7 +13,7 @@ class VnetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Vnet
-        fields = ['id', 'name', 'startip', 'size', 'subnets', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'networkaddress', 'mask', 'subnets', 'created_at', 'updated_at']
 
     def create(self, validated_data):
         subnets_data = validated_data.pop('subnets')
@@ -30,11 +30,10 @@ class VnetSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         subnets_data = validated_data.pop('subnets')
         instance.name = validated_data.get('name', instance.name)
-        instance.startip = validated_data.get('startip', instance.startip)
-        instance.size = validated_data.get('size', instance.size)
+        instance.networkaddress = validated_data.get('networkaddress', instance.networkaddress)
+        instance.mask = validated_data.get('mask', instance.mask)
         instance.save()
 
-        # Aktualisiere oder erstelle die Subnets
         for subnet_data in subnets_data:
             subnet_id = subnet_data.get('id')
             print(subnet_id)
@@ -47,7 +46,7 @@ class VnetSerializer(serializers.ModelSerializer):
                 subnet.range = subnet_data.get('range', subnet.range)
                 subnet.save()
             else:
-                # Neues Subnet erstellen
+                
                 Subnet.objects.create(vnet=instance, **subnet_data)
 
         return instance

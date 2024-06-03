@@ -4,117 +4,113 @@ import {
   getIpaddressesCount,
 } from "../../../api/calculatorCalls";
 import VnetStore from "../../../store/VnetStore";
-import useTableEntriesStore from "../../../store/SubnetStore";
+import useSubnetStore from "../../../store/SubnetStore";
 import { useEffect } from "react";
 
 function TableEntries() {
   useEffect(() => {
-    console.log("TableEntries:");
-    console.log(tableEntries);
+    console.log("Subnets:");
+    console.log(subnets);
   });
 
   // Store functions
-  const { vnet } = VnetStore((state) => ({
+  const { vnet, vnetSizeIsValid } = VnetStore((state) => ({
     vnet: state.vnet,
+    vnetSizeIsValid: state.vnetSizeIsValid,
   }));
 
-  const { checkErrorInEntries } = useTableEntriesStore((state) => ({
+  const { checkErrorInEntries } = useSubnetStore((state) => ({
     checkErrorInEntries: state.checkErrorInEntries,
   }));
 
   const {
-    addTableEntryStore,
-    deleteTableEntryStore,
-    updateTableEntryStore,
-    getTableEntriesWithoutOwnID,
-    tableEntries,
-  } = useTableEntriesStore((state) => ({
-    addTableEntryStore: state.addTableEntry,
-    deleteTableEntryStore: state.deleteTableEntry,
-    getTableEntryStore: state.getTableEntry,
-    updateTableEntryStore: state.updateTableEntry,
-    getTableEntriesWithoutOwnID: state.getTableEntriesWithoutOwnID,
-    tableEntries: state.tableEntries,
+    addSubnet,
+    deleteSubnet,
+    updateSubnet,
+    getSubnetWithoutOwnID,
+    subnets,
+  } = useSubnetStore((state) => ({
+    addSubnet: state.addSubnet,
+    deleteSubnet: state.deleteSubnet,
+    getSubnetWithoutOwnID: state.getSubnetWithoutOwnID,
+    updateSubnet: state.updateSubnet,
+    subnets: state.subnets,
   }));
 
-  const usedRanges = tableEntries.map((entry) => {
+  const usedRanges = subnets.map((entry) => {
     const firstIp = entry.range.split(" - ")[0];
-    return `${firstIp}/${entry.size}`;
+    return `${firstIp}/${entry.subnetmask}`;
   });
 
   const usedRangesWithoutOwnID = (id: number) => {
-    const tableEntriesWithoutOwnID = getTableEntriesWithoutOwnID(id).map(
-      (entry) => {
-        const firstIp = entry.range.split(" - ")[0];
-        return `${firstIp}/${entry.size}`;
-      }
-    );
+    const tableEntriesWithoutOwnID = getSubnetWithoutOwnID(id).map((entry) => {
+      const firstIp = entry.range.split(" - ")[0];
+      return `${firstIp}/${entry.subnetmask}`;
+    });
     return tableEntriesWithoutOwnID;
   };
 
   const handleAddClick = async () => {
     const size = 32;
-    const newTableEntry = await createNewTableEntry(size);
+    const newSubnet = await createNewSubnet(size);
 
-    addTableEntryStore(newTableEntry);
+    addSubnet(newSubnet);
   };
 
-  const createNewTableEntry = async (size: number) => {
-    const ips = await getIpaddressesCount(size);
+  const createNewSubnet = async (subnetmask: number) => {
+    const ips = await getIpaddressesCount(subnetmask);
     const range = await generateNextSubnet(
-      vnet.vnetStartIp + "/" + vnet.vnetSize,
-      size,
+      vnet.networkAddress + "/" + vnet.subnetmask,
+      subnetmask,
       usedRanges
     );
 
-    const error = "";
-
-    const newTableEntry = {
-      subnetName: "",
-      size,
+    const newSubnet = {
+      name: "",
+      subnetmask,
       ips,
       range,
-      error,
+      error: "",
     };
 
-    return newTableEntry;
+    return newSubnet;
   };
 
-  const updateSubnetName = (id: number, subnetName: string) => {
-    updateTableEntryStore({ id, subnetName });
+  const updateSubnetName = (id: number, name: string) => {
+    updateSubnet({ id, name });
   };
 
   // Adding ips to tableEntry state
-  const updateIps = async (id: number, size: number) => {
+  const updateIps = async (id: number, subnetmask: number) => {
     try {
-      const ips = await getIpaddressesCount(size);
+      const ips = await getIpaddressesCount(subnetmask);
 
       // Calling backend api to receive ip range for given cidr
       const range = await generateNextSubnet(
-        vnet.vnetStartIp + "/" + vnet.vnetSize,
-        size,
+        vnet.networkAddress + "/" + vnet.subnetmask,
+        subnetmask,
         usedRangesWithoutOwnID(id)
       );
       const error = "";
-      updateTableEntryStore({ id, size, ips, range, error });
+      updateSubnet({ id, subnetmask, ips, range, error });
     } catch (error) {
       throw error;
     }
   };
 
   const deleteTableEntry = (id: number) => {
-    deleteTableEntryStore(id);
+    deleteSubnet(id);
   };
 
   // Rendering TableEntries depending on amount of value of Table Entries
   const renderTableEntries = () => {
-    return tableEntries.map((entry) => (
+    return subnets.map((entry) => (
       <TableEntry
         key={entry.id}
         id={entry.id}
         error={""}
-        subnetName={entry.subnetName}
-        size={entry.size}
+        subnetName={entry.name}
+        size={entry.subnetmask}
         ips={entry.ips}
         range={entry.range}
         updateSubnetName={updateSubnetName}
@@ -125,9 +121,9 @@ function TableEntries() {
   };
 
   async function updateAllIps() {
-    for (const entry of tableEntries) {
+    for (const entry of subnets) {
       try {
-        await updateIps(entry.id, entry.size);
+        await updateIps(entry.id, entry.subnetmask);
       } catch (error) {
         console.error(`Error while updating table entry: ${entry.id}:`, error);
       }
@@ -136,7 +132,7 @@ function TableEntries() {
 
   useEffect(() => {
     updateAllIps();
-  }, [vnet.vnetStartIp]);
+  }, [vnet.networkAddress]);
 
   return (
     <>
@@ -149,7 +145,7 @@ function TableEntries() {
         </div>
       </div>
       {renderTableEntries()}{" "}
-      {vnet.vnetSizeIsValid === false ? (
+      {vnetSizeIsValid === false ? (
         <div className="flex justify-center mt-2 h-8">
           <div className="flex justify-center text-white bg-red-500 font-montserrat w-full max-w-screen-md rounded-lg pt-1">
             Network Address is too small for given subnets. Pls exchange subnet
