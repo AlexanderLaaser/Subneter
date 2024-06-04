@@ -3,8 +3,10 @@ import microsoftLogo from "../../styles/microsoft-logo.png";
 import googleLogo from "../../styles/google-logo.svg";
 import githubLogo from "../../styles/github-logo.svg";
 import { getCurrentUser, loginUser } from "../../api/userCalls";
+import { getAllVnets } from "../../api/persistenceCalls";
 import { useUserStore } from "../../store/UserStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import VnetStore from "../../store/VnetStore";
 
 function LoginPopUp() {
   const navigate = useNavigate();
@@ -23,6 +25,7 @@ function LoginPopUp() {
     setLastname,
     setEmail,
     setuserLoginStatus,
+    userLoginStatus,
     username,
     password,
   } = useUserStore();
@@ -67,6 +70,8 @@ function LoginPopUp() {
       }
     }
   }
+
+  useEffect(() => {}, []);
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto flex font-montserrat backdrop-blur-sm">

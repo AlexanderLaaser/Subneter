@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
-import SizeSelect from "../../elements/SizeSelect";
-import { compareVnetRangeWithSubnetRangeUsed } from "../../../api/calculatorCalls";
-import VnetStore from "../../../store/VnetStore";
-import useTableEntriesStore from "../../../store/SubnetStore";
-import { MdDelete } from "react-icons/md";
+import { useState } from "react";
+import SizeSelect from "../../elements/SubnetMaskSelect";
+import { useSubnetStore } from "../../../store/SubnetStore";
 import DeleteButton from "../../elements/DeleteButton";
 
 interface InterfaceTableEntryProps {
@@ -28,23 +25,11 @@ function TableEntry({
   updateIps,
   deleteTableEntry,
 }: InterfaceTableEntryProps) {
-  //store functions
-  const { vnet, setSuffixIsValid } = VnetStore((state) => ({
-    vnet: state.vnet,
-    setSuffixIsValid: state.setVnetSizeIsValid,
-  }));
-
-  const { tableEntries, getSubnet, setError } = useTableEntriesStore(
-    (state) => ({
-      tableEntries: state.subnets,
-      setError: state.setError,
-      getSubnet: state.getSubnet,
-    })
-  );
+  const { subnets, getSubnet, setError } = useSubnetStore();
 
   const [selectedSize, setSelectedSize] = useState(size);
 
-  const usedRanges = tableEntries.map((entry) => {
+  const usedRanges = subnets.map((entry) => {
     const firstIp = entry.range.split(" - ")[0];
     return `${firstIp}/${entry.subnetmask}`;
   });
@@ -68,27 +53,27 @@ function TableEntry({
     }
   };
 
-  useEffect(() => {
-    updateIps(id, selectedSize);
-  }, [vnet.subnetmask]);
+  // useEffect(() => {
+  //   updateIps(id, selectedSize);
+  // }, [vnet.subnetmask]);
 
-  useEffect(() => {
-    const checkSuffixisValid = async () => {
-      try {
-        setSuffixIsValid(
-          await compareVnetRangeWithSubnetRangeUsed(
-            vnet.networkAddress + "/" + vnet.subnetmask,
-            usedRanges
-          )
-        );
-      } catch (error) {
-        if (error instanceof Error) {
-          setError(id, error.message);
-        }
-      }
-    };
-    checkSuffixisValid();
-  }, [selectedSize]);
+  // useEffect(() => {
+  //   const checkSuffixisValid = async () => {
+  //     try {
+  //       setSuffixIsValid(
+  //         await compareVnetRangeWithSubnetRangeUsed(
+  //           vnet.networkAddress + "/" + vnet.subnetmask,
+  //           usedRanges
+  //         )
+  //       );
+  //     } catch (error) {
+  //       if (error instanceof Error) {
+  //         setError(id, error.message);
+  //       }
+  //     }
+  //   };
+  //   checkSuffixisValid();
+  // }, [selectedSize]);
 
   return (
     <>

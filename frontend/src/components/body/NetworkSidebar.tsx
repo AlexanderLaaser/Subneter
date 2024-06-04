@@ -1,7 +1,20 @@
-import { Link } from "react-router-dom";
 import NetworkIcon from "../../styles/network.png";
+import { useVnetStore } from "../../store/VnetStore";
+import { useEffect } from "react";
 
 function NetworkSidebar() {
+  const { vnets, addVnet, removeVnetByName, setSelectedVnet, selectedVnet } =
+    useVnetStore();
+
+  const handleAddVnet = () => {
+    const newVnetName = `VnetName-${vnets.length + 1}`;
+    addVnet(newVnetName);
+  };
+
+  const handleVnetSelect = (vnetName: string) => {
+    setSelectedVnet(vnetName);
+  };
+
   return (
     <aside
       id="default-sidebar"
@@ -14,24 +27,21 @@ function NetworkSidebar() {
           <div className="">
             <button
               className="inline-flex items-center justify-center w-6 h-6 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600"
-              //onClick={null}
+              onClick={handleAddVnet}
             >
               <span className="text-l">+</span>
             </button>
           </div>
         </div>
         <ul className="space-y-2 font-medium pt-4">
-          <li>
-            <a
-              href="#"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white bg-gray-100 hover:bg-orange-600 dark:hover:bg-gray-700 group"
-            >
-              <Link to="/">
-                <img className="h-6 w-6" src={NetworkIcon} alt="Your Logo" />
-              </Link>
-              <span className="ms-3">Vnet1</span>
-            </a>
-          </li>
+          {vnets.map((vnet) => (
+            <li key={vnet} onClick={() => handleVnetSelect(vnet)}>
+              <div className="flex items-center p-2 rounded-lg bg-gray-100 hover:bg-orange-600">
+                <img className="h-6 w-6" src={NetworkIcon} alt="Network Icon" />
+                <div className="flex-1 text-center">{vnet}</div>
+              </div>
+            </li>
+          ))}
         </ul>
       </div>
     </aside>

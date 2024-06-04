@@ -6,14 +6,14 @@ class SubnetSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Subnet
-        fields = ['id', 'name', 'mask', 'ips', 'range', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'subnetmask', 'ips', 'range', 'created_at', 'updated_at']
 
 class VnetSerializer(serializers.ModelSerializer):
     subnets = SubnetSerializer(many=True)
 
     class Meta:
         model = Vnet
-        fields = ['id', 'name', 'networkaddress', 'mask', 'subnets', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'networkaddress', 'subnetmask', 'subnets', 'created_at', 'updated_at']
 
     def create(self, validated_data):
         subnets_data = validated_data.pop('subnets')

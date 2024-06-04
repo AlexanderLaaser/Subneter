@@ -1,3 +1,5 @@
+import VnetStore from "../../store/VnetStore";
+
 interface SizeSelectProps {
   elementID: string;
   defaultValue: number;
@@ -6,12 +8,16 @@ interface SizeSelectProps {
   type: string;
 }
 
-function SizeSelect({
+function SubnetMaskSelect({
   elementID,
   defaultValue,
   tailWindConfig,
   onChangeFunction,
 }: SizeSelectProps) {
+  const { vnet } = VnetStore((state) => ({
+    vnet: state.vnet,
+  }));
+
   const suffixOptions = [];
 
   for (let i = 14; i <= 32; i++) {
@@ -25,6 +31,7 @@ function SizeSelect({
   return (
     <select
       id={elementID}
+      value={vnet.subnetmask}
       className={tailWindConfig}
       onChange={onChangeFunction}
       defaultValue={defaultValue}
@@ -34,4 +41,4 @@ function SizeSelect({
   );
 }
 
-export default SizeSelect;
+export default SubnetMaskSelect;

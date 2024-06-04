@@ -40,7 +40,6 @@ function Avatar() {
   async function setUserData() {
     const userData = await getCurrentUser();
     setuserLoginStatus(true);
-    console.log(userData);
 
     if (userData) {
       setFirstname(userData.user.first_name);

@@ -4,4 +4,5 @@ export default interface iUser {
   email: string;
   firstname: string;
   lastname: string;
+  isAuthenticated: boolean;
 }

@@ -4,38 +4,21 @@ import {
   getIpaddressesCount,
 } from "../../../api/calculatorCalls";
 import VnetStore from "../../../store/VnetStore";
-import useSubnetStore from "../../../store/SubnetStore";
+import { useSubnetStore } from "../../../store/SubnetStore";
 import { useEffect } from "react";
 
 function TableEntries() {
-  useEffect(() => {
-    console.log("Subnets:");
-    console.log(subnets);
-  });
-
   // Store functions
-  const { vnet, vnetSizeIsValid } = VnetStore((state) => ({
-    vnet: state.vnet,
-    vnetSizeIsValid: state.vnetSizeIsValid,
-  }));
-
-  const { checkErrorInEntries } = useSubnetStore((state) => ({
-    checkErrorInEntries: state.checkErrorInEntries,
-  }));
+  const { vnet, vnetSizeIsValid } = VnetStore();
 
   const {
     addSubnet,
     deleteSubnet,
     updateSubnet,
-    getSubnetWithoutOwnID,
+    getSubnetsExcludingID,
+    checkErrorInEntries,
     subnets,
-  } = useSubnetStore((state) => ({
-    addSubnet: state.addSubnet,
-    deleteSubnet: state.deleteSubnet,
-    getSubnetWithoutOwnID: state.getSubnetWithoutOwnID,
-    updateSubnet: state.updateSubnet,
-    subnets: state.subnets,
-  }));
+  } = useSubnetStore();
 
   const usedRanges = subnets.map((entry) => {
     const firstIp = entry.range.split(" - ")[0];
@@ -43,7 +26,7 @@ function TableEntries() {
   });
 
   const usedRangesWithoutOwnID = (id: number) => {
-    const tableEntriesWithoutOwnID = getSubnetWithoutOwnID(id).map((entry) => {
+    const tableEntriesWithoutOwnID = getSubnetsExcludingID(id).map((entry) => {
       const firstIp = entry.range.split(" - ")[0];
       return `${firstIp}/${entry.subnetmask}`;
     });

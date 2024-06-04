@@ -1,15 +1,7 @@
-import { useEffect } from "react";
-import useSubnetStore from "../../../store/SubnetStore";
+import { useSubnetStore } from "../../../store/SubnetStore";
 
 function JsonField() {
-  useEffect(() => {
-    console.log("JSON:");
-    console.log(subnets);
-  });
-
-  const { subnets } = useSubnetStore((state) => ({
-    subnets: state.subnets,
-  }));
+  const { subnets } = useSubnetStore();
 
   return (
     <>
