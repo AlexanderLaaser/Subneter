@@ -1,4 +1,3 @@
-import { useState } from "react";
 import SizeSelect from "../../elements/SubnetMaskSelect";
 import { useSubnetStore } from "../../../store/SubnetStore";
 import DeleteButton from "../../elements/DeleteButton";
@@ -6,7 +5,7 @@ import DeleteButton from "../../elements/DeleteButton";
 interface InterfaceTableEntryProps {
   id: number;
   subnetName: string;
-  size: number;
+  subnetmask: number;
   ips: number;
   range: string;
   error: string;
@@ -18,7 +17,7 @@ interface InterfaceTableEntryProps {
 function TableEntry({
   id,
   subnetName,
-  size,
+  subnetmask,
   ips,
   range,
   updateSubnetName,
@@ -26,8 +25,6 @@ function TableEntry({
   deleteTableEntry,
 }: InterfaceTableEntryProps) {
   const { subnets, getSubnet, setError } = useSubnetStore();
-
-  const [selectedSize, setSelectedSize] = useState(size);
 
   const usedRanges = subnets.map((entry) => {
     const firstIp = entry.range.split(" - ")[0];
@@ -44,7 +41,6 @@ function TableEntry({
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     try {
-      setSelectedSize(parseInt(event.target.value));
       await updateIps(id, parseInt(event.target.value));
     } catch (error) {
       if (error instanceof Error) {
@@ -52,28 +48,6 @@ function TableEntry({
       }
     }
   };
-
-  // useEffect(() => {
-  //   updateIps(id, selectedSize);
-  // }, [vnet.subnetmask]);
-
-  // useEffect(() => {
-  //   const checkSuffixisValid = async () => {
-  //     try {
-  //       setSuffixIsValid(
-  //         await compareVnetRangeWithSubnetRangeUsed(
-  //           vnet.networkAddress + "/" + vnet.subnetmask,
-  //           usedRanges
-  //         )
-  //       );
-  //     } catch (error) {
-  //       if (error instanceof Error) {
-  //         setError(id, error.message);
-  //       }
-  //     }
-  //   };
-  //   checkSuffixisValid();
-  // }, [selectedSize]);
 
   return (
     <>
@@ -90,7 +64,7 @@ function TableEntry({
           <div className="flex-inital w-12">
             <SizeSelect
               elementID={"ip_size_input"}
-              defaultValue={size}
+              value={subnetmask}
               tailWindConfig={
                 "outline-none border border-grey text-sm rounded-lg focus:border-orange-600"
               }

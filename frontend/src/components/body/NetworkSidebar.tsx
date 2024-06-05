@@ -1,10 +1,8 @@
 import NetworkIcon from "../../styles/network.png";
 import { useVnetStore } from "../../store/VnetStore";
-import { useEffect } from "react";
 
 function NetworkSidebar() {
-  const { vnets, addVnet, removeVnetByName, setSelectedVnet, selectedVnet } =
-    useVnetStore();
+  const { vnets, addVnet, setSelectedVnet, selectedVnet } = useVnetStore();
 
   const handleAddVnet = () => {
     const newVnetName = `VnetName-${vnets.length + 1}`;
@@ -36,9 +34,21 @@ function NetworkSidebar() {
         <ul className="space-y-2 font-medium pt-4">
           {vnets.map((vnet) => (
             <li key={vnet} onClick={() => handleVnetSelect(vnet)}>
-              <div className="flex items-center p-2 rounded-lg bg-gray-100 hover:bg-orange-600">
+              <div
+                className={`flex items-center p-2 rounded-lg ${
+                  selectedVnet === vnet
+                    ? "bg-sky-800 text-white"
+                    : "bg-gray-100 hover:bg-orange-600"
+                }`}
+              >
                 <img className="h-6 w-6" src={NetworkIcon} alt="Network Icon" />
-                <div className="flex-1 text-center">{vnet}</div>
+                <div
+                  className={`flex-1 text-center ${
+                    selectedVnet === vnet ? "text-white" : "text-black"
+                  }`}
+                >
+                  {vnet}
+                </div>
               </div>
             </li>
           ))}

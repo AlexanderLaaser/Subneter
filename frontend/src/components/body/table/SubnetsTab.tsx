@@ -8,8 +8,7 @@ import { useSubnetStore } from "../../../store/SubnetStore";
 import { useEffect } from "react";
 
 function TableEntries() {
-  // Store functions
-  const { vnet, vnetSizeIsValid } = VnetStore();
+  const { vnet } = VnetStore();
 
   const {
     addSubnet,
@@ -34,8 +33,9 @@ function TableEntries() {
   };
 
   const handleAddClick = async () => {
-    const size = 32;
-    const newSubnet = await createNewSubnet(size);
+    const subnetmask = 32;
+
+    const newSubnet = await createNewSubnet(subnetmask);
 
     addSubnet(newSubnet);
   };
@@ -47,6 +47,9 @@ function TableEntries() {
       subnetmask,
       usedRanges
     );
+
+    console.log("SubnetMask");
+    console.log(subnetmask);
 
     const newSubnet = {
       name: "",
@@ -93,7 +96,7 @@ function TableEntries() {
         id={entry.id}
         error={""}
         subnetName={entry.name}
-        size={entry.subnetmask}
+        subnetmask={entry.subnetmask}
         ips={entry.ips}
         range={entry.range}
         updateSubnetName={updateSubnetName}
@@ -115,6 +118,7 @@ function TableEntries() {
 
   useEffect(() => {
     updateAllIps();
+    console.log(subnets);
   }, [vnet.networkAddress]);
 
   return (
@@ -128,14 +132,6 @@ function TableEntries() {
         </div>
       </div>
       {renderTableEntries()}{" "}
-      {vnetSizeIsValid === false ? (
-        <div className="flex justify-center mt-2 h-8">
-          <div className="flex justify-center text-white bg-red-500 font-montserrat w-full max-w-screen-md rounded-lg pt-1">
-            Network Address is too small for given subnets. Pls exchange subnet
-            sizes!
-          </div>
-        </div>
-      ) : null}
       <div className="flex justify-center">
         {checkErrorInEntries() ? (
           <div className=" flex pl-2 content-center items-center mt-4 font-montserrat">

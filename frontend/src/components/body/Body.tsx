@@ -4,12 +4,9 @@ import Tab from "./table/Tab";
 import HistorySidebar from "./NetworkSidebar";
 import { useUserStore } from "../../store/UserStore";
 import TableControl from "./TableControl";
-import { useEffect } from "react";
 
 function Body() {
   const { userLoginStatus } = useUserStore();
-
-  useEffect(() => {}, [userLoginStatus]);
 
   return (
     <div>
