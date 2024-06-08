@@ -31,7 +31,7 @@ class VnetSerializer(serializers.ModelSerializer):
         subnets_data = validated_data.pop('subnets')
         instance.name = validated_data.get('name', instance.name)
         instance.networkaddress = validated_data.get('networkaddress', instance.networkaddress)
-        instance.mask = validated_data.get('mask', instance.mask)
+        instance.subnetmask = validated_data.get('subnetmask', instance.subnetmask)
         instance.save()
 
         for subnet_data in subnets_data:
@@ -41,7 +41,7 @@ class VnetSerializer(serializers.ModelSerializer):
                 # Existierendes Subnet aktualisieren
                 subnet = Subnet.objects.get(id=subnet_id, vnet=instance)
                 subnet.name = subnet_data.get('name', subnet.name)
-                subnet.mask = subnet_data.get('mask', subnet.mask)
+                subnet.subnetmask = subnet_data.get('subnetmask', subnet.subnetmask)
                 subnet.ips = subnet_data.get('ips', subnet.ips)
                 subnet.range = subnet_data.get('range', subnet.range)
                 subnet.save()

@@ -1,7 +1,7 @@
 function Footer() {
   return (
-    <footer className="flex flex-col font- font-montserrat items-center text-center text-surface dark:bg-neutral-700 dark:text-white">
-      <div className="container px-6 pt-40">
+    <footer className="flex flex-col font-montserrat items-center text-center text-surface dark:bg-neutral-700 dark:text-white bg-slate-300">
+      <div className="flex-1 pt-10 container px-6">
         <div className="mb-4 flex justify-center space-x-2">
           <a
             href="https://www.linkedin.com/in/alexander-laaser/"
@@ -41,7 +41,7 @@ function Footer() {
         </div>
       </div>
 
-      <div className="w-full bg-white text-center">
+      <div className="flex-1 pb-10 w-full text-center">
         © 2024 Copyright:
         <a href=""> Subneter</a>
       </div>

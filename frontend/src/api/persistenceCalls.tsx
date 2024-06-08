@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import VnetData from "../interfaces/iVnetData";
 
 axios.defaults.xsrfCookieName = "CSRFTOKEN";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -41,6 +42,48 @@ export const getAllVnets = async (isUserAuthenticated: boolean) => {
         return response.data;
       } else {
         throw new Error("Failed to fetch data!");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          if (error.response.status === 401) {
+            throw new Error("Unauthorized: No session or invalid credentials");
+          } else if (error.response.status === 400) {
+            throw new Error("Inputs invalid. Please check again!");
+          } else {
+            throw new Error("Server error!");
+          }
+        } else {
+          throw new Error("Network error!");
+        }
+      } else {
+        throw error;
+      }
+    }
+  } else {
+    console.log("User not authenticated");
+    return "User not authenticated";
+  }
+};
+
+export const updateVnetById = async (
+  isUserAuthenticated: boolean,
+  vnetId: number,
+  vnetData: VnetData
+) => {
+  if (isUserAuthenticated) {
+    try {
+      const response = await axios.put(
+        `${
+          import.meta.env.VITE_API_SERVER_URL
+        }/api/calculator/vnets/${vnetId}/`,
+        vnetData
+      );
+
+      if (response.status === 200 || response.status === 204) {
+        return response.data;
+      } else {
+        throw new Error("Failed to update data!");
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {

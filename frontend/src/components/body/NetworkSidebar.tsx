@@ -16,10 +16,10 @@ function NetworkSidebar() {
   return (
     <aside
       id="default-sidebar"
-      className="left-0 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 border-r-2 border-sky-800"
+      className="left-0 w-64 h-full sm:translate-x-0 border-r-2 border-sky-800 bg-white"
       aria-label="Sidebar"
     >
-      <div className="h-full pt-6 px-4 overflow-y-auto bg-white dark:bg-gray-800 font-montserrat">
+      <div className=" pt-6 px-4 overflow-y-auto bg-white dark:bg-gray-800 font-montserrat">
         <div className="flex items-center justify-between">
           <div className="text-lg text-sky-800">Virtuel Networks </div>
           <div className="">

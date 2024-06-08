@@ -5,4 +5,5 @@ export default interface iSubnet {
   ips: number;
   range: string;
   error?: string;
+  isStored: boolean;
 }

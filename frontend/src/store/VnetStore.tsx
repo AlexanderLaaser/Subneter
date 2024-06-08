@@ -7,6 +7,7 @@ interface iVnetStore {
   vnets: string[];
   selectedVnet: string;
   vnetSubnetmaskIsValid: boolean;
+  setVnetId: (id: number) => void;
   setVnetName: (name: string) => void;
   setVnetNetworkAddress: (networkAddress: string) => void;
   setVnetSubnetmask: (subnetmask: number) => void;
@@ -29,6 +30,7 @@ const vnetStore = create<iVnetStore>()((set, get) => ({
   },
   vnetSubnetmaskIsValid: true,
   selectedVnet: "VnetName-1",
+  setVnetId: (id) => set((state) => ({ vnet: { ...state.vnet, id: id } })),
   setVnetNetworkAddress: (networkAddress) =>
     set((state) => ({
       vnet: { ...state.vnet, networkAddress: networkAddress },
@@ -85,6 +87,7 @@ export const useVnetStore = () => {
     vnets,
     vnetSubnetmaskIsValid,
     selectedVnet,
+    setVnetId,
     setVnetName,
     setVnetNetworkAddress,
     setVnetSubnetmask,
@@ -101,6 +104,7 @@ export const useVnetStore = () => {
     vnets,
     vnetSubnetmaskIsValid,
     selectedVnet,
+    setVnetId,
     setVnetName,
     setVnetNetworkAddress,
     setVnetSubnetmask,

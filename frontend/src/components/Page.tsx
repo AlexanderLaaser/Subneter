@@ -3,12 +3,19 @@ import Footer from "./footer/Footer";
 import "../styles/index.css";
 import Body from "./body/Body";
 
+// Page component
 function Page() {
   return (
-    <div className="" id="subneter">
-      <Header />
-      <Body />
-      <Footer></Footer>
+    <div className="flex flex-col min-h-screen">
+      <header className="text-white">
+        <Header />
+      </header>
+      <main className="flex flex-1 overflow-hidden">
+        <Body />
+      </main>
+      <footer className="text-black">
+        <Footer />
+      </footer>
     </div>
   );
 }

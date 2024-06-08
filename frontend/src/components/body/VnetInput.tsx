@@ -10,10 +10,12 @@ import { useSubnetStore } from "../../store/SubnetStore";
 import { getAllVnets } from "../../api/persistenceCalls";
 import { useUserStore } from "../../store/UserStore";
 import { getCurrentUser } from "../../api/userCalls";
+import iSubnet from "../../interfaces/iSubnet";
 
 function VnetInput() {
   const {
     vnet,
+    setVnetId,
     setVnetSubnetmask,
     setVnetNetworkAddress,
     setVnetSubnetmaskIsValid,
@@ -24,8 +26,7 @@ function VnetInput() {
   } = useVnetStore();
 
   const { userLoginStatus, setuserLoginStatus } = useUserStore();
-
-  const { subnets } = useSubnetStore();
+  const { subnets, addSubnet, deleteAllSubnets } = useSubnetStore();
 
   const [IpIsValid, setIpIsValid] = useState(true);
   const [error, setError] = useState("");
@@ -91,11 +92,24 @@ function VnetInput() {
   async function loadVnetConfig() {
     const vnetConfig = await getAllVnets(userLoginStatus);
     const vnetListIndex = getVnetIndexByName(selectedVnet);
+    const subnets = vnetConfig[vnetListIndex].subnets;
 
     if (vnetConfig) {
       setVnetNetworkAddress(vnetConfig[vnetListIndex].networkaddress);
-      setVnetSubnetmask(vnetConfig[vnetListIndex].subnetmask);
       setVnetName(vnetConfig[vnetListIndex].name);
+      setVnetSubnetmask(vnetConfig[vnetListIndex].subnetmask);
+      setVnetId(vnetConfig[vnetListIndex].id);
+      subnets.forEach((subnet: iSubnet) => {
+        const newSubnet = {
+          id: subnet.id,
+          name: subnet.name,
+          subnetmask: subnet.subnetmask,
+          ips: subnet.ips || 32,
+          range: subnet.range || "10.0.0.0 - 10.0.0.0",
+          isStored: true,
+        };
+        addSubnet(newSubnet);
+      });
     }
   }
 
@@ -123,14 +137,19 @@ function VnetInput() {
 
   useEffect(() => {
     if (userLoginStatus) {
-      console.log("User is logged in");
+      deleteAllSubnets();
       loadVnetConfig();
     } else {
       console.log("User is logged out");
-      setVnetNetworkAddress("10.0.0.0");
-      setVnetSubnetmask(24);
-      setVnetName("VnetName-1");
-      setIps("256");
+      deleteAllSubnets();
+      addSubnet({
+        name: "VnetName1",
+        subnetmask: 25,
+        range: "10.0.0.0 - 10.0.0.128",
+        ips: 128,
+        error: "",
+        isStored: false,
+      });
       setIpIsValid(true);
       setError("");
       setVnetSubnetmaskIsValid(true);
@@ -149,18 +168,18 @@ function VnetInput() {
 
   return (
     <>
-      <div className="flex sm:flex-col pt-12 font-montserrat xl:space-x-10 xl:flex-row">
+      <div className="flex flex-1 sm:flex-col pt-12 font-montserrat xl:space-x-10 xl:flex-row">
         <div className="flex flex-1 flex-col space-y-4" id="vnetconfig">
           <div className="flex-1 text-lg text-sky-800 font-bold " id="vnetname">
             Vnet Name
           </div>
-          <div className="flex-1 border border-zinc-950 rounded">
+          <div className="flex-1 border border-zinc-950 rounded bg-white">
             <input
               id="vnetInput"
               placeholder=""
               type="text"
               value={vnet.name}
-              className=" text-sm sm:text-base focus:border-orange-600 focus:outline-none pl-4 rounded h-10"
+              className=" text-sm sm:text-base focus:border-orange-600 focus:outline-none pl-4 rounded h-10 "
               onChange={handleNameChange}
             ></input>
           </div>
@@ -174,7 +193,7 @@ function VnetInput() {
           >
             Network Address
           </div>
-          <div className="flex-1 border border-zinc-950 rounded">
+          <div className="flex-1 border border-zinc-950 rounded bg-white">
             <input
               type="text"
               placeholder=""

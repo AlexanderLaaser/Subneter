@@ -14,7 +14,7 @@ function Tab() {
 
   return (
     <>
-      <div className="flex justify-center content-center flex-col font-montserrat ">
+      <div className="flex flex-1 justify-center content-center flex-col font-montserrat ">
         <div className="flex justify-center content-center w-full ">
           <div className="w-full pt-12 ">
             <ul

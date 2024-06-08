@@ -3,8 +3,9 @@ import iSubnet from "../interfaces/iSubnet";
 
 interface iSubnetStore {
   subnets: iSubnet[];
-  addSubnet: (newEntry: Omit<iSubnet, "id">) => void;
+  addSubnet: (newEntry: Partial<iSubnet>) => void;
   deleteSubnet: (id: number) => void;
+  deleteAllSubnets: () => void;
   getSubnet: (id: number) => iSubnet;
   getSubnetsExcludingID: (id: number) => iSubnet[];
   updateSubnet: (updatedEntry: iUpdateSubnet) => void;
@@ -17,28 +18,38 @@ interface iUpdateSubnet extends Partial<iSubnet> {
 }
 
 const subnetStore = create<iSubnetStore>((set, get) => ({
-  subnets: [
-    {
-      id: 0,
-      name: "",
-      subnetmask: 27,
-      ips: 32,
-      range: "10.0.0.0 - 10.0.0.31",
-      error: "",
-    },
-  ],
+  subnets: [],
 
-  addSubnet: (entryData: Omit<iSubnet, "id">) =>
-    set((state) => ({
-      subnets: [
-        ...state.subnets,
-        { id: state.subnets.length + 1, ...entryData },
-      ],
-    })),
+  addSubnet: (entryData: Partial<iSubnet>) => {
+    set((state) => {
+      const nextId =
+        entryData.id ??
+        state.subnets.reduce((maxId, entry) => Math.max(maxId, entry.id), 0) +
+          1;
+      const newEntry: iSubnet = {
+        id: nextId,
+        name: entryData.name || "",
+        subnetmask: entryData.subnetmask || 0,
+        ips: entryData.ips || 0,
+        range: entryData.range || "Undefined",
+        error: entryData.error || "",
+        isStored: entryData.isStored || false,
+      };
+
+      return {
+        subnets: [...state.subnets, newEntry],
+      };
+    });
+  },
 
   deleteSubnet: (idToRemove: number) =>
     set((state) => ({
       subnets: state.subnets.filter((entry) => entry.id !== idToRemove),
+    })),
+
+  deleteAllSubnets: () =>
+    set(() => ({
+      subnets: [],
     })),
 
   getSubnet: (id: number) =>
@@ -49,6 +60,7 @@ const subnetStore = create<iSubnetStore>((set, get) => ({
       ips: 0,
       range: "",
       error: "Not found",
+      isStored: false,
     },
 
   getSubnetsExcludingID: (id: number) =>
@@ -76,6 +88,7 @@ export const useSubnetStore = () => {
     subnets,
     addSubnet,
     deleteSubnet,
+    deleteAllSubnets,
     getSubnet,
     getSubnetsExcludingID,
     updateSubnet,
@@ -87,6 +100,7 @@ export const useSubnetStore = () => {
     subnets,
     addSubnet,
     deleteSubnet,
+    deleteAllSubnets,
     getSubnet,
     getSubnetsExcludingID,
     updateSubnet,

@@ -8,7 +8,7 @@ function Header() {
   const { userLoginStatus } = useUserStore();
 
   return (
-    <div className=" bg-slate-400 font-montserrat">
+    <div className=" bg-slate-300 font-montserrat">
       <div className="flex justify-between p-2 z-50  ">
         <div className="flex flex-1 text-white space-x-10 items-center ">
           <div>
@@ -22,8 +22,8 @@ function Header() {
         {userLoginStatus ? (
           <Avatar />
         ) : (
-          <div className="flex space-x-6">
-            <div className="flex justify-center w-24 h-8 text-center bg-sky-800 text-white rounded-lg hover:bg-orange-600 ml-28">
+          <div className="flex space-x-6 justify-center items-center">
+            <div className=" w-24 h-8 text-center bg-sky-800 text-white rounded-lg hover:bg-orange-600 ml-28">
               <Link
                 to="/login"
                 state={{ loginpopouplocation: location }}
