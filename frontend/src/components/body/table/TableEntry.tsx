@@ -26,7 +26,7 @@ function TableEntry({
 }: InterfaceTableEntryProps) {
   const { subnets, getSubnet, setError } = useSubnetStore();
 
-  const usedRanges = subnets.map((entry) => {
+  const usedSubnets = subnets.map((entry) => {
     const firstIp = entry.range.split(" - ")[0];
     return `${firstIp}/${entry.subnetmask}`;
   });
@@ -81,7 +81,7 @@ function TableEntry({
             ) : (
               <div className="flex-1 text-sky-800">{range}</div>
             )}
-            {usedRanges.length > 1 ? (
+            {usedSubnets.length > 1 ? (
               <DeleteButton
                 status={"active"}
                 onClickFunction={deleteTableEntry}

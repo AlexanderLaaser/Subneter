@@ -107,3 +107,41 @@ export const updateVnetById = async (
     return "User not authenticated";
   }
 };
+
+export const deleteVnetById = async (
+  isUserAuthenticated: boolean,
+  vnetId: number
+) => {
+  if (isUserAuthenticated) {
+    try {
+      const response = await axios.delete(
+        `${import.meta.env.VITE_API_SERVER_URL}/api/calculator/vnets/${vnetId}/`
+      );
+
+      if (response.status === 200 || response.status === 204) {
+        return response.data;
+      } else {
+        throw new Error("Failed to update data!");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          if (error.response.status === 401) {
+            throw new Error("Unauthorized: No session or invalid credentials");
+          } else if (error.response.status === 400) {
+            throw new Error("Inputs invalid. Please check again!");
+          } else {
+            throw new Error("Server error!");
+          }
+        } else {
+          throw new Error("Network error!");
+        }
+      } else {
+        throw error;
+      }
+    }
+  } else {
+    console.log("User not authenticated");
+    return "User not authenticated";
+  }
+};

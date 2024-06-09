@@ -14,7 +14,6 @@ python3 manage.py migrate calculator_app
 
 # Thunder Client Testing
 
-1. delete invalid session in cookies tab
-2. Add csrftoken from browser to cookies tab
-3. login
-4. set current X-CSRFTOKEN to Header in CRUD Operation
+1. delete everything in cookies tab
+2. login
+3. set current X-CSRFTOKEN to Header in CRUD Operation

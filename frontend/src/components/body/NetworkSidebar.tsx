@@ -2,15 +2,21 @@ import NetworkIcon from "../../styles/network.png";
 import { useVnetStore } from "../../store/VnetStore";
 
 function NetworkSidebar() {
-  const { vnets, addVnet, setSelectedVnet, selectedVnet } = useVnetStore();
+  const { vnets, addVnet, setSelectedVnet, selectedVnetId } = useVnetStore();
 
   const handleAddVnet = () => {
-    const newVnetName = `VnetName-${vnets.length + 1}`;
-    addVnet(newVnetName);
+    const newVnet = {
+      id: vnets.length > 0 ? Math.max(...vnets.map((v) => v.id)) + 1 : 1,
+      name: `VnetName-${vnets.length + 1}`,
+      networkaddress: "10.0.0.0",
+      subnetmask: 24,
+      subnets: [],
+    };
+    addVnet(newVnet);
   };
 
-  const handleVnetSelect = (vnetName: string) => {
-    setSelectedVnet(vnetName);
+  const handleVnetSelect = (vnetId: number) => {
+    setSelectedVnet(vnetId);
   };
 
   return (
@@ -33,10 +39,10 @@ function NetworkSidebar() {
         </div>
         <ul className="space-y-2 font-medium pt-4">
           {vnets.map((vnet) => (
-            <li key={vnet} onClick={() => handleVnetSelect(vnet)}>
+            <li key={vnet.id} onClick={() => handleVnetSelect(vnet.id)}>
               <div
                 className={`flex items-center p-2 rounded-lg ${
-                  selectedVnet === vnet
+                  selectedVnetId === vnet.id
                     ? "bg-sky-800 text-white"
                     : "bg-gray-100 hover:bg-orange-600"
                 }`}
@@ -44,10 +50,10 @@ function NetworkSidebar() {
                 <img className="h-6 w-6" src={NetworkIcon} alt="Network Icon" />
                 <div
                   className={`flex-1 text-center ${
-                    selectedVnet === vnet ? "text-white" : "text-black"
+                    selectedVnetId === vnet.id ? "text-white" : "text-black"
                   }`}
                 >
-                  {vnet}
+                  {vnet.name}
                 </div>
               </div>
             </li>

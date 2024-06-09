@@ -5,24 +5,24 @@ import {
   compareVnetRangeWithSubnetRangeUsed,
 } from "../../api/calculatorCalls";
 import SubnetMaskSelect from "../elements/SubnetMaskSelect";
-import { useVnetStore } from "../../store/VnetStore";
 import { useSubnetStore } from "../../store/SubnetStore";
+import { useVnetStore } from "../../store/VnetStore";
 import { getAllVnets } from "../../api/persistenceCalls";
 import { useUserStore } from "../../store/UserStore";
 import { getCurrentUser } from "../../api/userCalls";
 import iSubnet from "../../interfaces/iSubnet";
+import iVnet from "../../interfaces/iVnet";
 
 function VnetInput() {
   const {
-    vnet,
-    setVnetId,
-    setVnetSubnetmask,
-    setVnetNetworkAddress,
-    setVnetSubnetmaskIsValid,
-    setVnetName,
-    getVnetIndexByName,
-    selectedVnet,
-    vnetSubnetmaskIsValid,
+    vnets,
+    addVnet,
+    clearVnets,
+    getSelectedVnet,
+    setSelectedVnet,
+    selectedVnetId,
+    updateSelectedVnetName,
+    updateVnet,
   } = useVnetStore();
 
   const { userLoginStatus, setuserLoginStatus } = useUserStore();
@@ -38,21 +38,29 @@ function VnetInput() {
     return `${firstIp}/${entry.subnetmask}`;
   });
 
-  //function that sets the ip and the validState
   const handleNetworkAddressChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const newNetworkAddress = (e.target as HTMLInputElement).value;
-    setVnetNetworkAddress(newNetworkAddress);
+    const newNetworkAddress = e.target.value;
+    const selectedVnet = getSelectedVnet();
+    if (selectedVnet) {
+      const updatedVnet = {
+        ...selectedVnet,
+        networkAddress: newNetworkAddress,
+      };
+      updateVnet(
+        vnets.findIndex((vnet) => vnet.id === selectedVnet.id),
+        updatedVnet
+      );
+    }
     setIpIsValid(validateIP(newNetworkAddress));
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
-    setVnetName(newName);
+    updateSelectedVnetName(newName);
   };
 
-  //function for validating the entered ip
   const validateIP = (ip: string) => {
     const regex =
       /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
@@ -62,61 +70,90 @@ function VnetInput() {
   const handleSubnetMaskChange = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const subnetmask = parseInt((e.target as HTMLSelectElement).value);
-    setVnetSubnetmask(subnetmask);
+    const subnetmask = parseInt(e.target.value);
+    const selectedVnet = getSelectedVnet();
+    if (selectedVnet) {
+      const updatedVnet = { ...selectedVnet, subnetmask };
+      updateVnet(
+        vnets.findIndex((vnet) => vnet.id === selectedVnet.id),
+        updatedVnet
+      );
+      await fetchAddressSpace(selectedVnet.networkaddress);
+    }
     const ipCount = await getIpaddressesCount(subnetmask);
     setIps(ipCount);
 
-    // Debugging the response and update process
     const isValid = await checkIfVnetSubnetMaskIsValid(subnetmask);
     console.log("Subnet mask validation result:", isValid);
-    setVnetSubnetmaskIsValid(isValid);
-    console.log(vnetSubnetmaskIsValid);
   };
 
-  // Ensure this async function handles all cases properly
   async function checkIfVnetSubnetMaskIsValid(subnetmask: number) {
     try {
+      const selectedVnet = getSelectedVnet();
+      if (!selectedVnet) return false;
+
       const isValid = await compareVnetRangeWithSubnetRangeUsed(
-        vnet.networkAddress + "/" + subnetmask,
+        selectedVnet.networkaddress + "/" + subnetmask,
         usedRanges
       );
       console.log("Network validation API call result:", isValid);
       return isValid;
     } catch (error) {
       console.error("Error validating subnet mask:", error);
-      return false; // Default to false on error
+      return false;
     }
   }
 
-  async function loadVnetConfig() {
-    const vnetConfig = await getAllVnets(userLoginStatus);
-    const vnetListIndex = getVnetIndexByName(selectedVnet);
-    const subnets = vnetConfig[vnetListIndex].subnets;
+  const loadAllStoredVnets = async () => {
+    try {
+      const vnetConfig = await getAllVnets(userLoginStatus);
+      if (vnetConfig.length !== 0 && Array.isArray(vnetConfig)) {
+        vnetConfig.forEach((vnet: iVnet) => {
+          addVnet(vnet);
+        });
+      } else {
+        addVnet({
+          id: 0,
+          name: "VnetName-1",
+          networkaddress: "10.0.0.0",
+          subnetmask: 24,
+          subnets: [],
+        });
+      }
+    } catch (error) {
+      console.error("Failed to load VNETs:", error);
+    }
+  };
 
-    if (vnetConfig) {
-      setVnetNetworkAddress(vnetConfig[vnetListIndex].networkaddress);
-      setVnetName(vnetConfig[vnetListIndex].name);
-      setVnetSubnetmask(vnetConfig[vnetListIndex].subnetmask);
-      setVnetId(vnetConfig[vnetListIndex].id);
-      subnets.forEach((subnet: iSubnet) => {
-        const newSubnet = {
-          id: subnet.id,
-          name: subnet.name,
-          subnetmask: subnet.subnetmask,
-          ips: subnet.ips || 32,
-          range: subnet.range || "10.0.0.0 - 10.0.0.0",
-          isStored: true,
-        };
-        addSubnet(newSubnet);
-      });
+  async function loadActiveVnetConfig() {
+    try {
+      const selectedVnet = getSelectedVnet();
+      if (selectedVnet) {
+        deleteAllSubnets();
+        selectedVnet.subnets.forEach((subnet: iSubnet) => {
+          const newSubnet = {
+            id: subnet.id,
+            name: subnet.name,
+            subnetmask: subnet.subnetmask,
+            ips: subnet.ips || 32,
+            range: subnet.range || "10.0.0.0 - 10.0.0.0",
+            isStored: true,
+          };
+          addSubnet(newSubnet);
+        });
+      }
+    } catch (error) {
+      console.error("Failed to load VNETs:", error);
     }
   }
 
   async function fetchAddressSpace(networkAddress: string) {
     try {
+      const selectedVnet = getSelectedVnet();
+      if (!selectedVnet) return;
+
       const addressSpace = await getAddressSpace(
-        networkAddress + "/" + vnet.subnetmask,
+        networkAddress + "/" + selectedVnet.subnetmask,
         IpIsValid
       );
       setError("");
@@ -137,8 +174,23 @@ function VnetInput() {
 
   useEffect(() => {
     if (userLoginStatus) {
-      deleteAllSubnets();
-      loadVnetConfig();
+      if (vnets.length > 0 && !selectedVnetId) {
+        setSelectedVnet(vnets[0].id);
+      }
+    }
+  }, [vnets]);
+
+  useEffect(() => {
+    if (userLoginStatus) {
+      clearVnets();
+      loadAllStoredVnets();
+    }
+  }, [userLoginStatus]);
+
+  useEffect(() => {
+    if (userLoginStatus) {
+      console.log("User is logged in");
+      loadActiveVnetConfig();
     } else {
       console.log("User is logged out");
       deleteAllSubnets();
@@ -152,15 +204,15 @@ function VnetInput() {
       });
       setIpIsValid(true);
       setError("");
-      setVnetSubnetmaskIsValid(true);
     }
-  }, [userLoginStatus, selectedVnet]);
+  }, [userLoginStatus, selectedVnetId]);
 
   useEffect(() => {
-    if (IpIsValid === true) {
-      fetchAddressSpace(vnet.networkAddress);
+    const selectedVnet = getSelectedVnet();
+    if (selectedVnet && IpIsValid) {
+      fetchAddressSpace(selectedVnet.networkaddress);
     }
-  }, [vnet.networkAddress]);
+  }, [selectedVnetId]);
 
   useEffect(() => {
     setUserData();
@@ -178,8 +230,8 @@ function VnetInput() {
               id="vnetInput"
               placeholder=""
               type="text"
-              value={vnet.name}
-              className=" text-sm sm:text-base focus:border-orange-600 focus:outline-none pl-4 rounded h-10 "
+              value={getSelectedVnet()?.name || ""}
+              className="text-sm sm:text-base focus:border-orange-600 focus:outline-none pl-4 rounded h-10"
               onChange={handleNameChange}
             ></input>
           </div>
@@ -197,7 +249,7 @@ function VnetInput() {
             <input
               type="text"
               placeholder=""
-              value={vnet.networkAddress}
+              value={getSelectedVnet()?.networkaddress || ""}
               className="text-sm sm:text-base rounded focus:border-orange-600 focus:outline-none pl-4 h-10"
               onChange={handleNetworkAddressChange}
             ></input>
@@ -220,9 +272,9 @@ function VnetInput() {
           <div className="flex-1" id="sizeselect">
             <SubnetMaskSelect
               elementID={"ip_size_input"}
-              value={vnet.subnetmask}
+              value={getSelectedVnet()?.subnetmask || 24}
               tailWindConfig={
-                "${vnet.suffixIsValid === true ? 'border-red-200' : 'border-red-200' } sm:text-base outline-none border border-zinc-950 text-m rounded focus:border-orange-600 pl-4 pr-4 h-10 "
+                "${vnet.suffixIsValid === true ? 'border-red-200' : 'border-red-200' } sm:text-base outline-none border border-zinc-950 text-m rounded focus:border-orange-600 pl-4 pr-4 h-10"
               }
               type="vnet"
               onChangeFunction={handleSubnetMaskChange}
@@ -235,7 +287,7 @@ function VnetInput() {
         <div className="flex flex-col space-y-4" id="addbutton">
           <div className="flex-1"></div>
           <div className="flex-1">
-            <button className=" w-10 h-10 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600">
+            <button className="w-10 h-10 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600">
               <span className="text-l">+</span>
             </button>
           </div>
@@ -243,14 +295,14 @@ function VnetInput() {
         </div>
       </div>
       <div>
-        {vnetSubnetmaskIsValid === false ? (
+        {/* {vnetSubnetmaskIsValid === false ? (
           <div className="flex justify-center mt-2 h-8 w-full">
             <div className="flex justify-center text-white bg-red-500 font-montserrat w-full rounded-lg pt-1">
               Network Address is too small for given subnets. Pls exchange
               subnet sizes!
             </div>
           </div>
-        ) : null}
+        ) : null} */}
       </div>
     </>
   );

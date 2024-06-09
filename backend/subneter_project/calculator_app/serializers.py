@@ -34,11 +34,18 @@ class VnetSerializer(serializers.ModelSerializer):
         instance.subnetmask = validated_data.get('subnetmask', instance.subnetmask)
         instance.save()
 
+        # Löschen von Subnets, die nicht mehr im neuen Bestand sind
+        current_subnet_ids = [subnet.id for subnet in instance.subnets.all()]
+        new_subnet_ids = [subnet_data.get('id') for subnet_data in subnets_data if subnet_data.get('id')]
+
+        for subnet_id in current_subnet_ids:
+            if subnet_id not in new_subnet_ids:
+                Subnet.objects.filter(id=subnet_id).delete()
+
         for subnet_data in subnets_data:
             subnet_id = subnet_data.get('id')
-            print(subnet_id)
             if subnet_id:
-                # Existierendes Subnet aktualisieren
+                
                 subnet = Subnet.objects.get(id=subnet_id, vnet=instance)
                 subnet.name = subnet_data.get('name', subnet.name)
                 subnet.subnetmask = subnet_data.get('subnetmask', subnet.subnetmask)
@@ -46,7 +53,7 @@ class VnetSerializer(serializers.ModelSerializer):
                 subnet.range = subnet_data.get('range', subnet.range)
                 subnet.save()
             else:
-                
+                # Neues Subnet erstellen
                 Subnet.objects.create(vnet=instance, **subnet_data)
 
         return instance

@@ -3,12 +3,13 @@ import {
   generateNextSubnet,
   getIpaddressesCount,
 } from "../../../api/calculatorCalls";
-import VnetStore from "../../../store/VnetStore";
+import { useVnetStore } from "../../../store/VnetStore";
 import { useSubnetStore } from "../../../store/SubnetStore";
 import { useEffect } from "react";
 
 function TableEntries() {
-  const { vnet } = VnetStore();
+  const { getSelectedVnet } = useVnetStore();
+  const selectedVnet = getSelectedVnet();
 
   const {
     addSubnet,
@@ -33,24 +34,22 @@ function TableEntries() {
   };
 
   const handleAddClick = async () => {
+    if (!selectedVnet) return; // Early return if selectedVnet is null
+
     const subnetmask = 32;
-
     const newSubnet = await createNewSubnet(subnetmask);
-
     addSubnet(newSubnet);
   };
 
   const createNewSubnet = async (subnetmask: number) => {
+    if (!selectedVnet) return {}; // Early return if selectedVnet is null
+
     const ips = await getIpaddressesCount(subnetmask);
     const range = await generateNextSubnet(
-      vnet.networkAddress + "/" + vnet.subnetmask,
+      selectedVnet.networkaddress + "/" + selectedVnet.subnetmask,
       subnetmask,
       usedRanges
     );
-
-    console.log("SubnetMask");
-    console.log(subnetmask);
-
     const newSubnet = {
       name: "",
       subnetmask,
@@ -68,12 +67,14 @@ function TableEntries() {
 
   // Adding ips to tableEntry state
   const updateIps = async (id: number, subnetmask: number) => {
+    if (!selectedVnet) return; // Early return if selectedVnet is null
+
     try {
       const ips = await getIpaddressesCount(subnetmask);
 
       // Calling backend api to receive ip range for given cidr
       const range = await generateNextSubnet(
-        vnet.networkAddress + "/" + vnet.subnetmask,
+        selectedVnet.networkaddress + "/" + selectedVnet.subnetmask,
         subnetmask,
         usedRangesWithoutOwnID(id)
       );
@@ -117,9 +118,11 @@ function TableEntries() {
   }
 
   useEffect(() => {
-    updateAllIps();
-    console.log(subnets);
-  }, [vnet.networkAddress]);
+    if (selectedVnet) {
+      updateAllIps();
+      console.log("check");
+    }
+  }, [selectedVnet?.networkaddress]);
 
   return (
     <>

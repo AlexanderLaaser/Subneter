@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { updateVnetById } from "../../api/persistenceCalls";
+import { useState, useEffect } from "react";
+import { deleteVnetById, updateVnetById } from "../../api/persistenceCalls";
 import { useSubnetStore } from "../../store/SubnetStore";
 import { useUserStore } from "../../store/UserStore";
 import { useVnetStore } from "../../store/VnetStore";
@@ -7,17 +7,31 @@ import SuccessPopup from "../header/elements/SuccessPopUp";
 
 function TableControl() {
   const { userLoginStatus } = useUserStore();
-  const { vnet } = useVnetStore();
+  const { getSelectedVnet, setSelectedVnet, removeVnetById, vnets } =
+    useVnetStore();
   const { subnets } = useSubnetStore();
 
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showSaveSuccessPopup, setSaveSuccessPopup] = useState(false);
+  const [showDeleteSuccessPopup, setDeleteSuccessPopup] = useState(false);
+
+  const selectedVnet = getSelectedVnet();
+
+  useEffect(() => {
+    if (!selectedVnet && vnets.length > 0) {
+      setSelectedVnet(vnets[0].id);
+    }
+  }, [vnets, selectedVnet, setSelectedVnet]);
+
+  if (!selectedVnet) {
+    return <div>No VNET selected</div>;
+  }
 
   const buildVnetConfig = () => {
     const vnetConfig = {
-      id: vnet.id,
-      name: vnet.name,
-      networkaddress: vnet.networkAddress,
-      subnetmask: vnet.subnetmask,
+      id: selectedVnet.id,
+      name: selectedVnet.name,
+      networkaddress: selectedVnet.networkaddress,
+      subnetmask: selectedVnet.subnetmask,
       subnets: subnets.map((subnet) => {
         const { id, isStored, ...rest } = subnet;
         if (!isStored) {
@@ -32,19 +46,43 @@ function TableControl() {
     return vnetConfig;
   };
 
-  async function storeVnetConfig() {
+  async function saveVnetConfig() {
     const vnetConfig = buildVnetConfig();
     try {
-      await updateVnetById(userLoginStatus, vnet.id, vnetConfig);
-      console.log("VNET config stored successfully.");
-      setShowSuccessPopup(true);
+      if (selectedVnet) {
+        await updateVnetById(userLoginStatus, selectedVnet.id, vnetConfig);
+        console.log("VNET config stored successfully.");
+        setSaveSuccessPopup(true);
+      } else {
+        console.error("No VNET selected.");
+      }
     } catch (error) {
       console.error("Failed to store VNET config:", error);
     }
   }
 
-  const handleAddVnetClick = () => {
-    storeVnetConfig();
+  const handleSaveVnetClick = () => {
+    saveVnetConfig();
+    console.log("executed");
+  };
+
+  async function deleteVnetConfig() {
+    try {
+      if (selectedVnet) {
+        await deleteVnetById(userLoginStatus, selectedVnet.id);
+        removeVnetById(selectedVnet.id);
+        console.log("VNET Deleted successfully.");
+        setDeleteSuccessPopup(true);
+      } else {
+        console.error("No VNET selected.");
+      }
+    } catch (error) {
+      console.error("Failed to delete VNET config:", error);
+    }
+  }
+
+  const handleDeleteVnetClick = () => {
+    deleteVnetConfig();
     console.log("executed");
   };
 
@@ -54,20 +92,29 @@ function TableControl() {
         className="flex flex-1 flex-row justify-end space-x-4"
         id="vnetconfig"
       >
-        <button className="inline-flex items-center justify-center pr-4 pl-4 h-10 text-slate-50 transition-colors duration-150 bg-red-500 rounded-lg focus:shadow-outline hover:bg-orange-600">
+        <button
+          className="inline-flex items-center justify-center pr-4 pl-4 h-10 text-slate-50 transition-colors duration-150 bg-red-500 rounded-lg focus:shadow-outline hover:bg-orange-600"
+          onClick={handleDeleteVnetClick}
+        >
           <span className="text-l">Delete</span>
         </button>
         <button
           className="inline-flex items-center justify-center pr-4 pl-4 h-10 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600"
-          onClick={handleAddVnetClick}
+          onClick={handleSaveVnetClick}
         >
           <span className="text-l">Save</span>
         </button>
       </div>
-      {showSuccessPopup && (
+      {showSaveSuccessPopup && (
         <SuccessPopup
           message="Your VNET configuration has been saved successfully!"
-          onClose={() => setShowSuccessPopup(false)}
+          onClose={() => setSaveSuccessPopup(false)}
+        />
+      )}
+      {showDeleteSuccessPopup && (
+        <SuccessPopup
+          message="Your VNET configuration has been deleted successfully!"
+          onClose={() => setDeleteSuccessPopup(false)}
         />
       )}
     </div>
