@@ -1,14 +1,13 @@
-import { useSubnetStore } from "../../../store/SubnetStore";
+import { useVnetStore } from "../../../store/VnetStore";
 
 function JsonField() {
-  const { subnets } = useSubnetStore();
-
+  const { getSubnets } = useVnetStore();
   return (
     <>
       <div className="flex justify-center content-center w-full font-montserrat">
         <div className="flex justify-center content-center w-full">
           <textarea
-            value={JSON.stringify(subnets, null, 2)}
+            value={JSON.stringify(getSubnets, null, 2)}
             className=" fleexresize-y font-montserrat w-full  bg-white mt-3 rounded-lg h-auto min-h-[300px]"
           ></textarea>
         </div>

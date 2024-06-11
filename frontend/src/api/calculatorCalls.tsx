@@ -67,6 +67,16 @@ export const generateNextSubnet = async (
   ip_ranges_used: string[]
 ) => {
   try {
+    console.log("generateNextSubnet aufgerufen mit Daten:", {
+      vnet_cidr,
+      new_suffix_length,
+      ip_ranges_used,
+    });
+
+    if (!vnet_cidr || !new_suffix_length || !Array.isArray(ip_ranges_used)) {
+      throw new Error("Ungültige Eingabeparameter für generateNextSubnet");
+    }
+
     const response = await axios.post(
       `${
         import.meta.env.VITE_API_SERVER_URL
@@ -79,12 +89,13 @@ export const generateNextSubnet = async (
       header
     );
 
-    if ((response.status = 200)) {
+    if (response.status === 200) {
       return response.data.nextSubnetRange.toString();
     } else {
       throw new Error("Failed to fetch data!");
     }
   } catch (error) {
+    console.error("Fehler beim API-Aufruf generateNextSubnet:", error);
     if (axios.isAxiosError(error) && error.response) {
       if (error.response.status === 400) {
         throw new Error("Inputs invalid. Please check again!");

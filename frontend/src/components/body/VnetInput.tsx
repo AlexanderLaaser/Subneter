@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   getIpaddressesCount,
   getAddressSpace,
   compareVnetRangeWithSubnetRangeUsed,
 } from "../../api/calculatorCalls";
-import SubnetMaskSelect from "../elements/SubnetMaskSelect";
-import { useSubnetStore } from "../../store/SubnetStore";
 import { useVnetStore } from "../../store/VnetStore";
 import { getAllVnets } from "../../api/persistenceCalls";
 import { useUserStore } from "../../store/UserStore";
 import { getCurrentUser } from "../../api/userCalls";
+import AddressSpace from "../body/AddressSpace";
 import iSubnet from "../../interfaces/iSubnet";
 import iVnet from "../../interfaces/iVnet";
 
@@ -22,39 +21,24 @@ function VnetInput() {
     setSelectedVnet,
     selectedVnetId,
     updateSelectedVnetName,
-    updateVnet,
+    addAddressSpace,
+    addSubnet,
+    deleteAllSubnets,
+    getSubnets,
+    getAddressSpaces,
   } = useVnetStore();
 
   const { userLoginStatus, setuserLoginStatus } = useUserStore();
-  const { subnets, addSubnet, deleteAllSubnets } = useSubnetStore();
 
   const [IpIsValid, setIpIsValid] = useState(true);
   const [error, setError] = useState("");
   const [range, setRange] = useState("");
   const [ips, setIps] = useState("256");
 
-  const usedRanges = subnets.map((entry) => {
+  const usedRanges = getSubnets().map((entry) => {
     const firstIp = entry.range.split(" - ")[0];
     return `${firstIp}/${entry.subnetmask}`;
   });
-
-  const handleNetworkAddressChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const newNetworkAddress = e.target.value;
-    const selectedVnet = getSelectedVnet();
-    if (selectedVnet) {
-      const updatedVnet = {
-        ...selectedVnet,
-        networkAddress: newNetworkAddress,
-      };
-      updateVnet(
-        vnets.findIndex((vnet) => vnet.id === selectedVnet.id),
-        updatedVnet
-      );
-    }
-    setIpIsValid(validateIP(newNetworkAddress));
-  };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -67,42 +51,23 @@ function VnetInput() {
     return regex.test(ip);
   };
 
-  const handleSubnetMaskChange = async (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const subnetmask = parseInt(e.target.value);
-    const selectedVnet = getSelectedVnet();
-    if (selectedVnet) {
-      const updatedVnet = { ...selectedVnet, subnetmask };
-      updateVnet(
-        vnets.findIndex((vnet) => vnet.id === selectedVnet.id),
-        updatedVnet
-      );
-      await fetchAddressSpace(selectedVnet.networkaddress);
-    }
-    const ipCount = await getIpaddressesCount(subnetmask);
-    setIps(ipCount);
-
-    const isValid = await checkIfVnetSubnetMaskIsValid(subnetmask);
-    console.log("Subnet mask validation result:", isValid);
-  };
-
-  async function checkIfVnetSubnetMaskIsValid(subnetmask: number) {
+  const fetchAddressSpace = async (networkAddress: string) => {
     try {
       const selectedVnet = getSelectedVnet();
-      if (!selectedVnet) return false;
+      if (!selectedVnet) return;
 
-      const isValid = await compareVnetRangeWithSubnetRangeUsed(
-        selectedVnet.networkaddress + "/" + subnetmask,
-        usedRanges
+      const addressSpace = await getAddressSpace(
+        networkAddress + "/" + selectedVnet.addressspaces[0].subnetmask,
+        IpIsValid
       );
-      console.log("Network validation API call result:", isValid);
-      return isValid;
+      setError("");
+      setRange(addressSpace);
     } catch (error) {
-      console.error("Error validating subnet mask:", error);
-      return false;
+      if (error instanceof Error) {
+        setError(error.message);
+      }
     }
-  }
+  };
 
   const loadAllStoredVnets = async () => {
     try {
@@ -115,8 +80,13 @@ function VnetInput() {
         addVnet({
           id: 0,
           name: "VnetName-1",
-          networkaddress: "10.0.0.0",
-          subnetmask: 24,
+          addressspaces: [
+            {
+              id: 0,
+              networkaddress: "10.0.0.0",
+              subnetmask: 24,
+            },
+          ],
           subnets: [],
         });
       }
@@ -144,24 +114,6 @@ function VnetInput() {
       }
     } catch (error) {
       console.error("Failed to load VNETs:", error);
-    }
-  }
-
-  async function fetchAddressSpace(networkAddress: string) {
-    try {
-      const selectedVnet = getSelectedVnet();
-      if (!selectedVnet) return;
-
-      const addressSpace = await getAddressSpace(
-        networkAddress + "/" + selectedVnet.subnetmask,
-        IpIsValid
-      );
-      setError("");
-      setRange(addressSpace);
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
     }
   }
 
@@ -195,6 +147,7 @@ function VnetInput() {
       console.log("User is logged out");
       deleteAllSubnets();
       addSubnet({
+        id: 0,
         name: "VnetName1",
         subnetmask: 25,
         range: "10.0.0.0 - 10.0.0.128",
@@ -210,7 +163,7 @@ function VnetInput() {
   useEffect(() => {
     const selectedVnet = getSelectedVnet();
     if (selectedVnet && IpIsValid) {
-      fetchAddressSpace(selectedVnet.networkaddress);
+      fetchAddressSpace(selectedVnet.addressspaces[0].networkaddress);
     }
   }, [selectedVnetId]);
 
@@ -218,14 +171,27 @@ function VnetInput() {
     setUserData();
   }, []);
 
+  const handleAddAddressSpace = () => {
+    addAddressSpace({
+      id: Math.random(),
+      networkaddress: "",
+      subnetmask: 24,
+    });
+  };
+
+  const addressSpaces = getAddressSpaces();
+
   return (
     <>
       <div className="flex flex-1 sm:flex-col pt-12 font-montserrat xl:space-x-10 xl:flex-row">
         <div className="flex flex-1 flex-col space-y-4" id="vnetconfig">
-          <div className="flex-1 text-lg text-sky-800 font-bold " id="vnetname">
-            Vnet Name
+          <div
+            className="flex-start text-lg text-sky-800 font-bold "
+            id="vnetname"
+          >
+            Virtuel Network Name
           </div>
-          <div className="flex-1 border border-zinc-950 rounded bg-white">
+          <div className="flex-start border border-zinc-950 rounded bg-white">
             <input
               id="vnetInput"
               placeholder=""
@@ -237,60 +203,23 @@ function VnetInput() {
           </div>
           <div className="flex-1"></div>
         </div>
-
-        <div className="flex flex-1 flex-col space-y-4" id="vnetconfig">
-          <div
-            className="flex-1 text-lg text-sky-800 font-bold "
-            id="networkaddress"
-          >
-            Network Address
+        <div
+          className="flex flex-1 flex-col space-y-4"
+          id="addressspaceNetworkAddress"
+        >
+          <div className="flex-1 text-lg text-sky-800 font-bold " id="vnetname">
+            Address Space
           </div>
-          <div className="flex-1 border border-zinc-950 rounded bg-white">
-            <input
-              type="text"
-              placeholder=""
-              value={getSelectedVnet()?.networkaddress || ""}
-              className="text-sm sm:text-base rounded focus:border-orange-600 focus:outline-none pl-4 h-10"
-              onChange={handleNetworkAddressChange}
-            ></input>
-          </div>
-          <div className="flex-1">
-            {IpIsValid === false ? (
-              <div className="text-red-500 font-bold text-m">
-                Invalid IP Address
-              </div>
-            ) : error !== "" ? (
-              <div className="text-red-500 font-bold text-m ">{error}</div>
-            ) : (
-              <div className="text-sky-800 font-bold text-m ">{range}</div>
-            )}
-          </div>
-        </div>
-
-        <div className="flex flex-col space-y-4" id="sizeconfig">
-          <div className="flex-1 text-lg text-sky-800 font-bold ">Mask</div>
-          <div className="flex-1" id="sizeselect">
-            <SubnetMaskSelect
-              elementID={"ip_size_input"}
-              value={getSelectedVnet()?.subnetmask || 24}
-              tailWindConfig={
-                "${vnet.suffixIsValid === true ? 'border-red-200' : 'border-red-200' } sm:text-base outline-none border border-zinc-950 text-m rounded focus:border-orange-600 pl-4 pr-4 h-10"
-              }
-              type="vnet"
-              onChangeFunction={handleSubnetMaskChange}
-            ></SubnetMaskSelect>
-          </div>
-
-          <div className="flex-1 text-sky-800 font-bold text-m">{ips}</div>
-        </div>
-
-        <div className="flex flex-col space-y-4" id="addbutton">
-          <div className="flex-1"></div>
-          <div className="flex-1">
-            <button className="w-10 h-10 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600">
-              <span className="text-l">+</span>
-            </button>
-          </div>
+          {addressSpaces.map((addressSpace, index) => (
+            <AddressSpace
+              key={addressSpace.id}
+              id={addressSpace.id}
+              networkAddress={addressSpace.networkaddress}
+              subnetMask={addressSpace.subnetmask}
+              index={index}
+              handleAddAddressSpace={handleAddAddressSpace}
+            />
+          ))}
           <div className="flex-1"></div>
         </div>
       </div>

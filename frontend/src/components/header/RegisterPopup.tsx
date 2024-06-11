@@ -12,6 +12,7 @@ function SignUpPopUp() {
     username: "",
     email: "",
     password: "",
+    isAuthenticated: false,
   });
 
   function handleClickToHome() {

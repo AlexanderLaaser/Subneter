@@ -1,9 +1,9 @@
+import iAddressSpace from "./iAddressSpace";
 import iSubnet from "./iSubnet";
 
 export default interface iVnet {
   id: number;
   name: string;
-  networkaddress: string;
-  subnetmask: number;
+  addressspaces: iAddressSpace[];
   subnets: iSubnet[];
 }

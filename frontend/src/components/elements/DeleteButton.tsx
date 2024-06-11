@@ -5,9 +5,10 @@ type StatusType = "active" | "inactive";
 interface DeleteButtonProps {
   status: StatusType;
   onClickFunction: () => void;
+  height?: string;
 }
 
-function DeleteButton({ status, onClickFunction }: DeleteButtonProps) {
+function DeleteButton({ status, onClickFunction, height }: DeleteButtonProps) {
   const buttonStyles =
     status === "active"
       ? "bg-red-500 hover:bg-orange-600 cursor-pointer"
@@ -16,7 +17,7 @@ function DeleteButton({ status, onClickFunction }: DeleteButtonProps) {
   return (
     <div>
       <button
-        className={`inline-flex items-center justify-center w-6 h-6  text-slate-50 transition-colors duration-150 rounded-lg focus:shadow-outline ${buttonStyles}`}
+        className={`inline-flex items-center justify-center ${height}  text-slate-50 transition-colors duration-150 rounded-lg focus:shadow-outline ${buttonStyles}`}
         onClick={status === "active" ? onClickFunction : undefined}
         disabled={status !== "active"}
       >

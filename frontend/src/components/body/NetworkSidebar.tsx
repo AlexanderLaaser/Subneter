@@ -1,15 +1,21 @@
 import NetworkIcon from "../../styles/network.png";
 import { useVnetStore } from "../../store/VnetStore";
+import iNetworkAddress from "../../interfaces/iAddressSpace";
 
 function NetworkSidebar() {
   const { vnets, addVnet, setSelectedVnet, selectedVnetId } = useVnetStore();
 
   const handleAddVnet = () => {
+    const newNetworkAddress: iNetworkAddress = {
+      id: 0,
+      networkaddress: "10.0.0.0",
+      subnetmask: 24,
+    };
+
     const newVnet = {
       id: vnets.length > 0 ? Math.max(...vnets.map((v) => v.id)) + 1 : 1,
       name: `VnetName-${vnets.length + 1}`,
-      networkaddress: "10.0.0.0",
-      subnetmask: 24,
+      addressspaces: [newNetworkAddress],
       subnets: [],
     };
     addVnet(newVnet);

@@ -1,20 +1,24 @@
 import { useState, useEffect } from "react";
 import { deleteVnetById, updateVnetById } from "../../api/persistenceCalls";
-import { useSubnetStore } from "../../store/SubnetStore";
 import { useUserStore } from "../../store/UserStore";
 import { useVnetStore } from "../../store/VnetStore";
 import SuccessPopup from "../header/elements/SuccessPopUp";
 
 function TableControl() {
   const { userLoginStatus } = useUserStore();
-  const { getSelectedVnet, setSelectedVnet, removeVnetById, vnets } =
-    useVnetStore();
-  const { subnets } = useSubnetStore();
+  const {
+    getSelectedVnet,
+    setSelectedVnet,
+    removeVnetById,
+    vnets,
+    getSubnets,
+  } = useVnetStore();
 
   const [showSaveSuccessPopup, setSaveSuccessPopup] = useState(false);
   const [showDeleteSuccessPopup, setDeleteSuccessPopup] = useState(false);
 
   const selectedVnet = getSelectedVnet();
+  const subnets = getSubnets();
 
   useEffect(() => {
     if (!selectedVnet && vnets.length > 0) {
@@ -30,8 +34,7 @@ function TableControl() {
     const vnetConfig = {
       id: selectedVnet.id,
       name: selectedVnet.name,
-      networkaddress: selectedVnet.networkaddress,
-      subnetmask: selectedVnet.subnetmask,
+      addressspace: selectedVnet.addressspaces,
       subnets: subnets.map((subnet) => {
         const { id, isStored, ...rest } = subnet;
         if (!isStored) {
