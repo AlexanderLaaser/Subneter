@@ -1,23 +1,14 @@
 import { useState } from "react";
-import { getCurrentUser, logoutUser } from "../../api/userCalls";
+import { logoutUser } from "../../api/userCalls";
 import { useUserStore } from "../../store/UserStore";
 import { useNavigate } from "react-router-dom";
 import React from "react";
-import { useEffect } from "react";
 
 function Avatar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
-  const {
-    firstname,
-    lastname,
-    email,
-    setFirstname,
-    setLastname,
-    setEmail,
-    setuserLoginStatus,
-  } = useUserStore();
+  const { firstname, lastname, email, setuserLoginStatus } = useUserStore();
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -30,29 +21,14 @@ function Avatar() {
     console.log("Logout wird versucht");
     try {
       await logoutUser();
-      setuserLoginStatus(false);
-      navigate("/");
+      if (await logoutUser()) {
+        setuserLoginStatus(false);
+        navigate("/");
+      }
     } catch (error) {
       console.error("Logout error", error);
     }
   }
-
-  async function setUserData() {
-    const userData = await getCurrentUser();
-    setuserLoginStatus(true);
-
-    if (userData) {
-      setFirstname(userData.user.first_name);
-      setLastname(userData.user.last_name);
-      setEmail(userData.user.email);
-    } else {
-      throw new Error("Failed to retrieve user data");
-    }
-  }
-
-  useEffect(() => {
-    setUserData();
-  }, []);
 
   return (
     <div className="relative flex flex-col items-center">

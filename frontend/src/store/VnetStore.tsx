@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { compareVnetRangeWithSubnetRangeUsed } from "../api/calculatorCalls";
 import iVnet from "../interfaces/iVnet";
 import iSubnet from "../interfaces/iSubnet";
 import iAddressSpace from "../interfaces/iAddressSpace";
@@ -30,12 +31,17 @@ interface iVnetStore {
   deleteAddressSpace: (addressSpaceId: number) => void;
   updateAddressSpace: (addressSpace: iAddressSpace) => void;
   getAddressSpaces: () => iAddressSpace[];
+
+  // VNet Validation
+  checkIfVnetSubnetMaskIsValid: (
+    networkaddress: string,
+    subnetmask: number
+  ) => Promise<boolean>;
 }
 
 const vnetStore = create<iVnetStore>((set, get) => ({
   vnets: [],
   selectedVnetId: null,
-
   // VNet Operations
   addVnet: (vnet) => set((state) => ({ vnets: [...state.vnets, vnet] })),
   setSelectedVnet: (id) => set(() => ({ selectedVnetId: id })),
@@ -69,15 +75,30 @@ const vnetStore = create<iVnetStore>((set, get) => ({
   clearVnets: () => set(() => ({ vnets: [] })),
 
   // Subnet Operations
-  addSubnet: (subnet) => {
-    const { selectedVnetId, vnets } = get();
-    const updatedVnets = vnets.map((vnet) =>
-      vnet.id === selectedVnetId
-        ? { ...vnet, subnets: [...vnet.subnets, subnet] }
-        : vnet
-    );
-    set(() => ({ vnets: updatedVnets }));
-  },
+  addSubnet: (subnet) =>
+    set((state) => {
+      const selectedVnet = state.vnets.find(
+        (vnet) => vnet.id === state.selectedVnetId
+      );
+      if (selectedVnet) {
+        selectedVnet.subnets.push(subnet);
+      }
+      return { vnets: [...state.vnets] };
+    }),
+  updateSubnet: (updatedSubnet) =>
+    set((state) => {
+      const selectedVnet = state.vnets.find(
+        (vnet) => vnet.id === state.selectedVnetId
+      );
+      if (selectedVnet) {
+        selectedVnet.subnets = selectedVnet.subnets.map((subnet) =>
+          subnet.id === updatedSubnet.id
+            ? { ...subnet, ...updatedSubnet }
+            : subnet
+        );
+      }
+      return { vnets: [...state.vnets] };
+    }),
   deleteSubnet: (subnetId) => {
     const { selectedVnetId, vnets } = get();
     const updatedVnets = vnets.map((vnet) =>
@@ -85,20 +106,6 @@ const vnetStore = create<iVnetStore>((set, get) => ({
         ? {
             ...vnet,
             subnets: vnet.subnets.filter((subnet) => subnet.id !== subnetId),
-          }
-        : vnet
-    );
-    set(() => ({ vnets: updatedVnets }));
-  },
-  updateSubnet: (updatedSubnet) => {
-    const { selectedVnetId, vnets } = get();
-    const updatedVnets = vnets.map((vnet) =>
-      vnet.id === selectedVnetId
-        ? {
-            ...vnet,
-            subnets: vnet.subnets.map((subnet) =>
-              subnet.id === updatedSubnet.id ? updatedSubnet : subnet
-            ),
           }
         : vnet
     );
@@ -189,6 +196,42 @@ const vnetStore = create<iVnetStore>((set, get) => ({
     const selectedVnet = get().getSelectedVnet();
     return selectedVnet ? selectedVnet.addressspaces : [];
   },
+
+  // VNet Validation
+  checkIfVnetSubnetMaskIsValid: async (
+    networkAddress: string,
+    subnetmask: number
+  ) => {
+    try {
+      const selectedVnet = get().getSelectedVnet();
+      if (!selectedVnet) return false;
+
+      const usedRanges = get()
+        .getSubnets()
+        .map((entry) => {
+          const firstIp = entry.range.split(" - ")[0];
+          return `${firstIp}/${entry.subnetmask}`;
+        });
+
+      // Temporarily add the new subnet mask for validation
+      const vnetCidrs = selectedVnet.addressspaces.map((addressSpace) =>
+        addressSpace.networkaddress === networkAddress
+          ? `${addressSpace.networkaddress}/${subnetmask}`
+          : `${addressSpace.networkaddress}/${addressSpace.subnetmask}`
+      );
+
+      const isValid = await compareVnetRangeWithSubnetRangeUsed(
+        vnetCidrs,
+        usedRanges
+      );
+
+      console.log("Network validation API call result:", isValid);
+      return isValid;
+    } catch (error) {
+      console.error("Error validating subnet mask:", error);
+      return false; // Default to false on error
+    }
+  },
 }));
 
 export const useVnetStore = () => {
@@ -217,6 +260,8 @@ export const useVnetStore = () => {
     deleteAddressSpace,
     updateAddressSpace,
     getAddressSpaces,
+
+    checkIfVnetSubnetMaskIsValid,
   } = vnetStore();
 
   return {
@@ -244,5 +289,7 @@ export const useVnetStore = () => {
     deleteAddressSpace,
     updateAddressSpace,
     getAddressSpaces,
+
+    checkIfVnetSubnetMaskIsValid,
   };
 };

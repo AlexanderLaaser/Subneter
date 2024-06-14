@@ -1,6 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import VnetData from "../interfaces/iVnetData";
+import iVnet from "../interfaces/iVnet";
 
 axios.defaults.xsrfCookieName = "CSRFTOKEN";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -69,7 +69,7 @@ export const getAllVnets = async (isUserAuthenticated: boolean) => {
 export const updateVnetById = async (
   isUserAuthenticated: boolean,
   vnetId: number,
-  vnetData: VnetData
+  vnetData: iVnet
 ) => {
   if (isUserAuthenticated) {
     try {

@@ -1,11 +1,10 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
-from .views import VnetViewSet, SubnetViewSet
+from .views import VnetViewSet
 
 router = DefaultRouter()
 router.register(r'vnets', VnetViewSet)
-router.register(r'subnets', SubnetViewSet)
 
 
 urlpatterns = [

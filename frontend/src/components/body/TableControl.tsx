@@ -3,6 +3,7 @@ import { deleteVnetById, updateVnetById } from "../../api/persistenceCalls";
 import { useUserStore } from "../../store/UserStore";
 import { useVnetStore } from "../../store/VnetStore";
 import SuccessPopup from "../header/elements/SuccessPopUp";
+import iVnet from "../../interfaces/iVnet";
 
 function TableControl() {
   const { userLoginStatus } = useUserStore();
@@ -12,6 +13,7 @@ function TableControl() {
     removeVnetById,
     vnets,
     getSubnets,
+    getAddressSpaces,
   } = useVnetStore();
 
   const [showSaveSuccessPopup, setSaveSuccessPopup] = useState(false);
@@ -19,6 +21,7 @@ function TableControl() {
 
   const selectedVnet = getSelectedVnet();
   const subnets = getSubnets();
+  const addressspaces = getAddressSpaces();
 
   useEffect(() => {
     if (!selectedVnet && vnets.length > 0) {
@@ -30,16 +33,16 @@ function TableControl() {
     return <div>No VNET selected</div>;
   }
 
-  const buildVnetConfig = () => {
-    const vnetConfig = {
+  const buildVnetConfig = (): iVnet => {
+    const vnetConfig: iVnet = {
       id: selectedVnet.id,
       name: selectedVnet.name,
-      addressspace: selectedVnet.addressspaces,
+      addressspaces: addressspaces.map((addressspace) => {
+        const { id, ...rest } = addressspace;
+        return { id, ...rest };
+      }),
       subnets: subnets.map((subnet) => {
-        const { id, isStored, ...rest } = subnet;
-        if (!isStored) {
-          return { ...rest };
-        }
+        const { id, ...rest } = subnet;
         return { id, ...rest };
       }),
     };
@@ -91,6 +94,9 @@ function TableControl() {
 
   return (
     <div className="flex sm:flex-col pt-10 font-montserrat xl:space-x-10 xl:flex-row">
+      <div className="flex-start font-extrabold text-2xl">
+        Network configuration:
+      </div>
       <div
         className="flex flex-1 flex-row justify-end space-x-4"
         id="vnetconfig"

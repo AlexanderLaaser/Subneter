@@ -1,9 +1,4 @@
 import React, { useEffect, useState } from "react";
-import {
-  getIpaddressesCount,
-  getAddressSpace,
-  compareVnetRangeWithSubnetRangeUsed,
-} from "../../api/calculatorCalls";
 import { useVnetStore } from "../../store/VnetStore";
 import { getAllVnets } from "../../api/persistenceCalls";
 import { useUserStore } from "../../store/UserStore";
@@ -14,7 +9,6 @@ import iVnet from "../../interfaces/iVnet";
 
 function VnetInput() {
   const {
-    vnets,
     addVnet,
     clearVnets,
     getSelectedVnet,
@@ -24,47 +18,25 @@ function VnetInput() {
     addAddressSpace,
     addSubnet,
     deleteAllSubnets,
-    getSubnets,
     getAddressSpaces,
   } = useVnetStore();
 
   const { userLoginStatus, setuserLoginStatus } = useUserStore();
 
   const [IpIsValid, setIpIsValid] = useState(true);
-  const [error, setError] = useState("");
-  const [range, setRange] = useState("");
-  const [ips, setIps] = useState("256");
-
-  const usedRanges = getSubnets().map((entry) => {
-    const firstIp = entry.range.split(" - ")[0];
-    return `${firstIp}/${entry.subnetmask}`;
-  });
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
     updateSelectedVnetName(newName);
   };
 
-  const validateIP = (ip: string) => {
-    const regex =
-      /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-    return regex.test(ip);
-  };
-
-  const fetchAddressSpace = async (networkAddress: string) => {
+  // Eventuell loeschen
+  const fetchAddressSpace = async () => {
     try {
       const selectedVnet = getSelectedVnet();
       if (!selectedVnet) return;
-
-      const addressSpace = await getAddressSpace(
-        networkAddress + "/" + selectedVnet.addressspaces[0].subnetmask,
-        IpIsValid
-      );
-      setError("");
-      setRange(addressSpace);
     } catch (error) {
       if (error instanceof Error) {
-        setError(error.message);
       }
     }
   };
@@ -77,22 +49,40 @@ function VnetInput() {
           addVnet(vnet);
         });
       } else {
-        addVnet({
-          id: 0,
-          name: "VnetName-1",
-          addressspaces: [
-            {
-              id: 0,
-              networkaddress: "10.0.0.0",
-              subnetmask: 24,
-            },
-          ],
-          subnets: [],
-        });
+        initializeVnet();
       }
     } catch (error) {
-      console.error("Failed to load VNETs:", error);
+      console.log("No VNETs found in database");
+      initializeVnet();
     }
+  };
+
+  const initializeVnet = () => {
+    clearVnets();
+    addVnet({
+      id: 0,
+      name: "VnetName-1",
+      addressspaces: [
+        {
+          id: 0,
+          networkaddress: "10.0.0.0",
+          subnetmask: 24,
+        },
+      ],
+      subnets: [
+        {
+          id: 0,
+          name: "Subnet1",
+          subnetmask: 25,
+          ips: 16,
+          range: "10.0.0.0 - 10.0.0.128",
+          error: "",
+          isStored: false,
+        },
+      ],
+    });
+    setSelectedVnet(0);
+    setIpIsValid(true);
   };
 
   async function loadActiveVnetConfig() {
@@ -118,58 +108,43 @@ function VnetInput() {
   }
 
   async function setUserData() {
-    const userData = await getCurrentUser();
-    if (userData) {
-      setuserLoginStatus(true);
+    try {
+      const userData = await getCurrentUser();
+      if (userData) {
+        setuserLoginStatus(true);
+      } else {
+        setuserLoginStatus(false);
+      }
+    } catch (error) {
+      console.error("Failed to load user data:", error);
+      setuserLoginStatus(false);
     }
   }
 
   useEffect(() => {
-    if (userLoginStatus) {
-      if (vnets.length > 0 && !selectedVnetId) {
-        setSelectedVnet(vnets[0].id);
-      }
-    }
-  }, [vnets]);
+    setUserData();
+  }, []);
 
   useEffect(() => {
     if (userLoginStatus) {
-      clearVnets();
       loadAllStoredVnets();
+    } else {
+      initializeVnet();
     }
   }, [userLoginStatus]);
 
   useEffect(() => {
     if (userLoginStatus) {
-      console.log("User is logged in");
       loadActiveVnetConfig();
-    } else {
-      console.log("User is logged out");
-      deleteAllSubnets();
-      addSubnet({
-        id: 0,
-        name: "VnetName1",
-        subnetmask: 25,
-        range: "10.0.0.0 - 10.0.0.128",
-        ips: 128,
-        error: "",
-        isStored: false,
-      });
-      setIpIsValid(true);
-      setError("");
     }
   }, [userLoginStatus, selectedVnetId]);
 
   useEffect(() => {
     const selectedVnet = getSelectedVnet();
     if (selectedVnet && IpIsValid) {
-      fetchAddressSpace(selectedVnet.addressspaces[0].networkaddress);
+      fetchAddressSpace();
     }
-  }, [selectedVnetId]);
-
-  useEffect(() => {
-    setUserData();
-  }, []);
+  }, [selectedVnetId, IpIsValid]);
 
   const handleAddAddressSpace = () => {
     addAddressSpace({
@@ -189,7 +164,7 @@ function VnetInput() {
             className="flex-start text-lg text-sky-800 font-bold "
             id="vnetname"
           >
-            Virtuel Network Name
+            Name
           </div>
           <div className="flex-start border border-zinc-950 rounded bg-white">
             <input

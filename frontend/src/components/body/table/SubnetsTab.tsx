@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   generateNextSubnet,
   getIpaddressesCount,
@@ -6,6 +6,7 @@ import {
 import { useVnetStore } from "../../../store/VnetStore";
 import TableEntry from "./TableEntry";
 import iSubnet from "../../../interfaces/iSubnet";
+import WarningPopup from "../../header/elements/WarningPopUp";
 
 function SubnetsTab() {
   const {
@@ -14,14 +15,16 @@ function SubnetsTab() {
     deleteSubnet,
     updateSubnet,
     getSubnetsExcludingID,
-    checkErrorInEntries,
     getSubnets,
     getAddressSpaces,
+    setError,
   } = useVnetStore();
 
   const selectedVnet = getSelectedVnet();
   const subnets = getSubnets();
   const addressSpaces = getAddressSpaces();
+  const [showSubnetWarningPop, setSubnetWarningPop] = useState(false);
+  const [subnetError, setSubnetError] = useState("");
 
   const usedRanges = subnets.map((entry) => {
     const firstIp = entry.range.split(" - ")[0];
@@ -79,28 +82,38 @@ function SubnetsTab() {
     if (newSubnet) {
       addSubnet(newSubnet);
     } else {
-      console.error("No valid address space found to create another.");
+      console.error(
+        "No valid address space found to um ein neues Subnetz zu erstellen."
+      );
     }
   };
 
   const updateSubnetName = (id: number, name: string) => {
-    updateSubnet({
-      id,
-      name,
-      subnetmask: 0,
-      ips: 0,
-      range: "",
-      isStored: false,
-    });
+    const selectedVnet = getSelectedVnet();
+    if (selectedVnet) {
+      const subnet = selectedVnet.subnets.find((subnet) => subnet.id === id);
+      if (subnet) {
+        updateSubnet({
+          ...subnet,
+          name,
+        });
+      }
+    }
   };
 
   const updateIps = async (id: number, subnetmask: number) => {
+    const selectedVnet = getSelectedVnet();
     if (!selectedVnet) return;
 
     try {
       const ips = await getIpaddressesCount(subnetmask);
       let range = "";
-      for (const addressSpace of addressSpaces) {
+      let localSubnetError = "";
+
+      let addressSpaceCount = addressSpaces.length;
+
+      for (let i = 0; i < addressSpaceCount; i++) {
+        const addressSpace = addressSpaces[i];
         try {
           range = await generateNextSubnet(
             `${addressSpace.networkaddress}/${addressSpace.subnetmask}`,
@@ -109,26 +122,50 @@ function SubnetsTab() {
           );
           if (range) break; // Wenn ein gültiger Bereich gefunden wird, beende die Schleife
         } catch (error) {
-          console.error(
-            `Fehler beim Generieren des Subnetzbereichs für ${addressSpace.networkaddress}:`,
-            error
-          );
-          continue; // Wenn ein Addressbereich fehlschlägt, versuche den nächsten
+          if (i === addressSpaceCount - 1 && error instanceof Error) {
+            localSubnetError = error.message; // Setze den Fehler, wenn es der letzte addressSpace ist
+          }
+          continue;
         }
       }
 
-      const error = "";
-      updateSubnet({
-        id,
-        subnetmask,
-        ips,
-        range,
-        error,
-        name: "",
-        isStored: false,
-      });
+      const existingSubnet = selectedVnet.subnets.find(
+        (subnet) => subnet.id === id
+      );
+      if (existingSubnet) {
+        if (localSubnetError === "") {
+          updateSubnet({
+            ...existingSubnet, // Behalte alle bestehenden Eigenschaften bei
+            subnetmask, // Überschreibe die gewünschten Eigenschaften
+            ips,
+            range,
+            isStored: false,
+            error: "",
+          });
+        } else {
+          updateSubnet({
+            ...existingSubnet, // Behalte alle bestehenden Eigenschaften bei
+            error: localSubnetError, // Setze den Fehler
+          });
+          setSubnetError(localSubnetError);
+          setSubnetWarningPop(true);
+        }
+      } else {
+        console.error(`Subnet with ID ${id} not found`);
+      }
     } catch (error) {
-      console.error(`Error while updating IPs for subnet ${id}:`, error);
+      if (error instanceof Error) {
+        console.error(
+          `Error while updating IPs for subnet ${id}:`,
+          error.message
+        );
+        setError(id, error.message); // Setze den Fehler, wenn einer auftritt
+      } else {
+        console.error(
+          `Unexpected error while updating IPs for subnet ${id}:`,
+          error
+        );
+      }
     }
   };
 
@@ -153,22 +190,6 @@ function SubnetsTab() {
     ));
   };
 
-  const updateAllIps = async () => {
-    for (const entry of subnets) {
-      try {
-        await updateIps(entry.id, entry.subnetmask);
-      } catch (error) {
-        console.error(`Error while updating table entry: ${entry.id}:`, error);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (selectedVnet) {
-      updateAllIps();
-    }
-  }, [selectedVnet?.addressspaces]);
-
   return (
     <>
       <div className="flex justify-center content-center w-full">
@@ -181,26 +202,21 @@ function SubnetsTab() {
       </div>
       {renderTableEntries()}
       <div className="flex justify-center">
-        {checkErrorInEntries() ? (
-          <div className="flex pl-2 content-center items-center mt-4 font-montserrat">
-            <button
-              className="cursor-not-allowed inline-flex items-center justify-center w-32 h-10 mr-2 text-slate-50 transition-colors duration-150 bg-slate-300 rounded-lg focus:shadow-outline"
-              onClick={handleAddClick}
-              disabled
-            >
-              <span className="text-l">Add Subnet</span>
-            </button>
-          </div>
-        ) : (
-          <div className="flex pl-2 content-center items-center mt-4 font-montserrat">
-            <button
-              className="inline-flex items-center justify-center w-32 h-10 mr-2 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600"
-              onClick={handleAddClick}
-            >
-              <span className="text-l">Add Subnet</span>
-            </button>
-          </div>
+        {showSubnetWarningPop && (
+          <WarningPopup
+            message={subnetError}
+            onClose={() => setSubnetWarningPop(false)}
+          />
         )}
+
+        <div className="flex pl-2 content-center items-center mt-4 font-montserrat pb-10 ">
+          <button
+            className="inline-flex items-center justify-center w-32 h-10 mr-2 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600"
+            onClick={handleAddClick}
+          >
+            <span className="text-l">Add Subnet</span>
+          </button>
+        </div>
       </div>
     </>
   );

@@ -100,7 +100,7 @@ export const generateNextSubnet = async (
       if (error.response.status === 400) {
         throw new Error("Inputs invalid. Please check again!");
       } else if (error.response.status === 500) {
-        throw new Error("Subnet mask doesn't match network address!");
+        throw new Error("Subnet mask doesn't match given address spaces!");
       }
     } else {
       throw new Error("Network error!");
@@ -109,7 +109,7 @@ export const generateNextSubnet = async (
 };
 
 export const compareVnetRangeWithSubnetRangeUsed = async (
-  vnet_cidr: string,
+  vnet_cidrs: string[],
   ip_ranges_used: string[]
 ) => {
   try {
@@ -118,13 +118,13 @@ export const compareVnetRangeWithSubnetRangeUsed = async (
         import.meta.env.VITE_API_SERVER_URL
       }/api/calculator/compare_vnet_range_with_subnet_ranges_used`,
       {
-        vnet_cidr,
+        vnet_cidrs,
         ip_ranges_used,
       },
       header
     );
 
-    if ((response.status = 200)) {
+    if (response.status === 200) {
       return response.data.result;
     } else {
       throw new Error("Failed to fetch data!");

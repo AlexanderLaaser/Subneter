@@ -6,6 +6,8 @@ import {
   getIpaddressesCount,
   getAddressSpace,
 } from "../../api/calculatorCalls";
+import { useUserStore } from "../../store/UserStore";
+import WarningPopup from "../header/elements/WarningPopUp";
 
 interface AddressSpaceProps {
   networkAddress: string;
@@ -22,26 +24,33 @@ const AddressSpace: React.FC<AddressSpaceProps> = ({
   index,
   handleAddAddressSpace,
 }) => {
-  const { updateAddressSpace, deleteAddressSpace } = useVnetStore();
+  const {
+    updateAddressSpace,
+    deleteAddressSpace,
+    checkIfVnetSubnetMaskIsValid,
+  } = useVnetStore();
+  const { userLoginStatus } = useUserStore();
   const [IpIsValid, setIpIsValid] = useState(true);
   const [error, setError] = useState("");
   const [range, setRange] = useState("");
   const [ips, setIps] = useState(256);
+  const [showAddressSpaceMaskWarningPop, setAddressSpaceMaskWarningPop] =
+    useState(false);
 
   const validateAndFetchAddressSpace = async (
-    networkAddr: string,
-    subnetMsk: number
+    networkAddress: string,
+    subnetMask: number
   ) => {
-    if (validateIP(networkAddr)) {
+    if (validateIP(networkAddress)) {
       setIpIsValid(true);
       try {
         const addressSpace = await getAddressSpace(
-          networkAddr + "/" + subnetMsk,
+          networkAddress + "/" + subnetMask,
           IpIsValid
         );
         setError("");
         setRange(addressSpace);
-        const ipCount = await getIpaddressesCount(subnetMsk);
+        const ipCount = await getIpaddressesCount(subnetMask);
         setIps(ipCount);
       } catch (error) {
         if (error instanceof Error) {
@@ -66,17 +75,27 @@ const AddressSpace: React.FC<AddressSpaceProps> = ({
     validateAndFetchAddressSpace(newNetworkAddress, subnetMask);
   };
 
-  const handleSubnetMaskChange = async (
+  const handleVnetMaskChange = async (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const newSubnetMask = parseInt(e.target.value);
+    console.log("New subnet mask: ", newSubnetMask);
     const updatedNetworkAddress = {
       id,
       networkaddress: networkAddress,
       subnetmask: newSubnetMask,
     };
-    updateAddressSpace(updatedNetworkAddress);
-    validateAndFetchAddressSpace(networkAddress, newSubnetMask);
+
+    if (
+      (await checkIfVnetSubnetMaskIsValid(networkAddress, newSubnetMask)) ===
+      true
+    ) {
+      updateAddressSpace(updatedNetworkAddress);
+      validateAndFetchAddressSpace(networkAddress, newSubnetMask);
+    } else {
+      setAddressSpaceMaskWarningPop(true);
+      console.log("Subnet mask is invalid");
+    }
   };
 
   const handleDeleteAddressSpace = () => {
@@ -123,25 +142,24 @@ const AddressSpace: React.FC<AddressSpaceProps> = ({
           <SubnetMaskSelect
             elementID={"ip_size_input"}
             value={subnetMask}
-            tailWindConfig={"sm:text-base rounded text-m pl-4 pr-4 h-10"}
+            tailWindConfig={"sm:text-base rounded text-m pl-4 h-10"}
             type="vnet"
-            onChangeFunction={handleSubnetMaskChange}
+            onChangeFunction={handleVnetMaskChange}
           />
         </div>
         <div className="flex-1 text-sky-800 font-bold text-m pt-1">{ips}</div>
       </div>
-
-      <div className="flex flex-start">
-        <div>
-          {index > 0 ? (
-            <DeleteButton
-              status={"active"}
-              onClickFunction={handleDeleteAddressSpace}
-              height="h-10 w-10"
-            />
-          ) : (
+      {userLoginStatus == true ? (
+        index > 0 ? (
+          <DeleteButton
+            status={"active"}
+            onClickFunction={handleDeleteAddressSpace}
+            height="h-10 w-10"
+          />
+        ) : (
+          <div className="flex flex-start">
             <div className="flex flex-col content-center " id="addbutton">
-              <div className="flex flex-1 items-center">
+              <div className="flex flex-1 items-start">
                 <button
                   onClick={handleAddAddressSpace}
                   className="w-10 h-10 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600"
@@ -150,9 +168,15 @@ const AddressSpace: React.FC<AddressSpaceProps> = ({
                 </button>
               </div>
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        )
+      ) : null}
+      {showAddressSpaceMaskWarningPop && (
+        <WarningPopup
+          message={"Address space cant be changed when subnets are filled out!"}
+          onClose={() => setAddressSpaceMaskWarningPop(false)}
+        />
+      )}
     </div>
   );
 };

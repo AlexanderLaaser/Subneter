@@ -27,8 +27,11 @@ def generate_next_subnet(vnet_range, new_prefix_length, ip_ranges_used):
     next_subnet = allocate_next_subnet()
     return str(next_subnet) if next_subnet else None
 
-def compare_vnet_range_with_subnet_ranges_used(vnet_range, ip_ranges_used ): 
-    vnet_network_object = ipaddress.ip_network(vnet_range, strict=True)
-    total_vnet_addresses = vnet_network_object.num_addresses
+def compare_vnet_range_with_subnet_ranges_used(vnet_ranges, ip_ranges_used):
+    total_vnet_addresses = 0
+    for vnet_range in vnet_ranges:
+        vnet_network_object = ipaddress.ip_network(vnet_range, strict=True)
+        total_vnet_addresses += vnet_network_object.num_addresses
+    
     total_subnet_addresses = sum(ipaddress.ip_network(subnet).num_addresses for subnet in ip_ranges_used)
     return total_vnet_addresses >= total_subnet_addresses
