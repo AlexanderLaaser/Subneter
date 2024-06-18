@@ -70,7 +70,7 @@ function LoginPopUp() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto flex font-montserrat backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 overflow-auto flex  backdrop-blur-sm">
       <div className="relative w-full max-w-md m-auto flex-col flex rounded-lg shadow-lg">
         <div className="bg-white rounded-lg shadow relative dark:bg-gray-700">
           <div className="flex justify-end p-2">
@@ -143,7 +143,7 @@ function LoginPopUp() {
               ) : (
                 <div className="flex items-start"></div>
               )}
-              <a className="text-sm text-zinc-700">Lost Password?</a>
+              {/* <a className="text-sm text-zinc-700">Lost Password?</a> */}
             </div>
 
             <div className="flex flex-row gap-2">

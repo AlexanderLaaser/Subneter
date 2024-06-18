@@ -6,10 +6,12 @@ import {
 import { useVnetStore } from "../../../store/VnetStore";
 import TableEntry from "./TableEntry";
 import iSubnet from "../../../interfaces/iSubnet";
-import WarningPopup from "../../header/elements/WarningPopUp";
+import WarningPopup from "../../elements/modals/NoFocusModal";
+import ActionModals from "../../elements/modals/NoFocusModal";
 
 function SubnetsTab() {
   const {
+    vnets,
     getSelectedVnet,
     addSubnet,
     deleteSubnet,
@@ -23,6 +25,7 @@ function SubnetsTab() {
   const selectedVnet = getSelectedVnet();
   const subnets = getSubnets();
   const addressSpaces = getAddressSpaces();
+
   const [showSubnetWarningPop, setSubnetWarningPop] = useState(false);
   const [subnetError, setSubnetError] = useState("");
 
@@ -56,7 +59,7 @@ function SubnetsTab() {
         );
         const newSubnet: iSubnet = {
           id: Math.random(), // Generate unique ID for new subnet
-          name: "",
+          name: "SubnetName",
           subnetmask,
           ips,
           range,
@@ -70,7 +73,6 @@ function SubnetsTab() {
       }
     }
 
-    // Wenn kein Addressbereich erfolgreich war, gib null zurück
     return null;
   };
 
@@ -169,6 +171,14 @@ function SubnetsTab() {
     }
   };
 
+  const updateIpsForAllSubnets = async () => {
+    for (const subnet of subnets) {
+      if (subnet.id !== undefined) {
+        await updateIps(subnet.id, subnet.subnetmask);
+      }
+    }
+  };
+
   const deleteTableEntry = (id: number) => {
     deleteSubnet(id);
   };
@@ -177,7 +187,7 @@ function SubnetsTab() {
     return subnets.map((entry) => (
       <TableEntry
         key={entry.id}
-        id={entry.id}
+        id={entry.id || 0}
         error={entry.error || ""}
         subnetName={entry.name}
         subnetmask={entry.subnetmask}
@@ -185,15 +195,19 @@ function SubnetsTab() {
         range={entry.range}
         updateSubnetName={updateSubnetName}
         updateIps={updateIps}
-        deleteTableEntry={() => deleteTableEntry(entry.id)}
+        deleteTableEntry={() => deleteTableEntry(entry.id || 0)}
       />
     ));
   };
 
+  useEffect(() => {
+    updateIpsForAllSubnets();
+  }, [addressSpaces]);
+
   return (
     <>
       <div className="flex justify-center content-center w-full">
-        <div className="flex font-montserrat pt-6 w-full font-bold space-x-6 text-black">
+        <div className="flex  pt-6 w-full font-bold space-x-6 text-black">
           <div className="flex-1 pl-4">Name</div>
           <div className="flex-inital w-12">Mask</div>
           <div className="flex-inital w-12">IPs</div>
@@ -203,13 +217,14 @@ function SubnetsTab() {
       {renderTableEntries()}
       <div className="flex justify-center">
         {showSubnetWarningPop && (
-          <WarningPopup
+          <ActionModals
             message={subnetError}
             onClose={() => setSubnetWarningPop(false)}
+            type={"warning"}
           />
         )}
 
-        <div className="flex pl-2 content-center items-center mt-4 font-montserrat pb-10 ">
+        <div className="flex pl-2 content-center items-center mt-4  pb-10 ">
           <button
             className="inline-flex items-center justify-center w-32 h-10 mr-2 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600"
             onClick={handleAddClick}

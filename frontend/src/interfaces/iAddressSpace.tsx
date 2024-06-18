@@ -1,5 +1,6 @@
 export default interface iAddressSpace {
-  id: number;
+  id?: number;
   networkaddress: string;
   subnetmask: number;
+  isStored?: boolean;
 }

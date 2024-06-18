@@ -10,6 +10,22 @@ def get_end_ip(ipaddress_cidr):
     network = ipaddress.ip_network(ipaddress_cidr, strict=True)
     return str(network.broadcast_address)
 
+def get_ip_range(ipaddress_cidr):
+    network = ipaddress.ip_network(ipaddress_cidr, strict=True)
+    start_ip = network.network_address
+    end_ip = network.broadcast_address
+    return f"{start_ip} - {end_ip}"
+
+def validate_cidr_overlap(new_range, existing_ranges):
+    new_network = ipaddress.ip_network(new_range, strict=True)
+    
+    for range in existing_ranges:
+        existing_network = ipaddress.ip_network(range, strict=True)
+        if new_network.overlaps(existing_network):
+            return True
+
+    return False
+
 # suffix needs to be a string
 def count_ipaddresses(suffix):
     return 2 ** (32 - int(suffix))

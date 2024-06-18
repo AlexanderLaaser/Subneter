@@ -27,6 +27,9 @@ class VnetSerializer(serializers.ModelSerializer):
         addressspaces_data = validated_data.pop('addressspaces')
         subnets_data = validated_data.pop('subnets')
         user = self.context['request'].user
+
+        # Ensure user is not in validated_data to avoid conflict
+        validated_data.pop('user', None)
         
         vnet = Vnet.objects.create(user=user, **validated_data)
         
@@ -44,7 +47,7 @@ class VnetSerializer(serializers.ModelSerializer):
         instance.name = validated_data.get('name', instance.name)
         instance.save()
 
-        # Löschen von AddressSpaces, die nicht mehr im neuen Bestand sind
+        # Update address spaces
         current_addressspace_ids = [addressspace.id for addressspace in instance.addressspaces.all()]
         new_addressspace_ids = [addressspace_data.get('id') for addressspace_data in addressspaces_data if addressspace_data.get('id')]
 
@@ -55,19 +58,14 @@ class VnetSerializer(serializers.ModelSerializer):
         for addressspace_data in addressspaces_data:
             addressspace_id = addressspace_data.get('id')
             if addressspace_id:
-                try:
-                    addressspace = AddressSpace.objects.get(id=addressspace_id, vnet=instance)
-                    for attr, value in addressspace_data.items():
-                        setattr(addressspace, attr, value)
-                    addressspace.save()
-                except AddressSpace.DoesNotExist:
-                    # Adressraum existiert nicht, neuen erstellen
-                    AddressSpace.objects.create(vnet=instance, **addressspace_data)
+                addressspace = AddressSpace.objects.get(id=addressspace_id, vnet=instance)
+                addressspace.networkaddress = addressspace_data.get('networkaddress', addressspace.networkaddress)
+                addressspace.subnetmask = addressspace_data.get('subnetmask', addressspace.subnetmask)
+                addressspace.save()
             else:
-                # Neues AddressSpace erstellen
                 AddressSpace.objects.create(vnet=instance, **addressspace_data)
 
-        # Löschen von Subnets, die nicht mehr im neuen Bestand sind
+        # Update subnets
         current_subnet_ids = [subnet.id for subnet in instance.subnets.all()]
         new_subnet_ids = [subnet_data.get('id') for subnet_data in subnets_data if subnet_data.get('id')]
 
@@ -78,16 +76,13 @@ class VnetSerializer(serializers.ModelSerializer):
         for subnet_data in subnets_data:
             subnet_id = subnet_data.get('id')
             if subnet_id:
-                try:
-                    subnet = Subnet.objects.get(id=subnet_id, vnet=instance)
-                    for attr, value in subnet_data.items():
-                        setattr(subnet, attr, value)
-                    subnet.save()
-                except Subnet.DoesNotExist:
-                    # Subnet existiert nicht, neues erstellen
-                    Subnet.objects.create(vnet=instance, **subnet_data)
+                subnet = Subnet.objects.get(id=subnet_id, vnet=instance)
+                subnet.name = subnet_data.get('name', subnet.name)
+                subnet.subnetmask = subnet_data.get('subnetmask', subnet.subnetmask)
+                subnet.ips = subnet_data.get('ips', subnet.ips)
+                subnet.range = subnet_data.get('range', subnet.range)
+                subnet.save()
             else:
-                # Neues Subnet erstellen
                 Subnet.objects.create(vnet=instance, **subnet_data)
 
         return instance

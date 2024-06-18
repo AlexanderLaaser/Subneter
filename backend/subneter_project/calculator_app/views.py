@@ -1,13 +1,16 @@
+import json
 from django.shortcuts import render # type: ignore
 from django.http import JsonResponse # type: ignore
 from django.views.decorators.http import require_http_methods # type: ignore
 from .calculations.calculation import (get_start_iP, get_end_ip, count_ipaddresses, 
-                                    generate_next_subnet, compare_vnet_range_with_subnet_ranges_used)
+                                    generate_next_subnet, compare_vnet_range_with_subnet_ranges_used, get_ip_range, validate_cidr_overlap)
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from .models import Vnet, Subnet
+from .serializers import VnetSerializer
+from .models import Vnet, AddressSpace, Subnet
 from .serializers import VnetSerializer
 
 @api_view(['GET'])
@@ -20,10 +23,38 @@ def endpoint_end_ip(request):
     ipaddress_cidr = request.GET.get('ipaddress_cidr')
     return JsonResponse({"end_ip": get_end_ip(ipaddress_cidr)})
 
-@api_view(['GET'])
+@api_view(['POST'])
 def endpoint_address_space(request):
-    ipaddress_cidr = request.GET.get('ipaddress_cidr') 
-    return JsonResponse({"address_space": f"{get_start_iP(ipaddress_cidr)} - {get_end_ip(ipaddress_cidr)}"})
+    try:
+        data = request.data
+        ipaddress_cidr = data.get('ipaddress_cidr')
+        existing_ranges = data.get('existing_ranges')
+
+        if not ipaddress_cidr:
+            return JsonResponse(
+                {"error": "The 'ipaddress_cidr' parameter is required."}, 
+                status=400
+            )
+
+        if validate_cidr_overlap(ipaddress_cidr, existing_ranges):
+            return JsonResponse(
+                {"error": "The new CIDR range overlaps with an existing range."}, 
+                status=409
+            )
+
+        ip_range = get_ip_range(ipaddress_cidr)
+        return JsonResponse({"address_space": ip_range})
+    except json.JSONDecodeError:
+        return JsonResponse(
+            {"error": "Invalid JSON format in request body."}, 
+            status=400
+        )
+    except Exception as e:
+        return JsonResponse(
+            {"error": str(e)}, 
+            status=500
+        )
+
 
 @api_view(['GET'])
 def endpoint_count_ipaddresses(request):
@@ -46,9 +77,6 @@ def endpoint_compare_vnet_range_with_subnet_ranges_used(request):
     ip_ranges_used = request.data['ip_ranges_used']
     result = compare_vnet_range_with_subnet_ranges_used(vnet_cidrs, ip_ranges_used)
     return JsonResponse({'result': result})
-
-from .models import Vnet, AddressSpace, Subnet
-from .serializers import VnetSerializer
 
 class VnetViewSet(viewsets.ModelViewSet):
     queryset = Vnet.objects.all()

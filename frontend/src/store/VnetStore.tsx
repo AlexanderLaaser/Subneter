@@ -3,13 +3,15 @@ import { compareVnetRangeWithSubnetRangeUsed } from "../api/calculatorCalls";
 import iVnet from "../interfaces/iVnet";
 import iSubnet from "../interfaces/iSubnet";
 import iAddressSpace from "../interfaces/iAddressSpace";
+import { Address4, Address6 } from "ip-address";
 
 interface iVnetStore {
   vnets: iVnet[];
-  selectedVnetId: number | null;
+  selectedVnetId: number;
   addVnet: (vnet: iVnet) => void;
   setSelectedVnet: (id: number) => void;
-  getSelectedVnet: () => iVnet | null;
+  getSelectedVnet: () => iVnet;
+  getVnetIdByIndex: (index: number) => number | null;
   updateVnet: (index: number, vnet: iVnet) => void;
   updateSelectedVnetName: (newName: string) => void;
   removeVnetByIndex: (index: number) => void;
@@ -19,6 +21,7 @@ interface iVnetStore {
   // Subnet Operations
   addSubnet: (subnet: iSubnet) => void;
   deleteSubnet: (subnetId: number) => void;
+  deleteSubnetsWithinRange: (cidrRange: string) => void;
   updateSubnet: (subnet: iSubnet) => void;
   deleteAllSubnets: () => void;
   getSubnets: () => iSubnet[];
@@ -30,7 +33,13 @@ interface iVnetStore {
   addAddressSpace: (addressSpace: iAddressSpace) => void;
   deleteAddressSpace: (addressSpaceId: number) => void;
   updateAddressSpace: (addressSpace: iAddressSpace) => void;
+  updateAddressSpaceNetworkAddress: (
+    id: number,
+    newNetworkAddress: string
+  ) => void;
+  updateAddressSpaceSubnetMask: (id: number, newSubnetMask: number) => void;
   getAddressSpaces: () => iAddressSpace[];
+  getAddressSpaceCIDRList: (currentAddressSpaceId: number) => string[];
 
   // VNet Validation
   checkIfVnetSubnetMaskIsValid: (
@@ -39,15 +48,44 @@ interface iVnetStore {
   ) => Promise<boolean>;
 }
 
+const defaultVnet: iVnet = {
+  id: 0,
+  name: "VnetName",
+  isStored: false,
+  addressspaces: [
+    {
+      id: 0,
+      networkaddress: "10.0.0.0",
+      subnetmask: 24,
+      isStored: false,
+    },
+  ],
+  subnets: [
+    {
+      id: 0,
+      name: "SubnetName",
+      isStored: false,
+      subnetmask: 25,
+      ips: 128,
+      range: "10.0.0.0 - 10.0.0.127",
+      error: "",
+    },
+  ],
+};
+
 const vnetStore = create<iVnetStore>((set, get) => ({
-  vnets: [],
-  selectedVnetId: null,
+  vnets: [defaultVnet],
+  selectedVnetId: defaultVnet.id,
   // VNet Operations
   addVnet: (vnet) => set((state) => ({ vnets: [...state.vnets, vnet] })),
   setSelectedVnet: (id) => set(() => ({ selectedVnetId: id })),
   getSelectedVnet: () => {
     const { selectedVnetId, vnets } = get();
-    return vnets.find((vnet) => vnet.id === selectedVnetId) || null;
+    return vnets.find((vnet) => vnet.id === selectedVnetId) || defaultVnet;
+  },
+  getVnetIdByIndex: (index) => {
+    const { vnets } = get();
+    return vnets[index] ? vnets[index].id : null;
   },
   updateVnet: (index, vnet) =>
     set((state) => ({
@@ -118,6 +156,26 @@ const vnetStore = create<iVnetStore>((set, get) => ({
     );
     set(() => ({ vnets: updatedVnets }));
   },
+  deleteSubnetsWithinRange: (cidrRange: string) => {
+    const { selectedVnetId, vnets } = get();
+    const network = new Address4(cidrRange); // Use Address4 or Address6 based on your IP version
+
+    const updatedVnets = vnets.map((vnet) => {
+      if (vnet.id === selectedVnetId) {
+        const updatedSubnets = vnet.subnets.filter((subnet) => {
+          const subnetCidr = `${subnet.range.split(" - ")[0]}/${
+            subnet.subnetmask
+          }`;
+          const subnetNetwork = new Address4(subnetCidr); // Use Address4 or Address6 based on your IP version
+
+          return !subnetNetwork.isInSubnet(network);
+        });
+        return { ...vnet, subnets: updatedSubnets };
+      }
+      return vnet;
+    });
+    set({ vnets: updatedVnets });
+  },
   getSubnets: () => {
     const selectedVnet = get().getSelectedVnet();
     return selectedVnet ? selectedVnet.subnets : [];
@@ -176,6 +234,18 @@ const vnetStore = create<iVnetStore>((set, get) => ({
     );
     set(() => ({ vnets: updatedVnets }));
   },
+  getAddressSpaceCIDRList: (currentAddressSpaceId) => {
+    const selectedVnet = get().getSelectedVnet();
+    return selectedVnet
+      ? selectedVnet.addressspaces
+          .filter((addressSpace) => addressSpace.id !== currentAddressSpaceId)
+          .map(
+            (addressSpace) =>
+              `${addressSpace.networkaddress}/${addressSpace.subnetmask}`
+          )
+      : [];
+  },
+
   updateAddressSpace: (updatedAddressSpace) => {
     const { selectedVnetId, vnets } = get();
     const updatedVnets = vnets.map((vnet) =>
@@ -185,6 +255,38 @@ const vnetStore = create<iVnetStore>((set, get) => ({
             addressspaces: vnet.addressspaces.map((addressSpace) =>
               addressSpace.id === updatedAddressSpace.id
                 ? updatedAddressSpace
+                : addressSpace
+            ),
+          }
+        : vnet
+    );
+    set(() => ({ vnets: updatedVnets }));
+  },
+  updateAddressSpaceNetworkAddress: (id, newNetworkAddress) => {
+    const { selectedVnetId, vnets } = get();
+    const updatedVnets = vnets.map((vnet) =>
+      vnet.id === selectedVnetId
+        ? {
+            ...vnet,
+            addressspaces: vnet.addressspaces.map((addressSpace) =>
+              addressSpace.id === id
+                ? { ...addressSpace, networkaddress: newNetworkAddress }
+                : addressSpace
+            ),
+          }
+        : vnet
+    );
+    set(() => ({ vnets: updatedVnets }));
+  },
+  updateAddressSpaceSubnetMask: (id, newSubnetMask) => {
+    const { selectedVnetId, vnets } = get();
+    const updatedVnets = vnets.map((vnet) =>
+      vnet.id === selectedVnetId
+        ? {
+            ...vnet,
+            addressspaces: vnet.addressspaces.map((addressSpace) =>
+              addressSpace.id === id
+                ? { ...addressSpace, subnetmask: newSubnetMask }
                 : addressSpace
             ),
           }
@@ -241,6 +343,7 @@ export const useVnetStore = () => {
     addVnet,
     setSelectedVnet,
     getSelectedVnet,
+    getVnetIdByIndex,
     updateVnet,
     updateSelectedVnetName,
     removeVnetByIndex,
@@ -251,6 +354,7 @@ export const useVnetStore = () => {
     deleteSubnet,
     updateSubnet,
     deleteAllSubnets,
+    deleteSubnetsWithinRange,
     getSubnets,
     getSubnetsExcludingID,
     setError,
@@ -259,7 +363,10 @@ export const useVnetStore = () => {
     addAddressSpace,
     deleteAddressSpace,
     updateAddressSpace,
+    updateAddressSpaceNetworkAddress,
+    updateAddressSpaceSubnetMask,
     getAddressSpaces,
+    getAddressSpaceCIDRList,
 
     checkIfVnetSubnetMaskIsValid,
   } = vnetStore();
@@ -270,6 +377,7 @@ export const useVnetStore = () => {
     addVnet,
     setSelectedVnet,
     getSelectedVnet,
+    getVnetIdByIndex,
     updateVnet,
     updateSelectedVnetName,
     removeVnetByIndex,
@@ -280,6 +388,7 @@ export const useVnetStore = () => {
     deleteSubnet,
     updateSubnet,
     deleteAllSubnets,
+    deleteSubnetsWithinRange,
     getSubnets,
     getSubnetsExcludingID,
     setError,
@@ -288,7 +397,10 @@ export const useVnetStore = () => {
     addAddressSpace,
     deleteAddressSpace,
     updateAddressSpace,
+    updateAddressSpaceNetworkAddress,
+    updateAddressSpaceSubnetMask,
     getAddressSpaces,
+    getAddressSpaceCIDRList,
 
     checkIfVnetSubnetMaskIsValid,
   };

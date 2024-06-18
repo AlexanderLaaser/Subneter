@@ -1,27 +1,24 @@
 import { useState, useEffect } from "react";
-import { deleteVnetById, updateVnetById } from "../../api/persistenceCalls";
+import {
+  createVnet,
+  deleteVnetById,
+  updateVnetById,
+} from "../../api/persistenceCalls";
 import { useUserStore } from "../../store/UserStore";
 import { useVnetStore } from "../../store/VnetStore";
-import SuccessPopup from "../header/elements/SuccessPopUp";
 import iVnet from "../../interfaces/iVnet";
+import ActionModals from "../elements/modals/NoFocusModal";
 
 function TableControl() {
-  const { userLoginStatus } = useUserStore();
-  const {
-    getSelectedVnet,
-    setSelectedVnet,
-    removeVnetById,
-    vnets,
-    getSubnets,
-    getAddressSpaces,
-  } = useVnetStore();
+  const { userLoginStatus, setUnsavedChanges } = useUserStore();
+  const { vnets, getSelectedVnet, setSelectedVnet, removeVnetById } =
+    useVnetStore();
 
   const [showSaveSuccessPopup, setSaveSuccessPopup] = useState(false);
   const [showDeleteSuccessPopup, setDeleteSuccessPopup] = useState(false);
+  const [showWarningPopup, setWarningPopup] = useState(false);
 
   const selectedVnet = getSelectedVnet();
-  const subnets = getSubnets();
-  const addressspaces = getAddressSpaces();
 
   useEffect(() => {
     if (!selectedVnet && vnets.length > 0) {
@@ -29,38 +26,45 @@ function TableControl() {
     }
   }, [vnets, selectedVnet, setSelectedVnet]);
 
-  if (!selectedVnet) {
-    return <div>No VNET selected</div>;
+  // Deleting the ID of subnets and addressspaces if isStored is false
+  function cleanVnet(vnet: iVnet): iVnet {
+    const { isStored, ...restVnet } = vnet;
+    return {
+      ...restVnet,
+      id: isStored ? vnet.id : 0,
+      addressspaces: vnet.addressspaces.map(({ isStored, id, ...rest }) =>
+        isStored ? { ...rest, id } : rest
+      ),
+      subnets: vnet.subnets.map(({ isStored, error, id, ...rest }) =>
+        isStored ? { ...rest, id } : rest
+      ),
+    };
   }
 
-  const buildVnetConfig = (): iVnet => {
-    const vnetConfig: iVnet = {
-      id: selectedVnet.id,
-      name: selectedVnet.name,
-      addressspaces: addressspaces.map((addressspace) => {
-        const { id, ...rest } = addressspace;
-        return { id, ...rest };
-      }),
-      subnets: subnets.map((subnet) => {
-        const { id, ...rest } = subnet;
-        return { id, ...rest };
-      }),
-    };
-
-    console.log(vnetConfig);
-
-    return vnetConfig;
-  };
-
   async function saveVnetConfig() {
-    const vnetConfig = buildVnetConfig();
     try {
-      if (selectedVnet) {
-        await updateVnetById(userLoginStatus, selectedVnet.id, vnetConfig);
-        console.log("VNET config stored successfully.");
+      if (
+        selectedVnet.name !== "" &&
+        selectedVnet.addressspaces[0].networkaddress !== "" &&
+        selectedVnet.addressspaces[0].subnetmask !== 0 &&
+        selectedVnet.subnets[0].name !== ""
+      ) {
+        const cleanedSelectedVnet = cleanVnet(selectedVnet);
+        console.log(selectedVnet.name);
+        console.log("cleanedSelectedVnet", cleanedSelectedVnet);
+
+        if (selectedVnet?.isStored === true) {
+          await updateVnetById(
+            userLoginStatus,
+            selectedVnet.id,
+            cleanedSelectedVnet
+          );
+        } else {
+          await createVnet(userLoginStatus, cleanedSelectedVnet);
+        }
         setSaveSuccessPopup(true);
       } else {
-        console.error("No VNET selected.");
+        setWarningPopup(true);
       }
     } catch (error) {
       console.error("Failed to store VNET config:", error);
@@ -69,16 +73,28 @@ function TableControl() {
 
   const handleSaveVnetClick = () => {
     saveVnetConfig();
-    console.log("executed");
+    setUnsavedChanges(false);
   };
 
   async function deleteVnetConfig() {
     try {
       if (selectedVnet) {
-        await deleteVnetById(userLoginStatus, selectedVnet.id);
-        removeVnetById(selectedVnet.id);
-        console.log("VNET Deleted successfully.");
-        setDeleteSuccessPopup(true);
+        if (selectedVnet.isStored) {
+          await deleteVnetById(userLoginStatus, selectedVnet.id);
+          removeVnetById(selectedVnet.id);
+          setDeleteSuccessPopup(true);
+        } else {
+          removeVnetById(selectedVnet.id);
+        }
+        // Select the first VNET as the selected VNET
+        const updatedVnets = vnets.filter(
+          (vnet) => vnet.id !== selectedVnet.id
+        );
+        if (updatedVnets.length > 0) {
+          setSelectedVnet(updatedVnets[0].id);
+        } else {
+          setSelectedVnet(0);
+        }
       } else {
         console.error("No VNET selected.");
       }
@@ -89,21 +105,25 @@ function TableControl() {
 
   const handleDeleteVnetClick = () => {
     deleteVnetConfig();
-    console.log("executed");
   };
 
   return (
-    <div className="flex sm:flex-col pt-10 font-montserrat xl:space-x-10 xl:flex-row">
+    <div className="flex sm:flex-col pt-10  xl:space-x-10 xl:flex-row">
       <div className="flex-start font-extrabold text-2xl">
-        Network configuration:
+        <h2>Manage Subnets, Address Spaces and More: </h2>
       </div>
       <div
         className="flex flex-1 flex-row justify-end space-x-4"
         id="vnetconfig"
       >
         <button
-          className="inline-flex items-center justify-center pr-4 pl-4 h-10 text-slate-50 transition-colors duration-150 bg-red-500 rounded-lg focus:shadow-outline hover:bg-orange-600"
+          className={`inline-flex items-center justify-center pr-4 pl-4 h-10 text-slate-50 transition-colors duration-150 ${
+            vnets.length === 1
+              ? "bg-slate-300 cursor-not-allowed"
+              : "bg-red-500 focus:shadow-outline hover:bg-orange-600"
+          } rounded-lg`}
           onClick={handleDeleteVnetClick}
+          disabled={vnets.length === 1}
         >
           <span className="text-l">Delete</span>
         </button>
@@ -115,15 +135,24 @@ function TableControl() {
         </button>
       </div>
       {showSaveSuccessPopup && (
-        <SuccessPopup
+        <ActionModals
           message="Your VNET configuration has been saved successfully!"
+          type="success"
           onClose={() => setSaveSuccessPopup(false)}
         />
       )}
       {showDeleteSuccessPopup && (
-        <SuccessPopup
+        <ActionModals
           message="Your VNET configuration has been deleted successfully!"
-          onClose={() => setDeleteSuccessPopup(false)}
+          type="success"
+          onClose={() => setSaveSuccessPopup(false)}
+        />
+      )}
+      {showWarningPopup && (
+        <ActionModals
+          message="Please fill in the required fields before saving the VNET configuration!"
+          type="warning"
+          onClose={() => setWarningPopup(false)}
         />
       )}
     </div>

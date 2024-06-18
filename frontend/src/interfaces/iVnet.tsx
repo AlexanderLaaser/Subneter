@@ -6,4 +6,5 @@ export default interface iVnet {
   name: string;
   addressspaces: iAddressSpace[];
   subnets: iSubnet[];
+  isStored?: boolean;
 }

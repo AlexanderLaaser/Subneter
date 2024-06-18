@@ -29,18 +29,22 @@ export const getIpaddressesCount = async (suffix: number) => {
 };
 
 export const getAddressSpace = async (
-  ipaddress_cidr: string,
+  ipaddressCidr: string,
+  existing_ranges: string[],
   isValid?: boolean
 ) => {
   if (isValid) {
     try {
-      const response = await axios.get(
-        `${
-          import.meta.env.VITE_API_SERVER_URL
-        }/api/calculator/address_space?ipaddress_cidr=${ipaddress_cidr}`
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_SERVER_URL}/api/calculator/address_space`,
+        {
+          ipaddress_cidr: ipaddressCidr,
+          existing_ranges: existing_ranges,
+        },
+        header
       );
 
-      if ((response.status = 200)) {
+      if (response.status === 200) {
         return response.data.address_space.toString();
       } else {
         throw new Error("Failed to fetch data!");
@@ -49,8 +53,10 @@ export const getAddressSpace = async (
       if (axios.isAxiosError(error) && error.response) {
         if (error.response.status === 400) {
           throw new Error("Inputs invalid. Please check again!");
+        } else if (error.response.status === 409) {
+          throw new Error("Address spaces or overlapping!");
         } else if (error.response.status === 500) {
-          throw new Error("Invalid CICR Block for given size!");
+          throw new Error("Invalid CIDR Block for given size!");
         }
       } else {
         throw new Error("Network error!");

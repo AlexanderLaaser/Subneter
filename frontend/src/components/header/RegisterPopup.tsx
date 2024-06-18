@@ -33,7 +33,7 @@ function SignUpPopUp() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto flex font-montserrat backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 overflow-auto flex  backdrop-blur-sm">
       <div className="relative w-full max-w-md m-auto flex-col flex rounded-lg shadow-lg">
         <div className="bg-white rounded-lg shadow relative dark:bg-gray-700">
           <div className="flex justify-end p-2">

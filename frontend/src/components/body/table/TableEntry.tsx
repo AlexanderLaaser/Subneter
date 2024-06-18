@@ -46,13 +46,13 @@ function TableEntry({
 
   return (
     <>
-      <div className="flex font-montserrat space-x-2 mt-3 items-center">
-        <div className="flex items-center w-full border border-sky-800 rounded-lg h-12 bg-white space-x-6">
+      <div className="flex space-x-2 mt-3 items-center ">
+        <div className="flex items-center w-full rounded-lg h-12 bg-gray-200 space-x-6">
           <div className="flex-1 pl-4">
             <input
               value={subnet.name}
               onChange={handleNameChange}
-              className="border-none"
+              className="border-none bg-gray-200"
               placeholder="Name"
             ></input>
           </div>
@@ -61,15 +61,13 @@ function TableEntry({
               elementID={"ip_size_input"}
               value={subnet.subnetmask}
               tailWindConfig={
-                "outline-none border border-grey text-sm rounded-lg focus:border-orange-600"
+                "outline-none border border-grey text-sm rounded-lg focus:border-orange-600 bg-gray-200"
               }
               type="subnet"
               onChangeFunction={handleSubnetMaskChange}
             ></SizeSelect>
           </div>
-          <div className="flex-inital w-12 text-sky-800 font-bold">
-            {subnet.ips}
-          </div>
+          <div className="flex-inital w-12 text-sky-800">{subnet.ips}</div>
           <div className="flex flex-1 flex-row pr-1">
             <div className="flex-1 text-sky-800">{subnet.range}</div>
           </div>

@@ -3,12 +3,14 @@ import { logoutUser } from "../../api/userCalls";
 import { useUserStore } from "../../store/UserStore";
 import { useNavigate } from "react-router-dom";
 import React from "react";
+import { useVnetStore } from "../../store/VnetStore";
 
 function Avatar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   const { firstname, lastname, email, setuserLoginStatus } = useUserStore();
+  const { clearVnets } = useVnetStore();
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -24,25 +26,33 @@ function Avatar() {
       if (await logoutUser()) {
         setuserLoginStatus(false);
         navigate("/");
+        clearVnets();
       }
     } catch (error) {
       console.error("Logout error", error);
     }
   }
 
+  const getInitials = (firstname: string, lastname: string) => {
+    if (!firstname || !lastname) return "";
+    return `${firstname.charAt(0)}${lastname.charAt(0)}`.toUpperCase();
+  };
+
   return (
     <div className="relative flex flex-col items-center">
       <button
-        className="ml-40 bg-sky-800 font-montserrat items-center justify-center w-10 h-10 rounded-full "
+        className="ml-40 bg-sky-800  items-center justify-center w-10 h-10 rounded-full"
         onClick={toggleDropdown}
       >
-        <span className="text-white text-sm">AL</span>
+        <span className="text-white text-sm">
+          {getInitials(firstname, lastname)}
+        </span>
       </button>
 
       {dropdownOpen ? (
         <div
           id="userDropdown"
-          className="absolute top-full mt-2 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-60 dark:bg-gray-700 dark:divide-gray-600"
+          className="absolute top-full right-0 mt-2 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
         >
           <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
             <div className="font-medium truncate">

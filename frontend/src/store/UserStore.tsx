@@ -9,12 +9,14 @@ interface userStoreInterface {
   lastname: string;
   email: string;
   password: string;
+  unsavedChanges?: boolean;
   setuserLoginStatus: (userLoggedIn: boolean) => void;
   setUsername: (username: string) => void;
   setFirstname: (username: string) => void;
   setLastname: (username: string) => void;
   setEmail: (email: string) => void;
   setPassword: (password: string) => void;
+  setUnsavedChanges: (unsavedChanges: boolean) => void;
 }
 
 const userStore = create<userStoreInterface>()(
@@ -35,6 +37,8 @@ const userStore = create<userStoreInterface>()(
       setLastname: (lastname: string) => set(() => ({ lastname })),
       setEmail: (email: string) => set(() => ({ email })),
       setPassword: (password: string) => set(() => ({ password })),
+      setUnsavedChanges: (unsavedChanges: boolean) =>
+        set(() => ({ unsavedChanges })),
     }),
     {
       name: "UserStore",
@@ -50,11 +54,13 @@ export const useUserStore = () => {
     lastname: state.lastname,
     email: state.email,
     password: state.password,
+    unsavedChanges: state.unsavedChanges,
     setuserLoginStatus: state.setuserLoginStatus,
     setUsername: state.setUsername,
     setFirstname: state.setFirstname,
     setLastname: state.setLastname,
     setEmail: state.setEmail,
     setPassword: state.setPassword,
+    setUnsavedChanges: state.setUnsavedChanges,
   }));
 };

@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <footer className="flex flex-col font-montserrat items-center text-center text-surface dark:bg-neutral-700 dark:text-white bg-slate-300">
+    <footer className="flex flex-col  items-center text-center text-surface dark:bg-neutral-700 dark:text-white bg-sky-800">
       <div className="flex-1 pt-10 container px-6">
         <div className="mb-4 flex justify-center space-x-2">
           <a
@@ -41,7 +41,7 @@ function Footer() {
         </div>
       </div>
 
-      <div className="flex-1 pb-10 w-full text-center">
+      <div className="flex-1 pb-10 w-full text-center text-white">
         © 2024 Copyright:
         <a href=""> Subneter</a>
       </div>

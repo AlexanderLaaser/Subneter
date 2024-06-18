@@ -66,6 +66,45 @@ export const getAllVnets = async (isUserAuthenticated: boolean) => {
   }
 };
 
+export const createVnet = async (
+  isUserAuthenticated: boolean,
+  vnetData: iVnet
+) => {
+  if (isUserAuthenticated) {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_SERVER_URL}/api/calculator/vnets/`,
+        vnetData
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        return response.data;
+      } else {
+        throw new Error("Failed to create data!");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          if (error.response.status === 401) {
+            throw new Error("Unauthorized: No session or invalid credentials");
+          } else if (error.response.status === 400) {
+            throw new Error("Inputs invalid. Please check again!");
+          } else {
+            throw new Error("Server error!");
+          }
+        } else {
+          throw new Error("Network error!");
+        }
+      } else {
+        throw error;
+      }
+    }
+  } else {
+    console.log("User not authenticated");
+    return "User not authenticated";
+  }
+};
+
 export const updateVnetById = async (
   isUserAuthenticated: boolean,
   vnetId: number,
