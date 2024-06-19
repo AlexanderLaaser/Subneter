@@ -15,7 +15,7 @@ const FocusModal: React.FC<FocusModalProps> = ({ onClose }) => {
         >
           ✕
         </button>
-        <h3 className="text-lg font-bold mb-4">
+        <h3 className="text-lg font-normal mb-4">
           Are you sure you want to leave your Vnet config without saving?
         </h3>
         <div className="flex justify-end space-x-4">

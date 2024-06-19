@@ -11,7 +11,7 @@ function Body() {
   const { userLoginStatus } = useUserStore();
 
   return (
-    <div className="flex flex-row flex-1 font-sans">
+    <div className="flex flex-row flex-1">
       <div className=" flex-none pl-2 pb-2" id="Sidebar">
         {userLoginStatus ? <NetworkSidebar /> : null}
       </div>

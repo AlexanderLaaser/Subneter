@@ -1,4 +1,7 @@
+import { Link, useLocation } from "react-router-dom";
+
 function Features() {
+  const location = useLocation();
   return (
     <section className="py-12">
       <div className="">
@@ -13,11 +16,12 @@ function Features() {
               Unlock exclusive features and seamless virtual network management
               - sign in now to transform your cloud experience!
             </p>
-            <a
-              href="login"
+            <Link
+              to="/register"
+              state={{ registerpopouplocation: location }}
               className="flex flex-row items-center justify-center gap-2 text-base font-semibold text-sky-800 lg:justify-start hover:text-orange-600 "
             >
-              Sign Up{" "}
+              Sign Up
               <svg
                 className="rtl:rotate-180 w-3.5 h-3.5 ms-2"
                 aria-hidden="true"
@@ -33,7 +37,7 @@ function Features() {
                   d="M1 5h12m0 0L9 1m4 4L9 9"
                 />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
         <div className="flex justify-center items-center gap-x-5 gap-y-6 lg:gap-y-0 flex-wrap md:flex-wrap lg:flex-nowrap lg:flex-row lg:justify-between lg:gap-x-8 ">

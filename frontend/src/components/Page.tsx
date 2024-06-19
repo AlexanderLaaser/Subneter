@@ -6,7 +6,7 @@ import Body from "./body/Body";
 // Page component
 function Page() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen font-libre">
       <header className="text-white">
         <Header />
       </header>

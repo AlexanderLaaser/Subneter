@@ -109,8 +109,8 @@ function TableControl() {
 
   return (
     <div className="flex sm:flex-col pt-10  xl:space-x-10 xl:flex-row">
-      <div className="flex-start font-extrabold text-2xl">
-        <h2>Manage Subnets, Address Spaces and More: </h2>
+      <div className="flex-start font-bold text-2xl">
+        <h2>Manage Subnets, Address Spaces and More </h2>
       </div>
       <div
         className="flex flex-1 flex-row justify-end space-x-4"

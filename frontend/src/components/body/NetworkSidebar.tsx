@@ -71,19 +71,18 @@ function NetworkSidebar() {
       >
         <div className="pt-4 px-4 dark:bg-gray-800">
           <div className="flex items-center justify-between">
-            <div className="text-lg text-sky-800">Virtuel Networks</div>
+            <div className="text-lg text-black font-medium">
+              <h3>Virtuel Networks</h3>
+            </div>
             <div className="">
-              <button
-                className={`inline-flex items-center justify-center w-6 h-6 text-slate-50 transition-colors duration-150 rounded-lg focus:shadow-outline ${
-                  unsavedChanges
-                    ? "bg-gray-200 cursor-not-allowed"
-                    : "bg-sky-800 hover:bg-orange-600"
-                }`}
-                onClick={handleAddVnet}
-                disabled={unsavedChanges}
-              >
-                <span className="text-l">+</span>
-              </button>
+              {unsavedChanges ? null : (
+                <button
+                  className="inline-flex items-center justify-center w-6 h-6 text-slate-50 transition-colors duration-150 rounded-lg focus:shadow-outline bg-sky-800 hover:bg-orange-600"
+                  onClick={handleAddVnet}
+                >
+                  <span className="text-l">+</span>
+                </button>
+              )}
             </div>
           </div>
           <ul className="space-y-2 font-medium pt-4">
@@ -92,8 +91,8 @@ function NetworkSidebar() {
                 <div
                   className={`flex items-center p-2 rounded-lg ${
                     selectedVnetId === vnet.id
-                      ? "bg-sky-800 text-white"
-                      : "bg-white hover:bg-orange-600"
+                      ? "bg-sky-800 text-white font-normal"
+                      : "bg-white hover:bg-orange-600 font-normal"
                   }`}
                 >
                   <img

@@ -207,7 +207,7 @@ function SubnetsTab() {
   return (
     <>
       <div className="flex justify-center content-center w-full">
-        <div className="flex  pt-6 w-full font-bold space-x-6 text-black">
+        <div className="flex pt-6 w-full font-medium space-x-6 text-black">
           <div className="flex-1 pl-4">Name</div>
           <div className="flex-inital w-12">Mask</div>
           <div className="flex-inital w-12">IPs</div>
@@ -215,7 +215,7 @@ function SubnetsTab() {
         </div>
       </div>
       {renderTableEntries()}
-      <div className="flex justify-center">
+      <div className="flex justify-center pb-10">
         {showSubnetWarningPop && (
           <ActionModals
             message={subnetError}
@@ -224,7 +224,7 @@ function SubnetsTab() {
           />
         )}
 
-        <div className="flex pl-2 content-center items-center mt-4  pb-10 ">
+        <div className="flex pl-2 content-center items-center mt-4">
           <button
             className="inline-flex items-center justify-center w-32 h-10 mr-2 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600"
             onClick={handleAddClick}

@@ -15,9 +15,9 @@ function Header() {
             <img className="h-10 w-10" src={Logo} alt="Your Logo" />
           </Link>
         </div>
-        <div className="flex text-lg font-extrabold text-sky-800">subneter</div>
+        {/* <div className="flex text-lg font-extrabold text-sky-800">subneter</div> */}
       </div>
-      <div className="flex flex-1 flex-row space-x-10 items-center text-black ">
+      <div className="flex flex-1 flex-row space-x-10 items-center justify-center text-black ">
         <div>
           <Link to="/" className="hover:text-orange-600">
             Home

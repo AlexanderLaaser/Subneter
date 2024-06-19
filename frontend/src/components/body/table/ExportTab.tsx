@@ -211,15 +211,15 @@ function JsonField() {
   }, [exportType, selectedVnet]);
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-4 pb-10 ">
       <div className="flex flex-row space-x-4 items-center pt-4 ">
-        <div className="flex-start">Type:</div>
+        <div className="flex-start font-semibold">Type:</div>
         <div className="flex-start">
           <select
             id="countries"
             value={exportType}
             onChange={(e) => setExportType(e.target.value)}
-            className="border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="border border-black rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           >
             <option value="json">JSON</option>
             <option value="terraform">Terraform</option>
@@ -233,7 +233,7 @@ function JsonField() {
           <textarea
             ref={textareaRef}
             value={output}
-            className="border border-sky-800 flex  w-full bg-white rounded-lg h-auto min-h-[600px] overflow-hidden resize-none"
+            className="border border-sky-800 flex  w-full bg-white rounded-lg h-auto min-h-[600px] overflow-hidden resize-none p-4"
             readOnly
           ></textarea>
         </div>

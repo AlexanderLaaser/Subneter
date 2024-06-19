@@ -2,7 +2,7 @@ import axios from "axios";
 import iUser from "../interfaces/iUser";
 import Cookies from "js-cookie";
 
-axios.defaults.xsrfCookieName = "CSRFTOKEN";
+axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.withCredentials = true;
 
@@ -10,7 +10,7 @@ axios.defaults.withCredentials = true;
 axios.interceptors.request.use(
   (config) => {
     // CSRF-Token aus den Cookies holen
-    const csrfToken = Cookies.get("CSRFTOKEN");
+    const csrfToken = Cookies.get("csrftoken");
     if (csrfToken) {
       config.headers["X-CSRFToken"] = csrfToken;
     }

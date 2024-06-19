@@ -39,12 +39,12 @@ function Avatar() {
   };
 
   return (
-    <div className="relative flex flex-col items-center">
+    <div className="relative flex flex-1 flex-col items-end">
       <button
         className="ml-40 bg-sky-800  items-center justify-center w-10 h-10 rounded-full"
         onClick={toggleDropdown}
       >
-        <span className="text-white text-sm">
+        <span className="text-white text-sm font-semibold">
           {getInitials(firstname, lastname)}
         </span>
       </button>
@@ -55,7 +55,7 @@ function Avatar() {
           className="absolute top-full right-0 mt-2 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
         >
           <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
-            <div className="font-medium truncate">
+            <div className="font-normal truncate">
               <div>{email}</div>
               <div>{firstname + " " + lastname}</div>
             </div>
