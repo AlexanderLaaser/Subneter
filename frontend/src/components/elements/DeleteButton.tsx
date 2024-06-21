@@ -11,13 +11,13 @@ interface DeleteButtonProps {
 function DeleteButton({ status, onClickFunction, height }: DeleteButtonProps) {
   const buttonStyles =
     status === "active"
-      ? "bg-red-500 hover:bg-orange-600 cursor-pointer"
+      ? "bg-warning transition duration-150 hover:scale-110 hover:bg-warningsec"
       : "bg-slate-300 text-slate-50 cursor-not-allowed";
 
   return (
     <div>
       <button
-        className={`inline-flex items-center justify-center ${height}  text-slate-50 transition-colors duration-150 rounded-lg focus:shadow-outline ${buttonStyles}`}
+        className={`inline-flex items-center justify-center ${height}  text-slate-50 rounded-lg focus:shadow-outline ${buttonStyles}`}
         onClick={status === "active" ? onClickFunction : undefined}
         disabled={status !== "active"}
       >

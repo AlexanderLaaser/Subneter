@@ -29,7 +29,7 @@ function Tab() {
             >
               <li className="me-2" role="presentation">
                 <button
-                  className={`text-lg inline-block border-b-2 pb-2 rounded-t-lg hover:border-orange-600 hover:text-organge-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
+                  className={`text-lg inline-block border-b-2 pb-2 rounded-t-lg hover:border-secondary hover:text-organge-600 dark:hover:text-secondary dark:hover:border-secondary ${
                     activeTab === "calculator-tab"
                       ? "text-sky-800 border-sky-800 font-medium"
                       : ""
@@ -48,7 +48,7 @@ function Tab() {
               {userLoginStatus ? (
                 <li className="me-2" role="presentation">
                   <button
-                    className={`text-lg inline-block border-b-2 pb-2 rounded-t-lg hover:border-orange-600 dark:hover:text-orange-600 dark:hover:border-orange-600 ${
+                    className={`text-lg inline-block border-b-2 pb-2 rounded-t-lg hover:border-secondary dark:hover:text-secondary dark:hover:border-secondary ${
                       activeTab === "json-tab"
                         ? "text-sky-800 border-sky-800 font-medium"
                         : ""

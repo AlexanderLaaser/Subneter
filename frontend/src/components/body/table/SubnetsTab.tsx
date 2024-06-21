@@ -206,12 +206,14 @@ function SubnetsTab() {
 
   return (
     <>
-      <div className="flex justify-center content-center w-full">
+      <div className="flex justify-center content-center w-full pr-12">
         <div className="flex pt-6 w-full font-medium space-x-6 text-black">
-          <div className="flex-1 pl-4">Name</div>
+          <div className="flex-1">
+            <div className="pl-4 pr-4">Name</div>
+          </div>
           <div className="flex-inital w-12">Mask</div>
           <div className="flex-inital w-12">IPs</div>
-          <div className="flex-1 pr-14">Range</div>
+          <div className="flex-1">Range</div>
         </div>
       </div>
       {renderTableEntries()}
@@ -224,9 +226,9 @@ function SubnetsTab() {
           />
         )}
 
-        <div className="flex pl-2 content-center items-center mt-4">
+        <div className="flex content-center items-center mt-4">
           <button
-            className="inline-flex items-center justify-center w-32 h-10 mr-2 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600"
+            className=" p-2 w-fit inline-flex items-center justify-center text-white duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-secondary hover:scale-110 transition"
             onClick={handleAddClick}
           >
             <span className="text-l">Add Subnet</span>

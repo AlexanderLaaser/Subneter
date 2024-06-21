@@ -7,7 +7,7 @@ function Slogan() {
             <div className="mr-2 text-5xl w-4/5 font-semibold">
               <h1>
                 Organize & <span className="text-sky-800">calculate</span> your
-                Virtual Network with ease
+                Virtual Networks with ease
               </h1>
             </div>
           </div>

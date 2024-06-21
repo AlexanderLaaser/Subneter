@@ -45,11 +45,13 @@ function NetworkSidebar() {
   };
 
   const handleVnetSelect = (vnetId: number) => {
-    if (unsavedChanges || getSelectedVnet().isStored === false) {
-      setPendingVnetId(vnetId);
-      setShowModal(true);
-    } else {
-      setSelectedVnet(vnetId);
+    if (selectedVnetId !== vnetId) {
+      if (unsavedChanges || getSelectedVnet().isStored === false) {
+        setPendingVnetId(vnetId);
+        setShowModal(true);
+      } else {
+        setSelectedVnet(vnetId);
+      }
     }
   };
 
@@ -57,9 +59,9 @@ function NetworkSidebar() {
     setShowModal(false);
     if (confirm && pendingVnetId !== null) {
       setSelectedVnet(pendingVnetId);
+      setUnsavedChanges(false);
     }
     setPendingVnetId(null);
-    setUnsavedChanges(false);
   };
 
   return (
@@ -71,13 +73,13 @@ function NetworkSidebar() {
       >
         <div className="pt-4 px-4 dark:bg-gray-800">
           <div className="flex items-center justify-between">
-            <div className="text-lg text-black font-medium">
+            <div className="text-lg font-medium">
               <h3>Virtuel Networks</h3>
             </div>
             <div className="">
               {unsavedChanges ? null : (
                 <button
-                  className="inline-flex items-center justify-center w-6 h-6 text-slate-50 transition-colors duration-150 rounded-lg focus:shadow-outline bg-sky-800 hover:bg-orange-600"
+                  className="inline-flex items-center justify-center w-6 h-6 text-slate-50 transition-colors duration-150 rounded-lg focus:shadow-outline bg-sky-800 hover:bg-secondary"
                   onClick={handleAddVnet}
                 >
                   <span className="text-l">+</span>
@@ -89,10 +91,10 @@ function NetworkSidebar() {
             {vnets.map((vnet) => (
               <li key={vnet.id} onClick={() => handleVnetSelect(vnet.id)}>
                 <div
-                  className={`flex items-center p-2 rounded-lg ${
+                  className={`flex items-center p-2 rounded-lg  ${
                     selectedVnetId === vnet.id
-                      ? "bg-sky-800 text-white font-normal"
-                      : "bg-white hover:bg-orange-600 font-normal"
+                      ? "bg-primary text-white font-normal"
+                      : "bg-white hover:bg-secondary hover:text-white"
                   }`}
                 >
                   <img
@@ -101,8 +103,10 @@ function NetworkSidebar() {
                     alt="Network Icon"
                   />
                   <div
-                    className={`flex-1 text-center ${
-                      selectedVnetId === vnet.id ? "text-white" : "text-black"
+                    className={`flex-1 text-center w-full h-full${
+                      selectedVnetId === vnet.id
+                        ? "text-white"
+                        : "text-black hover:text-white"
                     }`}
                   >
                     {vnet.name}
@@ -113,7 +117,14 @@ function NetworkSidebar() {
           </ul>
         </div>
       </aside>
-      {showModal && <FocusModal onClose={handleCloseModal} />}
+      {showModal && (
+        <FocusModal
+          onClose={handleCloseModal}
+          message={
+            "Are you sure you want to leave your Vnet config without saving?"
+          }
+        />
+      )}
     </>
   );
 }

@@ -12,7 +12,7 @@ function Body() {
 
   return (
     <div className="flex flex-row flex-1">
-      <div className=" flex-none pl-2 pb-2" id="Sidebar">
+      <div className=" flex-none pl-2 pt-10 pb-10" id="Sidebar">
         {userLoginStatus ? <NetworkSidebar /> : null}
       </div>
       <div className="flex flex-1 justify-center items-start" id="Main">

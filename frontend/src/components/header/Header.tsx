@@ -10,26 +10,36 @@ function Header() {
   return (
     <div className="flex justify-between p-2 z-50 bg-white">
       <div className="flex flex-1 flex-row text-white space-x-4 items-center w-1/6">
-        <div className="">
+        <div className="hover:scale-110 transition">
           <Link to="/">
-            <img className="h-10 w-10" src={Logo} alt="Your Logo" />
+            <img className="h-10 w-10 " src={Logo} alt="Your Logo" />
           </Link>
         </div>
-        {/* <div className="flex text-lg font-extrabold text-sky-800">subneter</div> */}
+
+        <div className="flex text-lg font-bold text-sky-800">subneter</div>
       </div>
       <div className="flex flex-1 flex-row space-x-10 items-center justify-center text-black ">
         <div>
-          <Link to="/" className="hover:text-orange-600">
+          <Link
+            to="/"
+            className="hover:text-white hover:bg-secondary rounded-lg p-2 "
+          >
             Home
           </Link>
         </div>
         <div>
-          <Link to="/updates" className="hover:text-orange-600">
+          <Link
+            to="/updates"
+            className="hover:text-white hover:bg-secondary rounded-lg p-2"
+          >
             Updates
           </Link>
         </div>
         <div>
-          <Link to="/knowledge" className="hover:text-orange-600">
+          <Link
+            to="/knowledge"
+            className="hover:text-white hover:bg-secondary rounded-lg p-2"
+          >
             Kownledge
           </Link>
         </div>
@@ -39,7 +49,7 @@ function Header() {
         <Avatar />
       ) : (
         <div className="flex flex-row flex-1 space-x-2 justify-end items-center w-1/6">
-          <div className="flex text-sky-800 bg-white rounded-lg hover:bg-orange-600 hover:text-white h-8  pr-2 pl-2 ">
+          <div className="flex text-sky-800 bg-white rounded-lg hover:bg-secondary hover:text-white p-2 ">
             <Link
               to="/login"
               state={{ loginpopouplocation: location }}
@@ -48,7 +58,7 @@ function Header() {
               Login
             </Link>
           </div>
-          <div className="flex h-8 bg-sky-800 text-white rounded-lg hover:bg-orange-600 pr-2 pl-2">
+          <div className="flex bg-sky-800 text-white rounded-lg hover:bg-secondary p-2">
             <Link
               to="/register"
               state={{ registerpopouplocation: location }}

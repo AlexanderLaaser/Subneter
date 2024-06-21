@@ -28,6 +28,7 @@ const userStore = create<userStoreInterface>()(
       lastname: "",
       email: "",
       password: "",
+      unsavedChanges: false,
       setuserLoginStatus: (userLoginStatus) => {
         set(() => ({ userLoginStatus }));
         localStorage.setItem("userLoginStatus", String(userLoginStatus));

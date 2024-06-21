@@ -62,7 +62,7 @@ function Avatar() {
           </div>
           <div className="py-1">
             <button
-              className="block px-4 py-2 text-sm text-sky-800 hover:text-orange-600 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+              className="block px-4 py-2 text-sm text-sky-800 hover:text-secondary dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
               onClick={handleLogoutButtonClick}
             >
               Sign out

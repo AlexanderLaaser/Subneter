@@ -1,8 +1,8 @@
 function Footer() {
   return (
-    <footer className="flex flex-col  items-center text-center text-surface dark:bg-neutral-700 dark:text-white bg-sky-800">
+    <footer className="flex flex-col items-center text-center text-surface dark:bg-neutral-700 dark:text-white bg-primary">
       <div className="flex-1 pt-10 container px-6">
-        <div className="mb-4 flex justify-center space-x-2">
+        <div className="mb-4 flex justify-center space-x-2 hover:scale-110 transition">
           <a
             href="https://www.linkedin.com/in/alexander-laaser/"
             type="button"

@@ -143,23 +143,24 @@ function VnetInput() {
             className="flex-start text-lg text-black font-medium "
             id="vnetname"
           >
-            Name
+            Network Name
           </div>
-          <div className="flex-start rounded bg-gray-200">
+          <div className="flex-start rounded-lg ">
             <input
               id="vnetInput"
               placeholder=""
               type="text"
               value={getSelectedVnet()?.name || ""}
-              className="text-sm sm:text-base focus:border-orange-600 focus:outline-none pl-4 rounded h-10 bg-gray-200 w-full"
+              className="bg-gray-200 text-sm sm:text-base hover:outline-secondary focus:outline-secondary pl-4 pr-4 rounded-lg h-10 w-full "
               onChange={handleNameChange}
             ></input>
-          </div>
-          <div className="flex-1">
             {nameError && (
-              <div className="text-red-500 font-bold text-m">{nameError}</div>
+              <div className="text-warning font-normal text-m pt-1">
+                {nameError}
+              </div>
             )}
           </div>
+          <div className="flex-1"></div>
         </div>
         <div
           className="flex flex-1 flex-col space-y-4"

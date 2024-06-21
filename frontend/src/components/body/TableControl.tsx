@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import {
   createVnet,
   deleteVnetById,
+  getAllVnets,
   updateVnetById,
 } from "../../api/persistenceCalls";
 import { useUserStore } from "../../store/UserStore";
 import { useVnetStore } from "../../store/VnetStore";
 import iVnet from "../../interfaces/iVnet";
 import ActionModals from "../elements/modals/NoFocusModal";
+import FocusModal from "../elements/modals/FocusModal";
 
 function TableControl() {
   const { userLoginStatus, setUnsavedChanges } = useUserStore();
@@ -17,6 +19,7 @@ function TableControl() {
   const [showSaveSuccessPopup, setSaveSuccessPopup] = useState(false);
   const [showDeleteSuccessPopup, setDeleteSuccessPopup] = useState(false);
   const [showWarningPopup, setWarningPopup] = useState(false);
+  const [showDeleteAskingModal, setDeleteAskingShowModal] = useState(false);
 
   const selectedVnet = getSelectedVnet();
 
@@ -61,7 +64,11 @@ function TableControl() {
           );
         } else {
           await createVnet(userLoginStatus, cleanedSelectedVnet);
+          selectedVnet.isStored = true;
+          console.log("Vnet created");
         }
+        console.log("Lade alle Vnets neu");
+        await getAllVnets(userLoginStatus);
         setSaveSuccessPopup(true);
       } else {
         setWarningPopup(true);
@@ -82,10 +89,10 @@ function TableControl() {
         if (selectedVnet.isStored) {
           await deleteVnetById(userLoginStatus, selectedVnet.id);
           removeVnetById(selectedVnet.id);
-          setDeleteSuccessPopup(true);
         } else {
           removeVnetById(selectedVnet.id);
         }
+        setDeleteSuccessPopup(true);
         // Select the first VNET as the selected VNET
         const updatedVnets = vnets.filter(
           (vnet) => vnet.id !== selectedVnet.id
@@ -104,12 +111,21 @@ function TableControl() {
   }
 
   const handleDeleteVnetClick = () => {
-    deleteVnetConfig();
+    setDeleteAskingShowModal(true);
   };
 
+  const handleCloseModal = (confirm: boolean) => {
+    setDeleteAskingShowModal(false);
+    if (confirm === true) {
+      deleteVnetConfig();
+    }
+  };
+
+  useEffect(() => {}, [handleSaveVnetClick]);
+
   return (
-    <div className="flex sm:flex-col pt-10  xl:space-x-10 xl:flex-row">
-      <div className="flex-start font-bold text-2xl">
+    <div className="flex sm:flex-col pt-10 xl:space-x-10 xl:flex-row">
+      <div className="flex-start font-medium text-2xl">
         <h2>Manage Subnets, Address Spaces and More </h2>
       </div>
       <div
@@ -117,10 +133,10 @@ function TableControl() {
         id="vnetconfig"
       >
         <button
-          className={`inline-flex items-center justify-center pr-4 pl-4 h-10 text-slate-50 transition-colors duration-150 ${
+          className={`inline-flex items-center justify-center pr-4 pl-4 h-10 text-slate-50 ${
             vnets.length === 1
               ? "bg-slate-300 cursor-not-allowed"
-              : "bg-red-500 focus:shadow-outline hover:bg-orange-600"
+              : "transition duration-150 hover:scale-110 bg-warning hover:bg-warningsec "
           } rounded-lg`}
           onClick={handleDeleteVnetClick}
           disabled={vnets.length === 1}
@@ -128,7 +144,7 @@ function TableControl() {
           <span className="text-l">Delete</span>
         </button>
         <button
-          className="inline-flex items-center justify-center pr-4 pl-4 h-10 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600"
+          className="inline-flex items-center justify-center pr-4 pl-4 h-10 text-white transition bg-sky-800 rounded-lg focus:shadow-outline hover:bg-secondary duration-150 hover:scale-110"
           onClick={handleSaveVnetClick}
         >
           <span className="text-l">Save</span>
@@ -145,7 +161,7 @@ function TableControl() {
         <ActionModals
           message="Your VNET configuration has been deleted successfully!"
           type="success"
-          onClose={() => setSaveSuccessPopup(false)}
+          onClose={() => setDeleteSuccessPopup(false)}
         />
       )}
       {showWarningPopup && (
@@ -153,6 +169,12 @@ function TableControl() {
           message="Please fill in the required fields before saving the VNET configuration!"
           type="warning"
           onClose={() => setWarningPopup(false)}
+        />
+      )}
+      {showDeleteAskingModal && (
+        <FocusModal
+          onClose={handleCloseModal}
+          message={"Are you sure you want to delete your Vnet config?"}
         />
       )}
     </div>

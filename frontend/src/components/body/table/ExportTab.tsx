@@ -240,7 +240,7 @@ function JsonField() {
       </div>
       <div className="flex justify-center mt-4 pb-2">
         <button
-          className="inline-flex items-center justify-center w-32 h-10 mr-2 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600"
+          className="inline-flex items-center justify-center w-32 h-10 mr-2 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-secondary hover:scale-110 transition"
           onClick={handleDownload}
         >
           <span className="text-l">Export</span>

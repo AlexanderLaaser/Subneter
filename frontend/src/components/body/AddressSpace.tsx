@@ -7,7 +7,6 @@ import {
   getAddressSpace,
 } from "../../api/calculatorCalls";
 import { useUserStore } from "../../store/UserStore";
-import WarningPopup from "../elements/modals/NoFocusModal";
 import ActionModals from "../elements/modals/NoFocusModal";
 
 interface AddressSpaceProps {
@@ -119,20 +118,20 @@ const AddressSpace: React.FC<AddressSpaceProps> = ({
   return (
     <div className="flex flex-1 flex-row space-x-4">
       <div className="flex flex-col flex-1">
-        <div className="flex-1 rounded ">
+        <div className="flex-1 rounded-lg ">
           <input
             type="text"
             placeholder=""
             value={networkAddress}
-            className="text-sm sm:text-base rounded focus:border-orange-600 focus:outline-none pl-4 h-10 bg-gray-200 w-full"
+            className="text-m sm:text-base rounded-lg focus:outline-secondary pl-4 h-10 bg-gray-200 w-full"
             onChange={handleNetworkAddressChange}
           />
         </div>
         <div className="flex-1 pt-1">
           {IpIsValid === false ? (
-            <div className="text-red-500 text-m">Invalid IP Address</div>
+            <div className="text-warning text-m">Invalid IP Address</div>
           ) : error !== "" ? (
-            <div className="text-red-500 text-m ">{error}</div>
+            <div className="text-warning text-m ">{error}</div>
           ) : (
             <div className="text-sky-800 text-m ">{range}</div>
           )}
@@ -140,12 +139,12 @@ const AddressSpace: React.FC<AddressSpaceProps> = ({
       </div>
 
       <div className="flex flex-col">
-        <div className="outline-none rounded focus:border-orange-600 !bg-gray-200">
+        <div className="rounded-lg !bg-gray-200">
           <SubnetMaskSelect
             elementID={"ip_size_input"}
             value={subnetMask}
             tailWindConfig={
-              "sm:text-base rounded text-m pl-4 h-10 !bg-gray-200"
+              "sm:text-base rounded-lg text-m pl-4 h-10 !bg-gray-200 focus:outline-secondary"
             }
             type="vnet"
             onChangeFunction={handleVnetMaskChange}
@@ -166,7 +165,7 @@ const AddressSpace: React.FC<AddressSpaceProps> = ({
               <div className="flex flex-1 items-start">
                 <button
                   onClick={handleAddAddressSpace}
-                  className="w-10 h-10 text-slate-50 transition-colors duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-orange-600"
+                  className="w-10 h-10 text-slate-50 transition duration-150 bg-sky-800 rounded-lg focus:shadow-outline hover:bg-secondary hover:scale-110"
                 >
                   <span className="text-l">+</span>
                 </button>
@@ -177,9 +176,7 @@ const AddressSpace: React.FC<AddressSpaceProps> = ({
       ) : null}
       {showAddressSpaceMaskWarningPop && (
         <ActionModals
-          message={
-            "Address range cannot be changed if the subnets are filled in!"
-          }
+          message={"Address range cannot be changed if subnets are filled in!"}
           onClose={() => setAddressSpaceMaskWarningPop(false)}
           type={"warning"}
         />

@@ -10,11 +10,18 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        libre: ['"Poppins"', ...defaultTheme.fontFamily.sans],
+        libre: ['"Montserrat"', ...defaultTheme.fontFamily.sans],
+      },
+      colors: {
+        primary: '#075985',
+        secondary: '#0c4a6e',
+        warning: '#dc2626',
+        warningsec: '#ef4444',
+        base100: '#ffffff',
       },
     },
     fontFamily: {
-      sans: ['"Poppins"']
+      sans: ['"Montserrat"']
     }
   },
   daisyui: {
